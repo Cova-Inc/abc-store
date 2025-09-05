@@ -14,6 +14,7 @@ import {
     Typography,
     IconButton,
     useMediaQuery,
+    Icon,
 } from '@mui/material';
 
 import { paths } from 'src/routes/paths';
@@ -23,10 +24,12 @@ import { useBoolean } from 'src/hooks';
 import { useAuthContext } from 'src/auth/hooks';
 import { DashboardContent } from 'src/layouts/dashboard';
 import { PRODUCT_CATEGORY_OPTIONS, PRODUCT_FILTER_FIELD_OPTIONS } from 'src/config-global';
+import { toast } from 'src/components/snackbar';
 
 import { Iconify } from 'src/components/iconify';
 import { EmptyContent } from 'src/components/empty-content';
 import { ConfirmDialog } from 'src/components/custom-dialog';
+import { ErrorSection } from '@/components/result-section';
 import { CommonToolbar, CommonListSkeleton, CommonListPagination } from 'src/components/common-list';
 
 import { ProductListItem } from '../components';
@@ -47,10 +50,10 @@ export default function ProductListView() {
     const {
         products,
         loading,
+        error,
         pagination,
         deleteProduct,
         deleteProducts,
-        downloadProduct,
         fetchProducts
     } = useProducts();
 
@@ -107,14 +110,17 @@ export default function ProductListView() {
             if (selectionManager.selectAllActive) {
                 // Delete all products
                 console.log('Delete all products not implemented yet');
+                toast.warning('Delete all products not implemented yet');
             } else {
                 // Delete selected products
-                await deleteProducts(selectionManager.selectedRowIds);
+                const result = await deleteProducts(selectionManager.selectedRowIds);
+                toast.success(`${result.count} products deleted successfully`);
             }
             selectionManager.clearSelection();
             confirmRows.onFalse();
         } catch (error) {
             console.error('Delete failed:', error);
+            toast.error(error.message || 'Failed to delete products');
         }
     }, [selectionManager, deleteProducts, confirmRows]);
 
@@ -125,9 +131,11 @@ export default function ProductListView() {
     const handleSingleDelete = useCallback(async (product) => {
         try {
             await deleteProduct(product.id);
+            toast.success('Product deleted successfully');
             confirmRows.onFalse();
         } catch (error) {
             console.error('Delete failed:', error);
+            toast.error(error.message || 'Failed to delete product');
         }
     }, [deleteProduct, confirmRows]);
 
@@ -154,6 +162,23 @@ export default function ProductListView() {
 
     const hasSelection = selectionManager.selectedCount > 0;
     const totalCount = pagination?.total || 0;
+
+    if (error) {
+        return (
+            <ErrorSection
+                error={error.code === 403 ? '403' : error.code === 404 ? '404' : '500'}
+                title={error.code === 403 ? 'Access Denied' : 'Failed to Load Products'}
+                description={error.message}
+                actionText="Retry"
+                onAction={() => fetchProducts({
+                    ...buildFilters(),
+                    page: page + 1, // API uses 1-based pagination
+                    limit: pageSize
+                })}
+                icon={<Iconify icon="eva:refresh-fill" />}
+            />
+        )
+    }
 
     return (
         <DashboardContent>
@@ -237,7 +262,6 @@ export default function ProductListView() {
                                     onView={handleViewProduct}
                                     onEdit={handleEditProduct}
                                     onDelete={handleSingleDelete}
-                                    onDownload={downloadProduct}
                                     onProductUpdate={fetchProducts}
                                 />
                             ))}

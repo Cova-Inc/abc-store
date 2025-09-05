@@ -1,5 +1,4 @@
 import { useState, useCallback } from 'react';
-import { toast } from 'src/components/snackbar';
 import * as productActions from '../actions';
 
 // =============================================================================
@@ -9,7 +8,9 @@ import * as productActions from '../actions';
 export function useProducts() {
     // State
     const [products, setProducts] = useState([]);
+    const [product, setProduct] = useState(null);
     const [loading, setLoading] = useState(false);
+    const [error, setError] = useState(null);
     const [pagination, setPagination] = useState({
         page: 1,
         limit: 10,
@@ -31,6 +32,7 @@ export function useProducts() {
     const fetchProducts = useCallback(async (newFilters = {}) => {
         try {
             setLoading(true);
+            setError(null);
             const params = {
                 ...filters,
                 ...newFilters,
@@ -46,13 +48,40 @@ export function useProducts() {
             if (Object.keys(newFilters).length > 0) {
                 setFilters(prev => ({ ...prev, ...newFilters }));
             }
-        } catch (error) {
-            toast.error(error.message || 'Failed to fetch products');
-            console.error('Error fetching products:', error);
+        } catch (err) {
+            const errorCode = err.response?.status || 500;
+            setError({
+                code: errorCode,
+                message: err.message || 'Failed to fetch products'
+            });
+            console.error('Error fetching products:', err);
         } finally {
             setLoading(false);
         }
     }, [filters, pagination.page, pagination.limit]);
+
+    // Fetch single product
+    const fetchProduct = useCallback(async (id) => {
+        try {
+            setLoading(true);
+            setError(null);
+            
+            const response = await productActions.getProduct(id);
+            setProduct(response);
+            
+            return response;
+        } catch (err) {
+            const errorCode = err.status || err.response?.status || 500;
+            setError({
+                code: errorCode,
+                message: err.message || 'Failed to fetch product'
+            });
+            setProduct(null);
+            throw err;
+        } finally {
+            setLoading(false);
+        }
+    }, []);
 
     // =============================================================================
     // CRUD OPERATIONS
@@ -64,10 +93,8 @@ export function useProducts() {
             const product = await productActions.createProduct(productData);
             setProducts(prev => [product, ...prev]);
             setPagination(prev => ({ ...prev, total: prev.total + 1 }));
-            toast.success('Product created successfully');
             return product;
         } catch (error) {
-            toast.error(error.message || 'Failed to create product');
             throw error;
         } finally {
             setLoading(false);
@@ -79,10 +106,8 @@ export function useProducts() {
             setLoading(true);
             const product = await productActions.updateProduct(id, productData);
             setProducts(prev => prev.map(p => p.id === id ? product : p));
-            toast.success('Product updated successfully');
             return product;
         } catch (error) {
-            toast.error(error.message || 'Failed to update product');
             throw error;
         } finally {
             setLoading(false);
@@ -95,10 +120,8 @@ export function useProducts() {
             await productActions.deleteProduct(id);
             setProducts(prev => prev.filter(p => p.id !== id));
             setPagination(prev => ({ ...prev, total: Math.max(0, prev.total - 1) }));
-            toast.success('Product deleted successfully');
             return true;
         } catch (error) {
-            toast.error(error.message || 'Failed to delete product');
             throw error;
         } finally {
             setLoading(false);
@@ -111,10 +134,8 @@ export function useProducts() {
             await productActions.deleteProducts(ids);
             setProducts(prev => prev.filter(p => !ids.includes(p.id)));
             setPagination(prev => ({ ...prev, total: Math.max(0, prev.total - ids.length) }));
-            toast.success(`${ids.length} products deleted successfully`);
-            return true;
+            return { count: ids.length };
         } catch (error) {
-            toast.error(error.message || 'Failed to delete products');
             throw error;
         } finally {
             setLoading(false);
@@ -136,9 +157,9 @@ export function useProducts() {
             link.click();
             document.body.removeChild(link);
             window.URL.revokeObjectURL(url);
-            toast.success('Product downloaded successfully');
+            return true;
         } catch (error) {
-            toast.error(error.message || 'Failed to download product');
+            throw error;
         }
     }, []);
 
@@ -153,9 +174,9 @@ export function useProducts() {
             link.click();
             document.body.removeChild(link);
             window.URL.revokeObjectURL(url);
-            toast.success('Products exported to CSV successfully');
+            return true;
         } catch (error) {
-            toast.error(error.message || 'Failed to export products');
+            throw error;
         }
     }, [products]);
 
@@ -170,9 +191,9 @@ export function useProducts() {
             link.click();
             document.body.removeChild(link);
             window.URL.revokeObjectURL(url);
-            toast.success('Products exported to Excel successfully');
+            return true;
         } catch (error) {
-            toast.error(error.message || 'Failed to export products');
+            throw error;
         }
     }, [products]);
 
@@ -183,7 +204,9 @@ export function useProducts() {
     return {
         // Data
         products,
+        product,
         loading,
+        error,
         pagination,
         filters,
         
@@ -197,7 +220,8 @@ export function useProducts() {
         downloadProduct,
         exportCSV,
         exportExcel,
-        fetchProducts
+        fetchProducts,
+        fetchProduct
     };
 }
 

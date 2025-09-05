@@ -10,7 +10,7 @@ import { LayoutSection } from '../core/layout-section';
 
 // ----------------------------------------------------------------------
 
-export function SimpleLayout({ sx, children, content }) {
+export function SimpleLayout({ sx, children, content, ...other }) {
   const mobileNavOpen = useBoolean();
 
   const layoutQuery = 'md';
@@ -20,20 +20,7 @@ export function SimpleLayout({ sx, children, content }) {
       /** **************************************
        * Header
        *************************************** */
-      headerSection={
-        <HeaderBase
-          layoutQuery={layoutQuery}
-          onOpenNav={mobileNavOpen.onTrue}
-          slots={{
-            topArea: (
-              <Alert severity="info" sx={{ display: 'none', borderRadius: 0 }}>
-                This is an info Alert.
-              </Alert>
-            ),
-          }}
-          slotProps={{ container: { maxWidth: false } }}
-        />
-      }
+      headerSection={other.header || null}
       /** **************************************
        * Footer
        *************************************** */

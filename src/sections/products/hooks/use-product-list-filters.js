@@ -10,27 +10,6 @@ const DEFAULT_FILTERS = {
     filterFields: [],
 };
 
-// Filter field options for products
-export const PRODUCT_FILTER_FIELD_OPTIONS = [
-    { value: 'name', label: 'Product Name' },
-    { value: 'description', label: 'Description' },
-    { value: 'sku', label: 'SKU' },
-    { value: 'category', label: 'Category' },
-    { value: 'tags', label: 'Tags' },
-];
-
-// Product category options
-export const PRODUCT_CATEGORY_OPTIONS = [
-    { value: 'electronics', label: 'Electronics' },
-    { value: 'clothing', label: 'Clothing' },
-    { value: 'books', label: 'Books' },
-    { value: 'home', label: 'Home & Garden' },
-    { value: 'sports', label: 'Sports' },
-    { value: 'beauty', label: 'Beauty' },
-    { value: 'toys', label: 'Toys' },
-    { value: 'automotive', label: 'Automotive' },
-];
-
 export function useProductListFilters() {
     const [page, setPage] = useState(DEFAULT_FILTERS.page);
     const [pageSize, setPageSize] = useState(DEFAULT_FILTERS.pageSize);

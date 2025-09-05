@@ -35,9 +35,9 @@ function ServerErrorIllustration({ hideBackground, sx, ...other }) {
       {!hideBackground && <BackgroundShape />}
 
       <image
-        href={`${CONFIG.site.basePath}/assets/illustrations/characters/character-8.webp`}
+        href={`${CONFIG.site.basePath}/assets/illustrations/characters/character-study.webp`}
         height="300"
-        x="340"
+        x="300"
         y="30"
       />
 

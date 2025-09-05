@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useEffect, useCallback } from 'react';
 
 import {
     Box,
@@ -22,42 +22,48 @@ import { useRouter } from 'src/routes/hooks';
 import { fDate } from 'src/utils/format-time';
 import { fCurrency, fShortenNumber } from 'src/utils/format-number';
 
+import { useAuthContext } from 'src/auth/hooks';
 import { DashboardContent } from 'src/layouts/dashboard';
 
+import { useBoolean } from 'src/hooks';
 import { toast } from 'src/components/snackbar';
 import { Iconify } from 'src/components/iconify';
-import { CONFIG } from 'src/config-global';
-import { getProduct } from '../actions';
+import { ConfirmDialog } from 'src/components/custom-dialog';
+import { ErrorSection } from 'src/components/result-section';
+import { useProducts } from '../hooks';
 import { ProductDetailsCarousel } from '../components/product-details-carousel';
+
 // ----------------------------------------------------------------------
 
 export default function ProductDetailsView({ params }) {
     const router = useRouter();
-    const [loading, setLoading] = useState(true);
-    const [product, setProduct] = useState(null);
-    // Fetch product data from API
+    const { user } = useAuthContext();
+    const confirmDelete = useBoolean();
+    
+    // Use the products hook for all operations
+    const { 
+        product, 
+        loading, 
+        error, 
+        fetchProduct, 
+        deleteProduct 
+    } = useProducts();
+    
+    // Fetch product data from API using the hook
     useEffect(() => {
-        const fetchProduct = async () => {
-            try {
-                setLoading(true);
-
-                // Fetch real product data from API
-                const productData = await getProduct(params.id);
-                setProduct(productData);
-
-            } catch (err) {
-                console.error('Error fetching product:', err);
-                toast.error(err.message || 'Failed to fetch product');
-                setProduct(null);
-            } finally {
-                setLoading(false);
+        const loadProduct = async () => {
+            if (params.id) {
+                try {
+                    await fetchProduct(params.id);
+                } catch (err) {
+                    console.error('Error fetching product:', err);
+                    toast.error(err.message || 'Failed to fetch product');
+                }
             }
         };
 
-        if (params.id) {
-            fetchProduct();
-        }
-    }, [params.id]);
+        loadProduct();
+    }, [params.id, fetchProduct]);
 
     const handleBack = useCallback(() => {
         router.push(paths.main.products.root);
@@ -66,6 +72,32 @@ export default function ProductDetailsView({ params }) {
     const handleEdit = useCallback(() => {
         router.push(paths.main.products.edit(params.id));
     }, [router, params.id]);
+
+    const handleDeleteConfirm = useCallback(async () => {
+        try {
+            // Use deleteProduct from the hook
+            await deleteProduct(params.id);
+            toast.success('Product deleted successfully');
+            confirmDelete.onFalse();
+            router.push(paths.main.products.root);
+        } catch (error) {
+            toast.error(error.message || 'Failed to delete product');
+            confirmDelete.onFalse();
+        }
+    }, [params.id, router, confirmDelete, deleteProduct]);
+
+    const handleDelete = useCallback(() => {
+        confirmDelete.onTrue();
+    }, [confirmDelete]);
+
+    // Determine permissions
+    const isAdmin = user?.role === 'admin';
+    const isOwner = product?.createdBy?.id === user?.id;
+    const isDraft = product?.status === 'draft';
+
+    const canEdit = isAdmin || (isOwner && isDraft);
+    const canDelete = isAdmin || (isOwner && isDraft);
+    const canView = isAdmin || isOwner;
 
     if (loading) {
         return (
@@ -80,40 +112,46 @@ export default function ProductDetailsView({ params }) {
                 >
                     <Stack alignItems="center" spacing={2}>
                         <CircularProgress />
-                        <Typography variant="body2" color="text.secondary" sx={{ mt: 2 }}>
-                            Loading product...
-                        </Typography>
                     </Stack>
                 </Box>
             </DashboardContent>
         );
     }
 
-    if (!product) {
+    if (error) {
         return (
-            <DashboardContent>
-                <Stack direction="row" alignItems="center" spacing={2} >
-                    <Button onClick={handleBack} startIcon={<Iconify icon="eva:arrow-back-fill" />}>
-                        Back
-                    </Button>
+            <ErrorSection
+                error={error.code || "500"}
+                title={error.code === 403 ? "Access Denied" : error.code === 404 ? "Product Not Found" : "Something went wrong"}
+                description={error.message || "An unexpected error occurred"}
+                onAction={handleBack}
+                actionText="Back"
+            />
+        );
+    }
 
-                </Stack>
-                <Box sx={{ textAlign: 'center', py: 4 }}>
-                    <Box
-                        component="img"
-                        alt="empty content"
-                        src={`${CONFIG.site.basePath}/assets/icons/empty/ic-cart.svg`}
-                        sx={{ width: 1, maxWidth: 160, mt: 4 }}
-                    />
+    if (!product && !loading) {
+        return (
+            <ErrorSection
+                error="404"
+                title="Product Not Found"
+                description="The product you're looking for doesn't exist or has been removed."
+                onAction={handleBack}
+                actionText="Back"
+            />
+        );
+    }
 
-                    <Typography variant="h4" gutterBottom>
-                        Product Not Found
-                    </Typography>
-                    <Typography variant="body2" color="text.secondary" sx={{ mb: 3 }}>
-                        The product you&apos;re looking for doesn&apos;t exist or has been removed.
-                    </Typography>
-                </Box>
-            </DashboardContent>
+    // Check if user has permission to view this product
+    if (!canView) {
+        return (
+            <ErrorSection
+                error="403"
+                title="Access Denied"
+                description="You don't have permission to view this product."
+                onAction={handleBack}
+                actionText="Back"
+            />
         );
     }
 
@@ -127,16 +165,20 @@ export default function ProductDetailsView({ params }) {
                     </Button>
 
                     <Stack direction="row" alignItems="center" spacing={2}>
-                        <Tooltip title="Edit">
-                            <IconButton onClick={handleEdit}>
-                                <Iconify icon="solar:pen-bold" />
-                            </IconButton>
-                        </Tooltip>
-                        <Tooltip title="Delete">
-                            <IconButton>
-                                <Iconify icon="solar:trash-bin-trash-bold" />
-                            </IconButton>
-                        </Tooltip>
+                        {canEdit && (
+                            <Tooltip title="Edit">
+                                <IconButton onClick={handleEdit}>
+                                    <Iconify icon="solar:pen-bold" />
+                                </IconButton>
+                            </Tooltip>
+                        )}
+                        {canDelete && (
+                            <Tooltip title="Delete">
+                                <IconButton onClick={handleDelete}>
+                                    <Iconify icon="solar:trash-bin-trash-bold" />
+                                </IconButton>
+                            </Tooltip>
+                        )}
                     </Stack>
                 </Stack>
             </Box>
@@ -272,6 +314,29 @@ export default function ProductDetailsView({ params }) {
                     </Stack>
                 </Grid>
             </Grid>
+
+            {/* Delete Confirmation Dialog */}
+            <ConfirmDialog
+                open={confirmDelete.value}
+                onClose={confirmDelete.onFalse}
+                title="Delete Product"
+                content={
+                    <>
+                        Are you sure you want to delete <strong>{product?.name}</strong>?
+                        <br />
+                        This action cannot be undone.
+                    </>
+                }
+                action={
+                    <Button
+                        variant="contained"
+                        color="error"
+                        onClick={handleDeleteConfirm}
+                    >
+                        Delete
+                    </Button>
+                }
+            />
 
         </DashboardContent>
     );

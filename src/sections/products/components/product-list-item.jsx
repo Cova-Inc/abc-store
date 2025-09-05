@@ -34,7 +34,6 @@ export function ProductListItem({
     onView,
     onEdit,
     onDelete,
-    onDownload,
     onProductUpdate,
     ...other
 }) {
@@ -58,8 +57,7 @@ export function ProductListItem({
         const statusMap = {
             active: 'success',
             inactive: 'warning',
-            draft: 'info',
-            archived: 'error'
+            draft: 'info'
         };
         return statusMap[status] || 'default';
     };
@@ -245,7 +243,7 @@ export function ProductListItem({
                                 {fDate(product.createdAt)}
                             </Typography>
 
-                            {product.createdBy && (
+                            {product.createdBy && isAdmin && (
                                 <Typography variant="caption" color="text.disabled">
                                     By {product.createdBy.name || product.createdBy.email || 'Unknown User'}
                                 </Typography>
@@ -258,7 +256,7 @@ export function ProductListItem({
                 <Stack direction="row" spacing={0.5}>
                     {canEdit && (
                         <Tooltip title="Edit">
-                            <IconButton size="small" onClick={handleEdit}>
+                            <IconButton size="large" onClick={handleEdit}>
                                 <Iconify icon="solar:pen-bold" width={18} />
                             </IconButton>
                         </Tooltip>
@@ -266,7 +264,7 @@ export function ProductListItem({
 
                     {canDelete && (
                         <Tooltip title="Delete">
-                            <IconButton size="small" onClick={handleDelete}>
+                            <IconButton size="large" onClick={handleDelete}>
                                 <Iconify icon="solar:trash-bin-trash-bold" width={18} />
                             </IconButton>
                         </Tooltip>

@@ -3,9 +3,9 @@ import { useState, useCallback } from 'react';
 import { zodResolver } from '@hookform/resolvers/zod';
 
 import { ProductFormSchema, defaultProductValues } from '../types/product.types';
-import { createProduct } from '../actions';
+import { createProduct, updateProduct } from '../actions';
 
-export function useProductForm(initialValues = {}) {
+export function useProductForm(productId = null, initialValues = {}) {
     const [isSubmitting, setIsSubmitting] = useState(false);
 
     const methods = useForm({
@@ -78,8 +78,13 @@ export function useProductForm(initialValues = {}) {
             
             console.log('Product data to submit:', productData);
             
-            // Call the actual API
-            const response = await createProduct(productData);
+            // Call the appropriate API based on whether we're creating or updating
+            let response;
+            if (productId) {
+                response = await updateProduct(productId, productData);
+            } else {
+                response = await createProduct(productData);
+            }
             
             return { success: true, data: response };
             
@@ -89,7 +94,7 @@ export function useProductForm(initialValues = {}) {
         } finally {
             setIsSubmitting(false);
         }
-    }, []);
+    }, [productId]);
 
     // Reset form
     const resetForm = useCallback(() => {

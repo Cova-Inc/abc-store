@@ -1,19 +1,14 @@
 import { z } from 'zod';
+import { PRODUCT_CATEGORY_OPTIONS, PRODUCT_STATUS_OPTIONS } from 'src/config-global';
 
+// Allowed product categories and statuses from config
+const enumCategories = PRODUCT_CATEGORY_OPTIONS.map(option => option.value);
+const enumStatuses = PRODUCT_STATUS_OPTIONS.map(option => option.value);
 // Product status enum
-export const ProductStatus = z.enum(['draft', 'active', 'inactive', 'archived']);
+export const ProductStatus = z.enum(enumStatuses);
 
 // Product category enum
-export const ProductCategory = z.enum([
-    'electronics',
-    'clothing', 
-    'books',
-    'home',
-    'sports',
-    'beauty',
-    'toys',
-    'automotive'
-]);
+export const ProductCategory = z.enum(enumCategories);
 
 // Base product object schema (without refine)
 const BaseProductSchema = z.object({

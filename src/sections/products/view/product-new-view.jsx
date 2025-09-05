@@ -8,11 +8,14 @@ import {
     Stack,
     Typography,
     IconButton,
+    Button,
+    Divider,
 } from '@mui/material';
 
 import { paths } from 'src/routes/paths';
 import { useRouter } from 'src/routes/hooks';
 
+import { useAuthContext } from 'src/auth/hooks';
 import { DashboardContent } from 'src/layouts/dashboard';
 
 import { toast } from 'src/components/snackbar';
@@ -25,6 +28,7 @@ import { useProductForm } from '../hooks/use-product-form';
 
 export default function ProductNewView() {
     const router = useRouter();
+    const { user } = useAuthContext();
 
     const {
         form,
@@ -56,30 +60,28 @@ export default function ProductNewView() {
     return (
         <DashboardContent>
             {/* Header */}
-            <Box sx={{ mb: 3 }}>
-                <Stack direction="row" alignItems="center" spacing={2}>
-                    <IconButton onClick={handleBack} sx={{ p: 1 }}>
-                        <Iconify icon="eva:arrow-back-fill" />
-                    </IconButton>
-                    <Box>
-                        <Typography variant="h4" gutterBottom>
-                            Add New Product
-                        </Typography>
-                        <Typography variant="body2" color="text.secondary">
-                            Create a new product for your store
-                        </Typography>
-                    </Box>
-                </Stack>
-            </Box>
+            <Stack direction="row" alignItems="center" spacing={2}>
+                <Button onClick={handleBack} size="large" startIcon={<Iconify icon="eva:arrow-back-fill" />}>
+                    Back
+                </Button>
+            </Stack>
 
             {/* Product Form */}
-            <Card sx={{ p: 3 }}>
+            <Card sx={{ p: 3, mt: 3 }}>
+                <Box>
+                    <Typography variant="h4">New Product</Typography>
+                    <Typography variant="body2" sx={{ color: 'text.secondary' }}>
+                        Fill in the details below to add a new product.
+                    </Typography>
+                </Box>
+                <Divider sx={{ my: 2, borderStyle: "dashed"}} />
                 <ProductForm
                     form={form}
                     methods={methods}
                     onSubmit={handleSubmit}
                     isSubmitting={isSubmitting}
                     onReset={reset}
+                    currentUser={user}
                 />
             </Card>
         </DashboardContent>

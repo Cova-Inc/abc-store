@@ -16,18 +16,11 @@ import {
     Autocomplete,
 } from '@mui/material';
 import { LoadingButton } from '@mui/lab';
-import { PRODUCT_CATEGORY_OPTIONS } from 'src/config-global';
+import { PRODUCT_CATEGORY_OPTIONS, PRODUCT_STATUS_OPTIONS } from 'src/config-global';
 
 import { Field } from 'src/components/hook-form';
 
 // ----------------------------------------------------------------------
-
-const PRODUCT_STATUS_OPTIONS = [
-    { value: 'draft', label: 'Draft' },
-    { value: 'active', label: 'Active' },
-    { value: 'inactive', label: 'Inactive' },
-    { value: 'archived', label: 'Archived' },
-];
 
 const PRODUCT_TAGS_OPTIONS = [
     'new',
@@ -48,6 +41,7 @@ export function ProductForm({
     isSubmitting,
     onReset,
     defaultValues,
+    currentUser,
 }) {
     const [selectedTags, setSelectedTags] = useState([]);
 
@@ -169,25 +163,28 @@ export function ProductForm({
                                                 helperText={errors.sku?.message}
                                             />
                                         </Grid>
-                                        <Grid item xs={12} sm={6}>
-                                            <Field.Select
-                                                name="status"
-                                                label="Status"
-                                                error={!!errors.status}
-                                                helperText={errors.status?.message}
-                                            >
-                                                {PRODUCT_STATUS_OPTIONS.map((option) => (
-                                                    <MenuItem key={option.value} value={option.value}>
-                                                        {option.label}
-                                                    </MenuItem>
-                                                ))}
-                                            </Field.Select>
-                                        </Grid>
+                                        {/* Only show status field for admin users */}
+                                        {currentUser?.role === 'admin' && (
+                                            <Grid item xs={12} sm={6}>
+                                                <Field.Select
+                                                    name="status"
+                                                    label="Status"
+                                                    error={!!errors.status}
+                                                    helperText={errors.status?.message}
+                                                >
+                                                    {PRODUCT_STATUS_OPTIONS.map((option) => (
+                                                        <MenuItem key={option.value} value={option.value}>
+                                                            {option.label}
+                                                        </MenuItem>
+                                                    ))}
+                                                </Field.Select>
+                                            </Grid>
+                                        )}
                                     </Grid>
                                 </Stack>
                             </Box>
 
-                            <Divider />
+                            <Divider sx={{borderStyle:"dashed"}}/>
 
                             {/* Pricing */}
                             <Box>
@@ -224,7 +221,7 @@ export function ProductForm({
                                 </Grid>
                             </Box>
 
-                            <Divider />
+                            <Divider sx={{borderStyle:"dashed"}}/>
 
                             {/* Inventory */}
                             <Box>
@@ -259,7 +256,7 @@ export function ProductForm({
                                 </Grid>
                             </Box>
 
-                            <Divider />
+                            <Divider sx={{borderStyle:"dashed"}}/>
 
                             {/* Tags */}
                             <Box>
@@ -303,7 +300,7 @@ export function ProductForm({
                 </Grid>
 
                 {/* Form Actions */}
-                <Box sx={{ mt: 4, pt: 3, borderTop: '1px solid', borderColor: 'divider' }}>
+                <Box sx={{ mt: 4, pt: 3, borderTop: '1px dashed', borderColor: 'divider'}}>
                     <Stack direction="row" spacing={2} justifyContent="flex-end">
                         <Button
                             variant="outlined"

@@ -33,7 +33,7 @@ function ForbiddenIllustration({ hideBackground, sx, ...other }) {
       {!hideBackground && <BackgroundShape />}
 
       <image
-        href={`${CONFIG.site.basePath}/assets/illustrations/characters/character-4.webp`}
+        href={`${CONFIG.site.basePath}/assets/illustrations/characters/character-reject.webp`}
         height="300"
         x="220"
         y="30"

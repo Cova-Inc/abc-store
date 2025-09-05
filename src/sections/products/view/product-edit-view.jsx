@@ -10,11 +10,13 @@ import {
     Typography,
     IconButton,
     CircularProgress,
+    Divider,
 } from '@mui/material';
 
 import { paths } from 'src/routes/paths';
 import { useRouter } from 'src/routes/hooks';
 
+import { useAuthContext } from 'src/auth/hooks';
 import { DashboardContent } from 'src/layouts/dashboard';
 
 import { toast } from 'src/components/snackbar';
@@ -22,14 +24,19 @@ import { Iconify } from 'src/components/iconify';
 
 import { ProductForm } from '../components/product-form';
 import { useProductForm } from '../hooks/use-product-form';
+import { useProducts } from '../hooks';
+import { ErrorSection } from 'src/components/result-section';
 
 // ----------------------------------------------------------------------
 
 export default function ProductEditView({ params }) {
     const router = useRouter();
-    const [loading, setLoading] = useState(true);
-    const [product, setProduct] = useState(null);
+    const { user } = useAuthContext();
+    
+    // Use the products hook for data fetching
+    const { product, loading, error, fetchProduct } = useProducts();
 
+    // Use the product form hook with productId for update
     const {
         form,
         methods,
@@ -37,49 +44,24 @@ export default function ProductEditView({ params }) {
         isSubmitting,
         reset,
         updateForm,
-    } = useProductForm();
+    } = useProductForm(params.id);
 
     // Fetch product data
     useEffect(() => {
-        const fetchProduct = async () => {
-            try {
-                setLoading(true);
-                
-                // Simulate API call
-                await new Promise(resolve => setTimeout(resolve, 1000));
-                
-                // Mock product data - replace with actual API call
-                const mockProduct = {
-                    id: params.id,
-                    name: 'Wireless Bluetooth Headphones',
-                    description: 'High-quality wireless headphones with noise cancellation and premium sound quality.',
-                    sku: 'WBH-001',
-                    price: 199.99,
-                    originalPrice: 249.99,
-                    stock: 50,
-                    category: 'electronics',
-                    status: 'active',
-                    image: null, // In real app, this would be the image URL
-                    tags: ['wireless', 'bluetooth', 'noise-cancellation'],
-                    createdAt: '2024-01-15T10:30:00Z',
-                    updatedAt: '2024-01-20T14:45:00Z',
-                };
-                
-                setProduct(mockProduct);
-                updateForm(mockProduct);
-                
-            } catch (err) {
-                console.error('Error fetching product:', err);
-                toast.error(err.message || 'Failed to fetch product');
-            } finally {
-                setLoading(false);
+        const loadProduct = async () => {
+            if (params.id) {
+                try {
+                    const productData = await fetchProduct(params.id);
+                    updateForm(productData);
+                } catch (err) {
+                    console.error('Error fetching product:', err);
+                    toast.error(err.message || 'Failed to fetch product');
+                }
             }
         };
 
-        if (params.id) {
-            fetchProduct();
-        }
-    }, [params.id, updateForm]);
+        loadProduct();
+    }, [params.id, fetchProduct, updateForm]);
 
     const handleBack = useCallback(() => {
         router.push(paths.main.products.root);
@@ -113,54 +95,55 @@ export default function ProductEditView({ params }) {
                 >
                     <Stack alignItems="center" spacing={2}>
                         <CircularProgress />
-                        <Typography variant="body2" color="text.secondary">
-                            Loading product...
-                        </Typography>
                     </Stack>
                 </Box>
             </DashboardContent>
         );
     }
 
-    if (!product) {
+    if (error) {
         return (
-            <DashboardContent>
-                <Box sx={{ textAlign: 'center', py: 4 }}>
-                    <Typography variant="h6" gutterBottom>
-                        Product Not Found
-                    </Typography>
-                    <Typography variant="body2" color="text.secondary" sx={{ mb: 3 }}>
-                        The product you&apos;re looking for doesn&apos;t exist or has been removed.
-                    </Typography>
-                    <Button variant="contained" onClick={handleBack}>
-                        Back to Products
-                    </Button>
-                </Box>
-            </DashboardContent>
+                <ErrorSection
+                    error={error.code || "500"}
+                    title={error.code === 403 ? "Access Denied" : error.code === 404 ? "Product Not Found" : "Something went wrong"}
+                    description={error.message || "An unexpected error occurred"}
+                    onAction={handleBack}
+                    actionText="Back to Products"
+                />
+        );
+    }
+
+    if (!product && !loading) {
+        return (
+                <ErrorSection
+                    error="404"
+                    title="Product Not Found"
+                    description="The product you're looking for doesn't exist or has been removed."
+                    onAction={handleBack}
+                    actionText="Back to Products"
+                />
         );
     }
 
     return (
         <DashboardContent>
             {/* Header */}
-            <Box sx={{ mb: 3 }}>
-                <Stack direction="row" alignItems="center" spacing={2}>
-                    <IconButton onClick={handleBack} sx={{ p: 1 }}>
-                        <Iconify icon="eva:arrow-back-fill" />
-                    </IconButton>
-                    <Box>
-                        <Typography variant="h4" gutterBottom>
-                            Edit Product
-                        </Typography>
-                        <Typography variant="body2" color="text.secondary">
-                            Update product information
-                        </Typography>
-                    </Box>
-                </Stack>
-            </Box>
+            <Stack direction="row" alignItems="center" spacing={2}>
+                <Button onClick={handleBack} size="large" startIcon={<Iconify icon="eva:arrow-back-fill" />}>
+                    Back
+                </Button>
+            </Stack>
 
             {/* Product Form */}
-            <Card sx={{ p: 3 }}>
+            <Card sx={{ p: 3, mt: 3 }}>
+                <Box>
+                    <Typography variant="h4">Edit Product</Typography>
+                    <Typography variant="body2" sx={{ color: 'text.secondary' }}>
+                        Fill in the details below to update the product.
+                    </Typography>
+                </Box>
+                <Divider sx={{ my: 2, borderStyle: "dashed"}} />
+
                 <ProductForm
                     form={form}
                     methods={methods}
@@ -168,6 +151,7 @@ export default function ProductEditView({ params }) {
                     isSubmitting={isSubmitting}
                     onReset={reset}
                     defaultValues={product}
+                    currentUser={user}
                 />
             </Card>
         </DashboardContent>
