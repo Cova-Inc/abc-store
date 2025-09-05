@@ -1,0 +1,73 @@
+'use client';
+
+import React from 'react';
+
+import {
+    Stack,
+    Select,
+    MenuItem,
+    InputLabel,
+    FormControl,
+} from '@mui/material';
+
+import { SearchWithFields } from './search-with-fields';
+
+export function CommonToolbar({
+    // Filter props
+    filterValue,
+    setFilterValue,
+    filterOptions,
+    filterLabel = "Filter",
+
+    // Search props
+    searchInput,
+    setSearchInput,
+    filterFields,
+    setFilterFields,
+    filterFieldOptions,
+    onSearchEnter,
+
+    // Action props
+    onClear,
+
+    // Custom props
+    placeholder = "Search...",
+    minFilterWidth = 200,
+    minSearchWidth = 250
+}) {
+
+    return (
+        <Stack direction="row" spacing={2} alignItems="center" sx={{ p: 2 }}>
+            {filterOptions && (
+                <FormControl sx={{ minWidth: minFilterWidth }}>
+                    <InputLabel id="filter-label">{filterLabel}</InputLabel>
+                    <Select
+                        labelId="filter-label"
+                        value={filterValue}
+                        label={filterLabel}
+                        onChange={(e) => setFilterValue(e.target.value)}
+                    >
+                        <MenuItem value="all">All</MenuItem>
+                        {filterOptions.map((option) => (
+                            <MenuItem key={option.value} value={option.value}>
+                                {option.label}
+                            </MenuItem>
+                        ))}
+                    </Select>
+                </FormControl>
+            )}
+
+            <SearchWithFields
+                search={searchInput}
+                setSearch={setSearchInput}
+                filterFields={filterFields}
+                setFilterFields={setFilterFields}
+                onFilter={onSearchEnter}
+                onClear={onClear}
+                filterFieldOptions={filterFieldOptions}
+                placeholder={placeholder}
+                minWidth={minSearchWidth}
+            />
+        </Stack>
+    );
+} 
