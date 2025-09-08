@@ -5,6 +5,7 @@ import { useAuthContext } from 'src/auth/hooks';
 import { HeaderSection } from './header-section';
 import { AccountDrawer } from '../components/account-drawer';
 import { SettingsButton } from '../components/settings-button';
+import {Logo} from "src/components/logo";
 // ----------------------------------------------------------------------
 
 export function HeaderBase({
@@ -18,16 +19,15 @@ export function HeaderBase({
 }) {
   const { authenticated } = useAuthContext();
 
-  if (!authenticated) {
-    return null;
-  }
-
   return (
     <HeaderSection
       sx={sx}
       layoutQuery={layoutQuery}
       slots={{
         ...slots,
+        leftArea: (
+            <Logo data-slot="logo" />
+        ),
         rightArea: (
           <Box
               data-area="right"
@@ -38,7 +38,7 @@ export function HeaderBase({
               }}
             >
               <SettingsButton data-slot="settings" />
-              <AccountDrawer data-slot="account" data={data?.account} />
+              {authenticated && <AccountDrawer data-slot="account" data={data?.account} /> }
             </Box>
         ),
       }}

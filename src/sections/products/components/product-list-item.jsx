@@ -75,7 +75,7 @@ export function ProductListItem({
         return (
             <Card
                 sx={{
-                    p: 1.5,
+                    p: 1,
                     height: '100%',
                     display: 'flex',
                     flexDirection: 'column',
@@ -96,7 +96,7 @@ export function ProductListItem({
                 <Box sx={{ position: 'relative' }}>
                     {/* Checkbox in corner */}
                     <Box sx={{
-                        position: 'absolute', top: -11, left: -11, zIndex: 9, width: 32, height: 32, borderRadius: 1, bgcolor: 'background.paper', display: 'flex', alignItems: 'center', justifyContent: 'center',
+                        position: 'absolute', top: -8, left: -8, zIndex: 9, width: 32, height: 32, borderRadius: 1, bgcolor: 'background.paper', display: 'flex', alignItems: 'center', justifyContent: 'center',
                     }}>
                         <Checkbox
                             checked={isSelected}
@@ -151,26 +151,24 @@ export function ProductListItem({
                     </Box>
 
                     {/* Status Badge */}
-                    {product.status && product.status !== 'approved' && (
-                        <Label
-                            color={statusConfig.color}
-                            variant="filled"
-                            size="small"
-                            sx={{
-                                position: 'absolute',
-                                top: -7,
-                                right: -5,
-                                borderRadius: 2,
-                                textTransform: 'capitalize',
-                            }}
-                        >
-                            {statusConfig.label}
-                        </Label>
-                    )}
+                    <Label
+                        color={statusConfig.color}
+                        variant="filled"
+                        size="small"
+                        sx={{
+                            position: 'absolute',
+                            top: -7,
+                            right: -5,
+                            borderRadius: 2,
+                            textTransform: 'capitalize',
+                        }}
+                    >
+                        {statusConfig.label}
+                    </Label>
                 </Box>
 
                 {/* Product Details */}
-                <Stack spacing={0.5} sx={{ mt: 1.5, flex: 1 }}>
+                <Stack spacing={0.5} sx={{ mt: 1, flex: 1 }}>
                     <Stack direction="row" justifyContent="space-between" alignItems="center">
                         {/* Name */}
                         <Typography variant="subtitle2">
@@ -216,7 +214,7 @@ export function ProductListItem({
                             </Label>
                         )}
                         {product.stock !== undefined && (
-                            <Typography variant="caption" color="text.secondary">
+                            <Typography variant="caption" color="text.secondary" sx={{ textDecorationLine: product.stock === 0 ? 'line-through' : 'none' }}>
                                 Stock: {product.stock}
                             </Typography>
                         )}
@@ -224,7 +222,7 @@ export function ProductListItem({
                 </Stack>
 
                 {/* Action Buttons */}
-                <Stack direction="row" justifyContent="flex-end" spacing={0.5} sx={{ mt: 1 }}>
+                <Stack direction="row" justifyContent="flex-end" spacing={0.5}>
                     {canEdit && (
                         <IconButton size="small" onClick={handleEdit}>
                             <Iconify icon="solar:pen-bold" width={16} />
@@ -244,8 +242,8 @@ export function ProductListItem({
     return (
         <Card
             sx={{
-                p: 2,
-                mb: 2,
+                p: 1.5,
+                mb: 1.5,
                 border: '1px solid',
                 borderColor: isSelected ? alpha(theme.palette.primary.main, 0.4) : 'divider',
                 backgroundColor: isSelected ? alpha(theme.palette.primary.main, 0.04) : 'background.paper',
@@ -276,8 +274,8 @@ export function ProductListItem({
                 {/* Product Image - Show primary image only */}
                 <Box
                     sx={{
-                        width: { xs: 120, md: 80 },
-                        height: { xs: 120, md: 80 },
+                        width: 100,
+                        height: 100,
                         flexShrink: 0,
                         borderRadius: 1,
                         overflow: 'hidden',
@@ -426,21 +424,21 @@ export function ProductListItem({
 
                 {/* Action Buttons */}
                 <Stack direction="row" spacing={0.5}>
-                    {canEdit && (
+                    {canEdit ? (
                         <Tooltip title="Edit">
                             <IconButton size="large" onClick={handleEdit}>
                                 <Iconify icon="solar:pen-bold" width={18} />
                             </IconButton>
                         </Tooltip>
-                    )}
+                    ): (<Box sx={{ width: 42 }} />)}
 
-                    {canDelete && (
+                    {canDelete ? (
                         <Tooltip title="Delete">
                             <IconButton size="large" onClick={handleDelete}>
                                 <Iconify icon="solar:trash-bin-trash-bold" width={18} />
                             </IconButton>
                         </Tooltip>
-                    )}
+                    ): (<Box sx={{ width: 42 }} />)}
                 </Stack>
             </Stack>
         </Card>
