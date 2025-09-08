@@ -95,20 +95,17 @@ export function ProductListItem({
                 {/* Mobile Layout */}
                 <Box sx={{ position: 'relative' }}>
                     {/* Checkbox in corner */}
-                    <Checkbox
-                        checked={isSelected}
-                        onChange={handleSelect}
-                        onClick={(e) => e.stopPropagation()}
-                        size="small"
-                        sx={{
-                            position: 'absolute',
-                            top: -8,
-                            left: -8,
-                            zIndex: 1,
-                            bgcolor: 'background.paper',
-                            borderRadius: 1
-                        }}
-                    />
+                    <Box sx={{
+                        position: 'absolute', top: -11, left: -11, zIndex: 9, width: 32, height: 32, borderRadius: 1, bgcolor: 'background.paper', display: 'flex', alignItems: 'center', justifyContent: 'center',
+                    }}>
+                        <Checkbox
+                            checked={isSelected}
+                            onChange={handleSelect}
+                            onClick={(e) => e.stopPropagation()}
+                            size="small"
+                            sx={{ p: 0 }}
+                        />
+                    </Box>
 
                     {/* Product Image */}
                     <Box
@@ -154,18 +151,22 @@ export function ProductListItem({
                     </Box>
 
                     {/* Status Badge */}
-                    <Label
-                        color={statusConfig.color}
-                        variant="filled"
-                        size="small"
-                        sx={{
-                            position: 'absolute',
-                            top: 8,
-                            right: 8,
-                        }}
-                    >
-                        {statusConfig.label}
-                    </Label>
+                    {product.status && product.status !== 'approved' && (
+                        <Label
+                            color={statusConfig.color}
+                            variant="filled"
+                            size="small"
+                            sx={{
+                                position: 'absolute',
+                                top: -7,
+                                right: -5,
+                                borderRadius: 2,
+                                textTransform: 'capitalize',
+                            }}
+                        >
+                            {statusConfig.label}
+                        </Label>
+                    )}
                 </Box>
 
                 {/* Product Details */}
@@ -178,7 +179,7 @@ export function ProductListItem({
 
                         {/* Price */}
                         <Stack direction="row" alignItems="center" spacing={0.5}>
-                            {product.originalPrice && product.originalPrice > product.price && (
+                            {product.originalPrice > product.price && (
                                 <Typography
                                     variant="caption"
                                     color="text.disabled"
@@ -223,7 +224,7 @@ export function ProductListItem({
                 </Stack>
 
                 {/* Action Buttons */}
-                <Stack direction="row" spacing={0.5} sx={{ mt: 1 }}>
+                <Stack direction="row" justifyContent="flex-end" spacing={0.5} sx={{ mt: 1 }}>
                     {canEdit && (
                         <IconButton size="small" onClick={handleEdit}>
                             <Iconify icon="solar:pen-bold" width={16} />
@@ -256,7 +257,7 @@ export function ProductListItem({
                 transition: 'all 0.2s ease-in-out',
             }}
             {...other}
-                onClick={() => onView(product.id)}
+            onClick={() => onView(product.id)}
         >
             <Stack
                 direction={{ xs: 'column', md: 'row' }}
@@ -338,7 +339,7 @@ export function ProductListItem({
 
                         <Stack alignItems={{ xs: 'center', md: 'flex-end' }} spacing={0.5}>
                             <Stack direction="row" alignItems="center" spacing={1}>
-                                {product.originalPrice && product.originalPrice > product.price && (
+                                {product.originalPrice > product.price && (
                                     <Typography
                                         variant="body2"
                                         color="text.disabled"

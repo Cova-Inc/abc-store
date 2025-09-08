@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 
 import LoadingButton from '@mui/lab/LoadingButton';
 import {
@@ -45,6 +45,7 @@ export default function ProductListView() {
     const theme = useTheme();
     const isMobile = useMediaQuery(theme.breakpoints.down('md'));
     const { user } = useAuthContext();
+    const [productToDelete, setProductToDelete] = useState(null);
 
     // ONE HOOK FOR EVERYTHING
     const {
@@ -109,7 +110,12 @@ export default function ProductListView() {
     const handleDeleteConfirm = useCallback(async () => {
         try {
             let result;
-            if (selectionManager.selectAllActive && selectionManager.selectedRowIds.length === products.length) {
+            if (productToDelete) {
+                // Delete single product
+                await deleteProduct(productToDelete.id);
+                toast.success('Product deleted successfully');
+                setProductToDelete(null);
+            } else if (selectionManager.selectAllActive && selectionManager.selectedRowIds.length === products.length) {
                 // Delete all products with current filters
                 const deleteFilters = buildFilters();
                 result = await deleteAllProducts(deleteFilters);
@@ -125,22 +131,16 @@ export default function ProductListView() {
             console.error('Delete failed:', error);
             toast.error(error.message || 'Failed to delete products');
         }
-    }, [selectionManager, products.length, deleteProducts, deleteAllProducts, buildFilters, confirmRows]);
+    }, [productToDelete, selectionManager, products.length, deleteProduct, deleteProducts, deleteAllProducts, buildFilters, confirmRows]);
 
     const handleDelete = useCallback(() => {
         confirmRows.onTrue();
     }, [confirmRows]);
 
-    const handleSingleDelete = useCallback(async (product) => {
-        try {
-            await deleteProduct(product.id);
-            toast.success('Product deleted successfully');
-            confirmRows.onFalse();
-        } catch (error) {
-            console.error('Delete failed:', error);
-            toast.error(error.message || 'Failed to delete product');
-        }
-    }, [deleteProduct, confirmRows]);
+    const handleSingleDelete = useCallback((product) => {
+        setProductToDelete(product);
+        confirmRows.onTrue();
+    }, [confirmRows]);
 
     // =============================================================================
     // EFFECTS
@@ -310,10 +310,15 @@ export default function ProductListView() {
             {/* Delete Confirmation Dialog */}
             <ConfirmDialog
                 open={confirmRows.value}
-                onClose={confirmRows.onFalse}
-                title="Delete Products"
+                onClose={() => {
+                    confirmRows.onFalse();
+                    setProductToDelete(null);
+                }}
+                title={productToDelete ? "Delete Product" : "Delete Products"}
                 content={
-                    selectionManager.selectAllActive && selectionManager.selectedRowIds.length === products.length
+                    productToDelete
+                        ? `Are you sure you want to delete "${productToDelete.name}"? This action cannot be undone.`
+                        : selectionManager.selectAllActive && selectionManager.selectedRowIds.length === products.length
                         ? `Are you sure you want to delete ALL ${products.length} product(s) matching the current filters? This action cannot be undone.`
                         : `Are you sure you want to delete ${selectionManager.selectedCount} selected product(s)? This action cannot be undone.`
                 }
@@ -322,6 +327,7 @@ export default function ProductListView() {
                         variant="contained"
                         color="error"
                         onClick={handleDeleteConfirm}
+                        loading={loading}
                     >
                         Delete
                     </LoadingButton>

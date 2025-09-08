@@ -48,26 +48,23 @@ const ProductSchema = new mongoose.Schema(
     ],
     price: {
       type: Number,
+      default: 0,
       required: [true, 'Product price is required'],
       min: [0, 'Price cannot be negative'],
     },
     originalPrice: {
       type: Number,
       min: [0, 'Original price cannot be negative'],
-      // If no original price provided, default to the current price
-      default: function() {
-        return this.price;
-      },
+      default: 0,
       validate: {
         validator: function(value) {
-          // For updates, 'this' might not have the price field
-          // So we need to check if we're in an update context
-          if (this.price !== undefined) {
+          // Only validate if originalPrice is greater than 0 (0 means no discount)
+          if (value > 0) {
             // originalPrice should be >= price if both exist
-            return !value || value >= this.price;
+            if (this.price !== undefined) {
+              return value >= this.price;
+            }
           }
-          // In update context, we can't validate against price here
-          // The validation will be handled at the application level
           return true;
         },
         message: 'Original price should be greater than or equal to current price'

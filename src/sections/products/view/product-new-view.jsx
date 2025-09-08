@@ -49,7 +49,7 @@ export default function ProductNewView() {
             // Redirect after successful submission
             setTimeout(() => {
                 router.push(paths.main.products.root);
-            }, 1500);
+            }, 500);
         } catch (err) {
             console.error('Product creation error:', err);
             toast.error(err.message || 'Failed to create product');

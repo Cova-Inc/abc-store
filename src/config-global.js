@@ -37,8 +37,8 @@ export const PRODUCT_CATEGORY_OPTIONS = [
 ];
 
 export const PRODUCT_STATUS_OPTIONS = [
-  { value: 'active', label: 'Active', color: 'success' },
-  { value: 'inactive', label: 'Inactive', color: 'warning' },
+  { value: 'approved', label: 'Approved', color: 'success' },
+  { value: 'declined', label: 'Declined', color: 'error' },
   { value: 'draft', label: 'Draft', color: 'info' },
 ];
 

@@ -32,7 +32,7 @@ import { ConfirmDialog } from 'src/components/custom-dialog';
 import { ErrorSection } from 'src/components/result-section';
 import { useProducts } from '../hooks';
 import { ProductDetailsCarousel } from '../components/product-details-carousel';
-
+import { PRODUCT_STATUS_OPTIONS } from 'src/config-global';
 // ----------------------------------------------------------------------
 
 export default function ProductDetailsView({ params }) {
@@ -90,10 +90,14 @@ export default function ProductDetailsView({ params }) {
         confirmDelete.onTrue();
     }, [confirmDelete]);
 
+
+
     // Determine permissions
     const isAdmin = user?.role === 'admin';
     const isOwner = product?.createdBy?.id === user?.id;
     const isDraft = product?.status === 'draft';
+
+
 
     const canEdit = isAdmin || (isOwner && isDraft);
     const canDelete = isAdmin || (isOwner && isDraft);
@@ -155,6 +159,12 @@ export default function ProductDetailsView({ params }) {
         );
     }
 
+    const statusConfig = PRODUCT_STATUS_OPTIONS.find(option => option.value === product.status) || {
+        value: product?.status,
+        label: product?.status,
+        color: 'default'
+    };
+
     return (
         <DashboardContent>
             {/* Header */}
@@ -208,8 +218,17 @@ export default function ProductDetailsView({ params }) {
                 {/* Product Details */}
                 <Grid item xs={12} md={6}>
                     <Stack spacing={3}>
-                        <Stack direction="column" alignItems="flex-start" spacing={2}>
-                            <Label variant="soft" color="success">{product.status.toUpperCase()}</Label>
+                        <Stack direction="column" alignItems="flex-start" spacing={1}>
+                            <Label
+                                color={statusConfig.color}
+                                variant="soft"
+                                sx={{
+                                    textTransform: 'capitalize',
+                                }}
+                            >
+                                {statusConfig.label}
+                            </Label>
+
                             <Typography variant="h5">
                                 {product.name}
                             </Typography>
@@ -224,7 +243,7 @@ export default function ProductDetailsView({ params }) {
                                 <Typography variant="h4" color="primary.main">
                                     {fCurrency(product.price)}
                                 </Typography>
-                                {product.originalPrice && product.originalPrice > product.price && (
+                                {product.originalPrice > 0 && product.originalPrice > product.price && (
                                     <>
                                         <Typography
                                             variant="h6"
@@ -241,7 +260,9 @@ export default function ProductDetailsView({ params }) {
                                     </>
                                 )}
                             </Stack>
-
+                            <Typography variant="body2" color="text.secondary">
+                                {product.sku ? `SKU: ${product.sku}` : 'No SKU'}
+                            </Typography>
                             <Typography variant="body2" color="text.secondary">
                                 {product.description}
                             </Typography>

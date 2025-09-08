@@ -71,7 +71,9 @@ export default function ProductEditView({ params }) {
                     // Update form with transformed data
                     const formData = {
                         ...productData,
-                        images: transformedImages
+                        images: transformedImages,
+                        // Convert null originalPrice to 0 for input field
+                        originalPrice: productData.originalPrice || 0
                     };
                     
                     updateForm(formData);
@@ -96,7 +98,7 @@ export default function ProductEditView({ params }) {
             // Redirect after successful submission
             setTimeout(() => {
                 router.push(paths.main.products.root);
-            }, 1500);
+            }, 500);
         } catch (err) {
             console.error('Product update error:', err);
             toast.error(err.message || 'Failed to update product');

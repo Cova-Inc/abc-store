@@ -18,7 +18,7 @@ export function Section({
   methods,
   title = 'Manage the job',
   imgUrl = `${CONFIG.site.basePath}/assets/illustrations/illustration-dashboard.webp`,
-  subtitle = 'Manage your Cova platform here.',
+  subtitle = 'Manage your ABC Store platform here.',
   ...other
 }) {
   const theme = useTheme();

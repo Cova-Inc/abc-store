@@ -59,18 +59,12 @@ export function useProductForm(productId = null, initialValues = {}) {
             formData.append('price', data.price);
             formData.append('category', data.category);
             formData.append('stock', data.stock || 0);
-            formData.append('sku', data.sku);
+            formData.append('sku', data.sku || '');
             formData.append('status', data.status || 'draft');
             
             // Add optional fields
-            // Ensure originalPrice is at least equal to price
-            if (data.originalPrice !== null && data.originalPrice !== undefined) {
-                const originalPrice = Math.max(data.originalPrice, data.price);
-                formData.append('originalPrice', originalPrice);
-            } else {
-                // If no originalPrice, set it to price (no discount)
-                formData.append('originalPrice', data.price);
-            }
+            // Always send originalPrice (0 means no discount)
+            formData.append('originalPrice', data.originalPrice || 0);
             if (data.rating !== undefined) {
                 formData.append('rating', data.rating);
             }

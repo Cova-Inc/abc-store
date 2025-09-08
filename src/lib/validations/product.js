@@ -91,8 +91,8 @@ const BaseProductSchema = z.object({
 
 // Schema for creating a product (all required fields)
 export const CreateProductSchema = BaseProductSchema.refine((data) => {
-  // Validate that originalPrice >= price (original is list price, price is sale price)
-  if (data.originalPrice !== null && data.originalPrice !== undefined && data.originalPrice > 0) {
+  // Only validate if originalPrice is greater than 0 (0 means no discount)
+  if (data.originalPrice > 0) {
     return data.originalPrice >= data.price;
   }
   return true;
@@ -103,11 +103,9 @@ export const CreateProductSchema = BaseProductSchema.refine((data) => {
 
 // Schema for updating a product (all fields optional)
 export const UpdateProductSchema = BaseProductSchema.partial().refine((data) => {
-  // Only validate if both fields are provided in the update
-  if (data.originalPrice !== undefined && data.price !== undefined) {
-    if (data.originalPrice !== null && data.originalPrice > 0) {
-      return data.originalPrice >= data.price;
-    }
+  // Only validate if originalPrice is greater than 0 and price is defined
+  if (data.originalPrice !== undefined && data.originalPrice > 0 && data.price !== undefined) {
+    return data.originalPrice >= data.price;
   }
   return true;
 }, {
@@ -121,8 +119,8 @@ export const ProductFormSchema = BaseProductSchema.omit({
   createdAt: true, 
   updatedAt: true 
 }).refine((data) => {
-  // Validate that originalPrice >= price for forms
-  if (data.originalPrice !== null && data.originalPrice !== undefined && data.originalPrice > 0) {
+  // Only validate if originalPrice is greater than 0 (0 means no discount)
+  if (data.originalPrice > 0) {
     return data.originalPrice >= data.price;
   }
   return true;
@@ -144,7 +142,11 @@ export function parseFormData(formData, schema) {
     // Parse special fields
     if (key === 'tags') {
       data.tags = value ? JSON.parse(value) : [];
-    } else if (key === 'price' || key === 'originalPrice' || key === 'rating') {
+    } else if (key === 'originalPrice') {
+      // Handle originalPrice - 0 means no discount
+      const num = parseFloat(value);
+      data[key] = !isNaN(num) ? num : 0;
+    } else if (key === 'price' || key === 'rating') {
       const num = parseFloat(value);
       if (!isNaN(num)) data[key] = num;
     } else if (key === 'stock' || key === 'reviewCount') {
@@ -195,15 +197,10 @@ export function sanitizeProductData(data, userRole) {
     sanitized.status = 'draft';
   }
   
-  // Handle originalPrice logic
-  // If originalPrice is not provided or null, set it equal to price
-  // This ensures originalPrice >= price
-  if (sanitized.price !== undefined) {
-    if (sanitized.originalPrice === null || sanitized.originalPrice === undefined || sanitized.originalPrice === 0) {
-      sanitized.originalPrice = sanitized.price;
-    } else if (sanitized.originalPrice < sanitized.price) {
-      // If originalPrice is less than price, set it to price (no discount)
-      sanitized.originalPrice = sanitized.price;
+  // Only validate originalPrice if it's greater than 0 (0 means no discount)
+  if (sanitized.originalPrice > 0) {
+    if (sanitized.price !== undefined && sanitized.originalPrice < sanitized.price) {
+      throw new Error('Original price must be greater than or equal to current price');
     }
   }
   
@@ -219,7 +216,7 @@ export const defaultProductValues = {
   description: '',
   sku: '',
   price: 0,
-  originalPrice: 0,
+  originalPrice: 0,  // Default to 0 for input fields
   stock: 0,
   rating: 0,
   reviewCount: 0,
