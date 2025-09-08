@@ -189,7 +189,16 @@ export default function ProductListView() {
         limit: pageSize,
       });
     }
-  }, [initialized, page, pageSize, categoryFilter, search, filterFields, buildFilters, fetchProducts]);
+  }, [
+    initialized,
+    page,
+    pageSize,
+    categoryFilter,
+    search,
+    filterFields,
+    buildFilters,
+    fetchProducts,
+  ]);
 
   // =============================================================================
   // RENDER
