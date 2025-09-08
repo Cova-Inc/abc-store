@@ -6,6 +6,15 @@ const nextConfig = {
   env: {
     BUILD_STATIC_EXPORT: isStaticExport,
   },
+  async redirects() {
+    return [
+      {
+        source: '/',
+        destination: '/products',
+        permanent: false,
+      },
+    ];
+  },
   modularizeImports: {
     '@mui/icons-material': {
       transform: '@mui/icons-material/{{member}}',
