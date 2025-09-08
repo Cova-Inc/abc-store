@@ -5,6 +5,7 @@ import Box from '@mui/material/Box';
 import { styled } from '@mui/material/styles';
 
 import { CONFIG } from 'src/config-global';
+import { formatImageUrl } from 'src/utils/format-url';
 
 import { imageClasses } from './classes';
 
@@ -64,7 +65,7 @@ export const Image = forwardRef(
       <Box
         component={LazyLoadImage}
         alt={alt}
-        src={src}
+        src={formatImageUrl(src)}
         delayTime={delayTime}
         threshold={threshold}
         beforeLoad={beforeLoad}
