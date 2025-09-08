@@ -45,8 +45,8 @@ export async function processAndSaveImage(buffer) {
   const filename = `${uuidv4()}.webp`;
   const filepath = path.join(UPLOAD_DIR, filename);
   
-  // Process image with Sharp
-  await sharp(buffer)
+  // Process image with Sharp and get file info
+  const mainImageInfo = await sharp(buffer)
     .resize(800, 800, {
       fit: 'inside',
       withoutEnlargement: true
@@ -67,46 +67,11 @@ export async function processAndSaveImage(buffer) {
   
   return {
     url: `/uploads/products/${filename}`,
-    thumbnail: `/uploads/products/${thumbFilename}`
+    thumbnail: `/uploads/products/${thumbFilename}`,
+    size: mainImageInfo.size // Add the file size in bytes
   };
 }
 
-// Process base64 image
-export async function processBase64Image(base64String) {
-  await ensureUploadDir();
-  
-  // Remove data URL prefix if present
-  const base64Data = base64String.replace(/^data:image\/\w+;base64,/, '');
-  const buffer = Buffer.from(base64Data, 'base64');
-  
-  const filename = `${uuidv4()}.webp`;
-  const filepath = path.join(UPLOAD_DIR, filename);
-  
-  // Process with Sharp
-  await sharp(buffer)
-    .resize(800, 800, {
-      fit: 'inside',
-      withoutEnlargement: true
-    })
-    .webp({ quality: 85 })
-    .toFile(filepath);
-  
-  // Create thumbnail
-  const thumbFilename = `thumb_${filename}`;
-  const thumbFilepath = path.join(UPLOAD_DIR, thumbFilename);
-  
-  await sharp(buffer)
-    .resize(200, 200, {
-      fit: 'cover'
-    })
-    .webp({ quality: 80 })
-    .toFile(thumbFilepath);
-  
-  return {
-    url: `/uploads/products/${filename}`,
-    thumbnail: `/uploads/products/${thumbFilename}`
-  };
-}
 
 // Delete image and thumbnail
 export async function deleteImage(imageUrl) {
@@ -118,19 +83,91 @@ export async function deleteImage(imageUrl) {
     const filename = path.basename(imageUrl);
     const filepath = path.join(UPLOAD_DIR, filename);
     
-    // Delete main image
-    await fs.unlink(filepath);
+    // Check if file exists before trying to delete
+    try {
+      await fs.access(filepath);
+      await fs.unlink(filepath);
+      console.log(`Deleted file: ${filename}`);
+    } catch (err) {
+      if (err.code !== 'ENOENT') {
+        // Only log error if it's not a "file not found" error
+        console.error(`Error deleting main image ${filename}:`, err.message);
+      }
+    }
     
-    // Try to delete thumbnail
-    const thumbFilename = `thumb_${filename}`;
-    const thumbFilepath = path.join(UPLOAD_DIR, thumbFilename);
-    await fs.unlink(thumbFilepath).catch(() => {});
+    // Try to delete thumbnail if it's not already a thumbnail
+    if (!filename.startsWith('thumb_')) {
+      const thumbFilename = `thumb_${filename}`;
+      const thumbFilepath = path.join(UPLOAD_DIR, thumbFilename);
+      try {
+        await fs.access(thumbFilepath);
+        await fs.unlink(thumbFilepath);
+        console.log(`Deleted thumbnail: ${thumbFilename}`);
+      } catch (err) {
+        // Thumbnail might not exist, that's ok
+        if (err.code !== 'ENOENT') {
+          console.error(`Error deleting thumbnail ${thumbFilename}:`, err.message);
+        }
+      }
+    }
   } catch (error) {
-    console.error('Error deleting image:', error);
+    console.error('Unexpected error in deleteImage:', error);
   }
 }
 
-// Process multiple images from request
+// Process multipart form files directly
+export async function processMultipartImages(files) {
+  if (!files || files.length === 0) return [];
+  
+  await ensureUploadDir();
+  const processedImages = [];
+  
+  for (const file of files) {
+    try {
+      // Get buffer from File object
+      const buffer = Buffer.from(await file.arrayBuffer());
+      
+      const filename = `${uuidv4()}.webp`;
+      const filepath = path.join(UPLOAD_DIR, filename);
+      
+      // Process image with Sharp and get file info
+      const mainImageInfo = await sharp(buffer)
+        .resize(800, 800, {
+          fit: 'inside',
+          withoutEnlargement: true
+        })
+        .webp({ quality: 85 })
+        .toFile(filepath);
+      
+      // Create thumbnail
+      const thumbFilename = `thumb_${filename}`;
+      const thumbFilepath = path.join(UPLOAD_DIR, thumbFilename);
+      
+      await sharp(buffer)
+        .resize(200, 200, {
+          fit: 'cover'
+        })
+        .webp({ quality: 80 })
+        .toFile(thumbFilepath);
+      
+      processedImages.push({
+        url: `/uploads/products/${filename}`,
+        thumbnail: `/uploads/products/${thumbFilename}`,
+        size: mainImageInfo.size,
+        alt: file.name || '',
+        isPrimary: processedImages.length === 0
+      });
+      
+    } catch (error) {
+      console.error('Error processing multipart image:', error);
+    }
+  }
+  
+  return processedImages;
+}
+
+// Process existing image URLs (for updates)
+// Only handles string URLs from existing images
 export async function processImages(images) {
   if (!images || !Array.isArray(images)) return [];
   
@@ -138,38 +175,21 @@ export async function processImages(images) {
   
   for (const image of images) {
     try {
-      let imageUrl = '';
-      let imageData;
-      
-      // Extract the image URL/data from different formats
-      if (typeof image === 'string') {
-        imageUrl = image;
-      } else if (image && typeof image === 'object') {
-        imageUrl = image.url || image.base64 || image.preview || '';
-      }
-      
-      if (!imageUrl) continue;
-      
-      // Process based on what type of data it is
-      if (imageUrl.startsWith('data:image')) {
-        // It's base64 - needs to be saved to disk
-        imageData = await processBase64Image(imageUrl);
-      } else if (imageUrl.startsWith('/uploads/') || imageUrl.startsWith('http')) {
-        // Already a saved URL - preserve it with thumbnail if exists
-        imageData = { 
-          url: imageUrl,
-          thumbnail: image.thumbnail || imageUrl // Use existing thumbnail or fallback to main image
-        };
-      }
-      
-      if (imageData) {
+      // Only process string URLs for existing images
+      if (typeof image === 'string' && image.startsWith('/uploads/')) {
+        const filename = image.split('/').pop();
+        const thumbUrl = image.replace(filename, `thumb_${filename}`);
+        
         processedImages.push({
-          ...imageData,
+          url: image,
+          thumbnail: thumbUrl,
+          size: 0, // We don't have size for existing string URLs
+          alt: '',
           isPrimary: processedImages.length === 0
         });
       }
     } catch (error) {
-      console.error('Error processing image:', error);
+      console.error('Error processing image URL:', error);
     }
   }
   
@@ -181,9 +201,12 @@ export async function cleanupOldImages(oldImages, newImages) {
   if (!oldImages || !Array.isArray(oldImages)) return;
   
   const newUrls = newImages.map(img => img.url);
+  console.log('Cleanup - Old images:', oldImages.length, 'New images:', newImages.length);
+  console.log('New URLs:', newUrls);
   
   for (const oldImage of oldImages) {
     if (oldImage.url && !newUrls.includes(oldImage.url)) {
+      console.log('Deleting removed image:', oldImage.url);
       await deleteImage(oldImage.url);
     }
   }

@@ -23,8 +23,7 @@ import { toast } from 'src/components/snackbar';
 import { Iconify } from 'src/components/iconify';
 
 import { ProductForm } from '../components/product-form';
-import { useProductForm } from '../hooks/use-product-form';
-import { useProducts } from '../hooks';
+import { useProducts, useProductForm} from '../hooks';
 import { ErrorSection } from 'src/components/result-section';
 
 // ----------------------------------------------------------------------
@@ -52,7 +51,30 @@ export default function ProductEditView({ params }) {
             if (params.id) {
                 try {
                     const productData = await fetchProduct(params.id);
-                    updateForm(productData);
+                    
+                    // Simple: Extract just the URL strings from image objects
+                    // These will be displayed and sent back as strings when updating
+                    console.log('Raw product images from API:', productData.images);
+                    const transformedImages = productData.images?.map(img => {
+                        if (typeof img === 'string') {
+                            return img;
+                        }
+                        // Extract the main URL (not thumbnail) from image object
+                        const url = img.url || '';
+                        if (url && url.includes('thumb_')) {
+                            console.error('WARNING: Product has corrupted image data - thumbnail as main URL:', url);
+                        }
+                        return url;
+                    }).filter(url => url) || [];
+                    console.log('Transformed images for form:', transformedImages);
+                    
+                    // Update form with transformed data
+                    const formData = {
+                        ...productData,
+                        images: transformedImages
+                    };
+                    
+                    updateForm(formData);
                 } catch (err) {
                     console.error('Error fetching product:', err);
                     toast.error(err.message || 'Failed to fetch product');

@@ -27,9 +27,17 @@ export async function getProduct(id) {
 }
 
 // Create a new product
-export async function createProduct(productData) {
+export async function createProduct(formData) {
     try {
-        const response = await axios.post('/api/products', productData);
+        // Check if it's FormData or regular object
+        const isFormData = formData instanceof FormData;
+        
+        const response = await axios.post('/api/products', formData, {
+            headers: isFormData ? {
+                // Let axios set the Content-Type with boundary for multipart
+                'Content-Type': 'multipart/form-data',
+            } : undefined,
+        });
         return response.data;
     } catch (error) {
         console.error('Error creating product:', error);
@@ -38,9 +46,17 @@ export async function createProduct(productData) {
 }
 
 // Update a product
-export async function updateProduct(id, productData) {
+export async function updateProduct(id, formData) {
     try {
-        const response = await axios.put(`/api/products/${id}`, productData);
+        // Check if it's FormData or regular object
+        const isFormData = formData instanceof FormData;
+        
+        const response = await axios.put(`/api/products/${id}`, formData, {
+            headers: isFormData ? {
+                // Let axios set the Content-Type with boundary for multipart
+                'Content-Type': 'multipart/form-data',
+            } : undefined,
+        });
         return response.data;
     } catch (error) {
         console.error('Error updating product:', error);
@@ -59,13 +75,24 @@ export async function deleteProduct(id) {
     }
 }
 
-// Delete multiple products
+// Delete multiple products by IDs
 export async function deleteProducts(ids) {
     try {
         const response = await axios.post('/api/products/bulk-delete', { ids });
         return response.data;
     } catch (error) {
         console.error('Error deleting products:', error);
+        throw new Error(error.response?.data?.error || 'Failed to delete products');
+    }
+}
+
+// Delete all products with filters
+export async function deleteAllProducts(filters) {
+    try {
+        const response = await axios.post('/api/products/bulk-delete', { filters });
+        return response.data;
+    } catch (error) {
+        console.error('Error deleting all products:', error);
         throw new Error(error.response?.data?.error || 'Failed to delete products');
     }
 }

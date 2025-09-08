@@ -8,13 +8,13 @@ import {
     Box,
     Card,
     List,
+    Grid,
     Stack,
     Checkbox,
     useTheme,
     Typography,
     IconButton,
     useMediaQuery,
-    Icon,
 } from '@mui/material';
 
 import { paths } from 'src/routes/paths';
@@ -54,6 +54,7 @@ export default function ProductListView() {
         pagination,
         deleteProduct,
         deleteProducts,
+        deleteAllProducts,
         fetchProducts
     } = useProducts();
 
@@ -107,13 +108,15 @@ export default function ProductListView() {
 
     const handleDeleteConfirm = useCallback(async () => {
         try {
-            if (selectionManager.selectAllActive) {
-                // Delete all products
-                console.log('Delete all products not implemented yet');
-                toast.warning('Delete all products not implemented yet');
-            } else {
+            let result;
+            if (selectionManager.selectAllActive && selectionManager.selectedRowIds.length === products.length) {
+                // Delete all products with current filters
+                const deleteFilters = buildFilters();
+                result = await deleteAllProducts(deleteFilters);
+                toast.success(`${result.count} products deleted successfully`);
+            } else if (selectionManager.selectedRowIds.length > 0) {
                 // Delete selected products
-                const result = await deleteProducts(selectionManager.selectedRowIds);
+                result = await deleteProducts(selectionManager.selectedRowIds);
                 toast.success(`${result.count} products deleted successfully`);
             }
             selectionManager.clearSelection();
@@ -122,7 +125,7 @@ export default function ProductListView() {
             console.error('Delete failed:', error);
             toast.error(error.message || 'Failed to delete products');
         }
-    }, [selectionManager, deleteProducts, confirmRows]);
+    }, [selectionManager, products.length, deleteProducts, deleteAllProducts, buildFilters, confirmRows]);
 
     const handleDelete = useCallback(() => {
         confirmRows.onTrue();
@@ -236,7 +239,7 @@ export default function ProductListView() {
                 </Box>
 
                 {/* Product List Content */}
-                <Box sx={{ minHeight: 400, maxHeight: 600, overflow: 'auto' }}>
+                <Box sx={{ minHeight: 400 }}>
                     {loading ? (
                         <CommonListSkeleton
                             itemCount={5}
@@ -251,21 +254,44 @@ export default function ProductListView() {
                             description="No products have been added yet. Add your first product to get started."
                         />
                     ) : (
-                        <List sx={{ p: 2 }}>
-                            {products.map((product) => (
-                                <ProductListItem
-                                    key={product.id}
-                                    product={product}
-                                    currentUser={user}
-                                    isSelected={selectionManager.isProductSelected(product.id)}
-                                    onSelect={selectionManager.handleSelectProduct}
-                                    onView={handleViewProduct}
-                                    onEdit={handleEditProduct}
-                                    onDelete={handleSingleDelete}
-                                    onProductUpdate={fetchProducts}
-                                />
-                            ))}
-                        </List>
+                        isMobile ? (
+                            // Mobile Grid Layout
+                            <Grid container spacing={2} sx={{ p: 2 }}>
+                                {products.map((product) => (
+                                    <Grid item xs={6} sm={4} key={product.id}>
+                                        <ProductListItem
+                                            product={product}
+                                            currentUser={user}
+                                            isSelected={selectionManager.isProductSelected(product.id)}
+                                            onSelect={selectionManager.handleSelectProduct}
+                                            onView={handleViewProduct}
+                                            onEdit={handleEditProduct}
+                                            onDelete={handleSingleDelete}
+                                            onProductUpdate={fetchProducts}
+                                            isMobile={isMobile}
+                                        />
+                                    </Grid>
+                                ))}
+                            </Grid>
+                        ) : (
+                            // Desktop List Layout
+                            <List sx={{ p: 2 }}>
+                                {products.map((product) => (
+                                    <ProductListItem
+                                        key={product.id}
+                                        product={product}
+                                        currentUser={user}
+                                        isSelected={selectionManager.isProductSelected(product.id)}
+                                        onSelect={selectionManager.handleSelectProduct}
+                                        onView={handleViewProduct}
+                                        onEdit={handleEditProduct}
+                                        onDelete={handleSingleDelete}
+                                        onProductUpdate={fetchProducts}
+                                        isMobile={isMobile}
+                                    />
+                                ))}
+                            </List>
+                        )
                     )}
                 </Box>
 
@@ -286,7 +312,11 @@ export default function ProductListView() {
                 open={confirmRows.value}
                 onClose={confirmRows.onFalse}
                 title="Delete Products"
-                content={`Are you sure you want to delete ${selectionManager.selectedCount} product(s)? This action cannot be undone.`}
+                content={
+                    selectionManager.selectAllActive && selectionManager.selectedRowIds.length === products.length
+                        ? `Are you sure you want to delete ALL ${products.length} product(s) matching the current filters? This action cannot be undone.`
+                        : `Are you sure you want to delete ${selectionManager.selectedCount} selected product(s)? This action cannot be undone.`
+                }
                 action={
                     <LoadingButton
                         variant="contained"

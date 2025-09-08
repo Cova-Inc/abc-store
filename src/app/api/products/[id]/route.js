@@ -2,7 +2,8 @@ import { NextResponse } from 'next/server';
 import { connectToDatabase } from 'src/lib/mongodb';
 import Product from 'src/models/Product';
 import mongoose from 'mongoose';
-import { processImages, cleanupOldImages } from 'src/lib/upload';
+import { processImages, cleanupOldImages, processMultipartImages } from 'src/lib/upload';
+import { UpdateProductSchema, parseFormData, sanitizeProductData, validateProductPermissions } from 'src/lib/validations/product';
 
 // GET /api/products/[id] - Get a single product
 export async function GET(request, { params }) {
@@ -53,7 +54,7 @@ export async function GET(request, { params }) {
             price: product.price,
             originalPrice: product.originalPrice,
             rating: product.rating,
-            reviewCount: product.reviews,
+            reviewCount: product.reviewCount,
             images: product.images || [], // Return ALL images for single product views
             category: product.category,
             status: product.status,
@@ -102,19 +103,8 @@ export async function PUT(request, { params }) {
             );
         }
 
-        const body = await request.json();
-        const {
-            name,
-            description,
-            price,
-            originalPrice,
-            category,
-            stock,
-            sku,
-            tags,
-            images,
-            status
-        } = body;
+        // Handle FormData submission
+        const formData = await request.formData();
 
         // Check if product exists
         const existingProduct = await Product.findById(id);
@@ -125,45 +115,79 @@ export async function PUT(request, { params }) {
             );
         }
 
-        // Check permissions: 
-        // - Admins can edit all products
-        // - Users can only edit their own products AND only if status is 'draft'
-        if (userRole !== 'admin') {
-            if (existingProduct.createdBy.toString() !== userId) {
-                return NextResponse.json(
-                    { error: 'Access denied - not your product' },
-                    { status: 403 }
-                );
-            }
-            if (existingProduct.status !== 'draft') {
-                return NextResponse.json(
-                    { error: 'Access denied - can only edit draft products' },
-                    { status: 403 }
-                );
-            }
+        // Check permissions
+        try {
+            validateProductPermissions(existingProduct, userId, userRole, 'update');
+        } catch (error) {
+            return NextResponse.json(
+                { error: error.message },
+                { status: 403 }
+            );
         }
-
-        // Process images if provided
+        
+        // Parse and validate form data
+        let validatedData;
+        try {
+            validatedData = parseFormData(formData, UpdateProductSchema);
+        } catch (validationError) {
+            if (validationError.errors) {
+                const errors = validationError.errors.map(e => `${e.path.join('.')}: ${e.message}`);
+                return NextResponse.json(
+                    { error: 'Validation failed', details: errors },
+                    { status: 400 }
+                );
+            }
+            return NextResponse.json(
+                { error: validationError.message || 'Invalid input' },
+                { status: 400 }
+            );
+        }
+        
+        // Sanitize data based on user role
+        const sanitizedData = sanitizeProductData(validatedData, userRole);
+        
+        // Handle images: combine new files and existing URLs
+        const imageFiles = formData.getAll('images');
+        const existingImagesString = formData.get('existingImages');
+        const existingImageUrls = existingImagesString ? JSON.parse(existingImagesString) : [];
+        
+        // Process images if any changes
         let processedImages;
-        if (images !== undefined) {
-            processedImages = await processImages(images);
+        if (imageFiles.length > 0 || existingImageUrls.length >= 0) {
+            console.log(`Processing images - New files: ${imageFiles.length}, Existing URLs: ${existingImageUrls.length}`);
+            
+            // Process new image files
+            const newProcessedImages = imageFiles.length > 0 ? await processMultipartImages(imageFiles) : [];
+            console.log('New processed images:', newProcessedImages.length);
+            
+            // Process existing image URLs to get proper format
+            const existingProcessedImages = existingImageUrls.length > 0 ? await processImages(existingImageUrls) : [];
+            console.log('Existing processed images:', existingProcessedImages.length);
+            
+            // Combine existing and new images
+            processedImages = [...existingProcessedImages, ...newProcessedImages];
+            console.log('Total processed images:', processedImages.length);
+            
             // Clean up old images that are being replaced
             await cleanupOldImages(existingProduct.images, processedImages);
         }
 
-        // Update product
-        const updateData = {};
-        if (name !== undefined) updateData.name = name;
-        if (description !== undefined) updateData.description = description;
-        if (price !== undefined) updateData.price = price;
-        if (originalPrice !== undefined) updateData.originalPrice = originalPrice;
-        if (category !== undefined) updateData.category = category;
-        if (stock !== undefined) updateData.stock = stock;
-        if (sku !== undefined) updateData.sku = sku;
-        if (tags !== undefined) updateData.tags = tags;
-        if (processedImages !== undefined) updateData.images = processedImages;
-        // Only admins can change status
-        if (status !== undefined && userRole === 'admin') updateData.status = status;
+        // Build update data from sanitized input
+        const updateData = { ...sanitizedData };
+        if (processedImages !== undefined) {
+            updateData.images = processedImages;
+        }
+
+        // If updating price or originalPrice, ensure originalPrice >= price
+        if (updateData.price !== undefined || updateData.originalPrice !== undefined) {
+            const currentPrice = updateData.price ?? existingProduct.price;
+            const currentOriginalPrice = updateData.originalPrice ?? existingProduct.originalPrice;
+            
+            // Ensure originalPrice is at least equal to price
+            if (currentOriginalPrice < currentPrice) {
+                updateData.originalPrice = currentPrice;
+            }
+        }
 
         const product = await Product.findByIdAndUpdate(
             id,
@@ -179,7 +203,7 @@ export async function PUT(request, { params }) {
             price: product.price,
             originalPrice: product.originalPrice,
             rating: product.rating,
-            reviewCount: product.reviews,
+            reviewCount: product.reviewCount,
             images: product.images || [], // Return ALL images for single product views
             category: product.category,
             status: product.status,
@@ -245,30 +269,30 @@ export async function DELETE(request, { params }) {
             );
         }
 
-        // Check permissions:
-        // - Admins can delete all products
-        // - Users can only delete their own products AND only if status is 'draft'
-        if (userRole !== 'admin') {
-            if (existingProduct.createdBy.toString() !== userId) {
-                return NextResponse.json(
-                    { error: 'Access denied - not your product' },
-                    { status: 403 }
-                );
-            }
-            if (existingProduct.status !== 'draft') {
-                return NextResponse.json(
-                    { error: 'Access denied - can only delete draft products' },
-                    { status: 403 }
-                );
-            }
+        // Check permissions
+        try {
+            validateProductPermissions(existingProduct, userId, userRole, 'delete');
+        } catch (error) {
+            return NextResponse.json(
+                { error: error.message },
+                { status: 403 }
+            );
         }
 
-        // Clean up images before deleting product
-        if (existingProduct.images && existingProduct.images.length > 0) {
-            await cleanupOldImages(existingProduct.images, []);
-        }
+        // Store image URLs before deletion
+        const imagesToDelete = existingProduct.images ? [...existingProduct.images] : [];
 
+        // Delete from database first
         await Product.findByIdAndDelete(id);
+
+        // Then try to clean up images (if DB deletion succeeded)
+        // This way, if file deletion fails, at least the DB is clean
+        if (imagesToDelete.length > 0) {
+            // Don't await - do it async to not block response
+            cleanupOldImages(imagesToDelete, []).catch(err => {
+                console.error('Failed to delete product images, but product was removed from DB:', err);
+            });
+        }
 
         return NextResponse.json({ message: 'Product deleted successfully' });
 

@@ -22,7 +22,7 @@ import { toast } from 'src/components/snackbar';
 import { Iconify } from 'src/components/iconify';
 
 import { ProductForm } from '../components/product-form';
-import { useProductForm } from '../hooks/use-product-form';
+import { useProductForm } from '../hooks';
 
 // ----------------------------------------------------------------------
 

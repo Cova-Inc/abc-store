@@ -18,28 +18,47 @@ export async function POST(request) {
         await connectToDatabase();
 
         const body = await request.json();
-        const { ids } = body;
+        const { ids, filters } = body;
 
-        // Validate input
-        if (!ids || !Array.isArray(ids) || ids.length === 0) {
+        // Build base delete filter
+        let deleteFilter = {};
+
+        // Handle deletion by IDs
+        if (ids && Array.isArray(ids) && ids.length > 0) {
+            // Validate all IDs are valid MongoDB ObjectIds
+            const validIds = ids.filter(id => mongoose.Types.ObjectId.isValid(id));
+            
+            if (validIds.length !== ids.length) {
+                return NextResponse.json(
+                    { error: 'Some product IDs are invalid' },
+                    { status: 400 }
+                );
+            }
+            
+            deleteFilter._id = { $in: validIds };
+        } 
+        // Handle deletion by filters (for delete all)
+        else if (filters) {
+            // Apply filters
+            if (filters.search) {
+                deleteFilter.$or = [
+                    { name: { $regex: filters.search, $options: 'i' } },
+                    { description: { $regex: filters.search, $options: 'i' } },
+                    { sku: { $regex: filters.search, $options: 'i' } }
+                ];
+            }
+            if (filters.category) {
+                deleteFilter.category = filters.category;
+            }
+            if (filters.status) {
+                deleteFilter.status = filters.status;
+            }
+        } else {
             return NextResponse.json(
-                { error: 'Invalid input: ids array is required' },
+                { error: 'Either ids array or filters object is required' },
                 { status: 400 }
             );
         }
-
-        // Validate all IDs are valid MongoDB ObjectIds
-        const validIds = ids.filter(id => mongoose.Types.ObjectId.isValid(id));
-        
-        if (validIds.length !== ids.length) {
-            return NextResponse.json(
-                { error: 'Some product IDs are invalid' },
-                { status: 400 }
-            );
-        }
-
-        // Build filter based on role
-        const deleteFilter = { _id: { $in: validIds } };
         
         // Users can only delete their own draft products
         if (userRole !== 'admin') {

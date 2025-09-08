@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useEffect } from 'react';
 import { Controller, FormProvider } from 'react-hook-form';
 
 import {
@@ -14,6 +14,7 @@ import {
     TextField,
     Typography,
     Autocomplete,
+    Rating,
 } from '@mui/material';
 import { LoadingButton } from '@mui/lab';
 import { PRODUCT_CATEGORY_OPTIONS, PRODUCT_STATUS_OPTIONS } from 'src/config-global';
@@ -43,8 +44,6 @@ export function ProductForm({
     defaultValues,
     currentUser,
 }) {
-    const [selectedTags, setSelectedTags] = useState([]);
-
     const {
         control,
         handleSubmit,
@@ -54,8 +53,22 @@ export function ProductForm({
         formState: { errors, isDirty },
     } = methods;
 
-    // Watch images to trigger re-renders
+    // Watch form fields to trigger re-renders
     const images = watch('images');
+    const watchedTags = watch('tags');
+    
+    // Initialize selectedTags with watched value
+    const [selectedTags, setSelectedTags] = useState(watchedTags || []);
+    
+    // Update selectedTags when form value changes (e.g., when editing)
+    useEffect(() => {
+        if (watchedTags && Array.isArray(watchedTags)) {
+            setSelectedTags(watchedTags);
+        } else if (watchedTags === undefined && defaultValues?.tags) {
+            // Fallback to defaultValues if watchedTags is not yet initialized
+            setSelectedTags(defaultValues.tags);
+        }
+    }, [watchedTags, defaultValues]);
 
     // Handle image drop with duplicate prevention
     const handleImageDrop = useCallback((acceptedFiles) => {
@@ -63,11 +76,18 @@ export function ProductForm({
         // Filter out duplicates based on file name and size
         const newFiles = acceptedFiles.filter(
             (newFile) => !existingFiles.some(
-                (existing) => existing.name === newFile.name && existing.size === newFile.size
+                (existing) => {
+                    // For URL strings (existing images), compare URLs
+                    if (typeof existing === 'string') {
+                        return false; // Can't compare new file with existing URL
+                    }
+                    // For File objects, compare name and size
+                    return existing.name === newFile.name && existing.size === newFile.size;
+                }
             )
         );
         const updatedFiles = [...existingFiles, ...newFiles];
-        setValue('images', updatedFiles);
+        setValue('images', updatedFiles, { shouldDirty: true });
     }, [getValues, setValue]);
 
     // Handle single image removal
@@ -75,18 +95,20 @@ export function ProductForm({
         const filtered = getValues('images')?.filter(
             (file) => file !== inputFile
         );
-        setValue('images', filtered);
+        setValue('images', filtered, { shouldDirty: true });
     }, [getValues, setValue]);
 
     // Handle remove all images
     const handleImageRemoveAll = useCallback(() => {
-        setValue('images', []);
+        setValue('images', [], { shouldDirty: true });
     }, [setValue]);
 
     // Handle tags change
     const handleTagsChange = useCallback((_, newValue) => {
-        setSelectedTags(newValue);
-        setValue('tags', newValue);
+        // newValue can contain both predefined and custom tags
+        const validTags = newValue.filter(tag => tag && tag.trim() !== '');
+        setSelectedTags(validTags);
+        setValue('tags', validTags, { shouldDirty: true });
     }, [setValue]);
 
     return (
@@ -208,20 +230,71 @@ export function ProductForm({
                                     <Grid item xs={12} sm={6}>
                                         <Field.Text
                                             name="originalPrice"
-                                            label="Original Price"
+                                            label="Original Price (List Price)"
                                             type="number"
                                             placeholder="0.00"
                                             InputProps={{
                                                 startAdornment: '$',
                                             }}
                                             error={!!errors.originalPrice}
-                                            helperText={errors.originalPrice?.message}
+                                            helperText={errors.originalPrice?.message || 'Original price before discount (must be ≥ sale price)'}
                                         />
                                     </Grid>
                                 </Grid>
                             </Box>
 
                             <Divider sx={{borderStyle:"dashed"}}/>
+
+                            {/* Rating & Reviews - Admin Only */}
+                            {currentUser?.role === 'admin' && (
+                                <>
+                                    <Box>
+                                        <Typography variant="h6" gutterBottom>
+                                            Rating & Reviews
+                                        </Typography>
+                                        <Grid container spacing={2}>
+                                            <Grid item xs={12} sm={6}>
+                                                <Controller
+                                                    name="rating"
+                                                    control={control}
+                                                    render={({ field }) => (
+                                                        <Box>
+                                                            <Typography variant="body2" color="text.secondary" gutterBottom>
+                                                                Product Rating
+                                                            </Typography>
+                                                            <Stack direction="row" alignItems="center" spacing={2}>
+                                                                <Rating
+                                                                    {...field}
+                                                                    value={field.value || 0}
+                                                                    precision={0.5}
+                                                                    onChange={(_, value) => {
+                                                                        field.onChange(value);
+                                                                        setValue('rating', value, { shouldDirty: true });
+                                                                    }}
+                                                                />
+                                                                <Typography variant="body2" color="text.secondary">
+                                                                    {field.value || 0} / 5
+                                                                </Typography>
+                                                            </Stack>
+                                                        </Box>
+                                                    )}
+                                                />
+                                            </Grid>
+                                            <Grid item xs={12} sm={6}>
+                                                <Field.Text
+                                                    name="reviewCount"
+                                                    label="Review Count"
+                                                    type="number"
+                                                    placeholder="0"
+                                                    error={!!errors.reviewCount}
+                                                    helperText={errors.reviewCount?.message}
+                                                />
+                                            </Grid>
+                                        </Grid>
+                                    </Box>
+                                    <Divider sx={{borderStyle:"dashed"}}/>
+                                </>
+                            )}
 
                             {/* Inventory */}
                             <Box>
@@ -266,29 +339,33 @@ export function ProductForm({
                                 <Controller
                                     name="tags"
                                     control={control}
-                                    render={() => (
+                                    render={({ field }) => (
                                         <Autocomplete
+                                            {...field}
                                             multiple
                                             freeSolo
                                             options={PRODUCT_TAGS_OPTIONS}
-                                            value={selectedTags}
+                                            value={selectedTags || []}
                                             onChange={handleTagsChange}
+                                            getOptionLabel={(option) => option}
+                                            filterSelectedOptions
                                             renderTags={(value, getTagProps) =>
                                                 value.map((option, index) => (
                                                     <Chip
                                                         {...getTagProps({ index })}
-                                                        key={option}
+                                                        key={`tag-${index}-${option}`}
                                                         label={option}
                                                         size="small"
+                                                        color={PRODUCT_TAGS_OPTIONS.includes(option) ? 'default' : 'primary'}
                                                     />
                                                 ))
                                             }
                                             renderInput={(params) => (
                                                 <TextField
                                                     {...params}
-                                                    placeholder="Add tags..."
+                                                    placeholder="Add tags... (press Enter to add custom tags)"
                                                     error={!!errors.tags}
-                                                    helperText={errors.tags?.message}
+                                                    helperText={errors.tags?.message || 'Select from suggestions or type and press Enter for custom tags'}
                                                 />
                                             )}
                                         />
@@ -304,7 +381,10 @@ export function ProductForm({
                     <Stack direction="row" spacing={2} justifyContent="flex-end">
                         <Button
                             variant="outlined"
-                            onClick={onReset}
+                            onClick={() => {
+                                onReset();
+                                setSelectedTags([]);
+                            }}
                             disabled={isSubmitting}
                         >
                             Reset

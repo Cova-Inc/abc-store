@@ -24,7 +24,7 @@ import { fCurrency, fShortenNumber } from 'src/utils/format-number';
 
 import { useAuthContext } from 'src/auth/hooks';
 import { DashboardContent } from 'src/layouts/dashboard';
-
+import { Label } from 'src/components/label';
 import { useBoolean } from 'src/hooks';
 import { toast } from 'src/components/snackbar';
 import { Iconify } from 'src/components/iconify';
@@ -39,16 +39,16 @@ export default function ProductDetailsView({ params }) {
     const router = useRouter();
     const { user } = useAuthContext();
     const confirmDelete = useBoolean();
-    
+
     // Use the products hook for all operations
-    const { 
-        product, 
-        loading, 
-        error, 
-        fetchProduct, 
-        deleteProduct 
+    const {
+        product,
+        loading,
+        error,
+        fetchProduct,
+        deleteProduct
     } = useProducts();
-    
+
     // Fetch product data from API using the hook
     useEffect(() => {
         const loadProduct = async () => {
@@ -183,9 +183,9 @@ export default function ProductDetailsView({ params }) {
                 </Stack>
             </Box>
 
-            <Grid container spacing={3}>
+            <Grid container spacing={5}>
                 {/* Product Images Carousel */}
-                <Grid item xs={12} md={4}>
+                <Grid item xs={12} md={6}>
                     {product.images && product.images.length > 0 ? (
                         <ProductDetailsCarousel images={product.images.map(img => img.url)} />
                     ) : (
@@ -206,111 +206,109 @@ export default function ProductDetailsView({ params }) {
                 </Grid>
 
                 {/* Product Details */}
-                <Grid item xs={12} md={8}>
+                <Grid item xs={12} md={6}>
                     <Stack spacing={3}>
-                        <Box sx={{ p: 3, borderRadius: 1, border: '1px solid', borderColor: 'divider', borderStyle: 'dashed' }}>
-                            <Stack direction="column" alignItems="flex-start" spacing={2}>
-                                <Typography variant="h5">
-                                    {product.name}
-                                </Typography>
+                        <Stack direction="column" alignItems="flex-start" spacing={2}>
+                            <Label variant="soft" color="success">{product.status.toUpperCase()}</Label>
+                            <Typography variant="h5">
+                                {product.name}
+                            </Typography>
 
-                                <Stack direction="row" alignItems="center" sx={{ color: 'text.disabled', typography: 'body2' }}>
-                                    <Rating size="small" value={4} precision={0.1} readOnly sx={{ mr: 1 }} />
-                                    {`(${fShortenNumber(5234525)} reviews)`}
-                                </Stack>
-
-                                <Stack direction="row" alignItems="center" spacing={2}>
-
-                                    {product.originalPrice && product.originalPrice > product.price && (
-                                        <>
-                                            <Typography variant="h4" color="primary.main">
-                                                {fCurrency(product.price)}
-                                            </Typography>
-
-                                            <Typography
-                                                variant="h6"
-                                                color="text.disabled"
-                                                sx={{ textDecoration: 'line-through' }}
-                                            >
-                                                {fCurrency(product.originalPrice)}
-                                            </Typography>
-                                            <Chip
-                                                label={`${Math.round(((product.originalPrice - product.price) / product.originalPrice) * 100)}% OFF`}
-                                                color="error"
-                                                size="small"
-                                            />
-                                        </>
-                                    )}
-                                </Stack>
-
-                                <Typography variant="body2" color="text.secondary">
-                                    {product.description}
-                                </Typography>
-
-                                <Divider sx={{ borderStyle: 'dashed', width: '100%' }} />
-
-                                <Grid container spacing={2}>
-                                    <Grid item xs={6}>
-                                        <Typography variant="body2" color="text.secondary">
-                                            Stock Quantity
-                                        </Typography>
-                                        <Typography variant="h6">
-                                            {product.stock} units
-                                        </Typography>
-                                    </Grid>
-                                    <Grid item xs={6}>
-                                        <Typography variant="body2" color="text.secondary">
-                                            Category
-                                        </Typography>
-                                        <Typography variant="h6" sx={{ textTransform: 'capitalize' }}>
-                                            {product.category}
-                                        </Typography>
-                                    </Grid>
-                                </Grid>
-
-                                {/* Tags */}
-                                {product.tags && product.tags.length > 0 && (
-
-                                    <Stack direction="column" spacing={1} flexWrap="wrap">
-                                        <Typography variant="body2" color="text.secondary">
-                                            Tags
-                                        </Typography>
-                                        <Stack direction="row" spacing={1} flexWrap="wrap">
-                                            {product.tags.map((tag) => (
-                                                <Chip
-                                                    key={tag}
-                                                    label={tag}
-                                                    size="small"
-                                                    variant="outlined"
-                                                />
-                                            ))}
-                                        </Stack>
-                                    </Stack>
-
-                                )}
-
-                                <Divider sx={{ borderStyle: 'dashed', width: '100%' }} />
-
-                                <Stack spacing={1} direction="row" alignItems="center" justifyContent="space-between" sx={{ width: '100%' }}>
-                                    <Typography variant="body2" color="text.secondary">
-                                        Added:
-                                    </Typography>
-                                    <Typography variant="body2">
-                                        {fDate(product.createdAt)}
-                                    </Typography>
-                                </Stack>
-
-
-                                <Stack spacing={1} direction="row" alignItems="center" justifyContent="space-between" sx={{ width: '100%' }}>
-                                    <Typography variant="body2" color="text.secondary">
-                                        By:
-                                    </Typography>
-                                    <Typography variant="body2">
-                                        {product.createdBy.name}
-                                    </Typography>
-                                </Stack>
+                            <Stack direction="row" alignItems="center" sx={{ color: 'text.disabled', typography: 'body2' }}>
+                                <Rating size="small" value={product.rating} precision={0.1} readOnly sx={{ mr: 1 }} />
+                                {`(${fShortenNumber(product.reviewCount)} reviews)`}
                             </Stack>
-                        </Box>
+
+                            <Stack direction="row" alignItems="center" spacing={2}>
+
+                                <Typography variant="h4" color="primary.main">
+                                    {fCurrency(product.price)}
+                                </Typography>
+                                {product.originalPrice && product.originalPrice > product.price && (
+                                    <>
+                                        <Typography
+                                            variant="h6"
+                                            color="text.disabled"
+                                            sx={{ textDecoration: 'line-through' }}
+                                        >
+                                            {fCurrency(product.originalPrice)}
+                                        </Typography>
+                                        <Chip
+                                            label={`${Math.round(((product.originalPrice - product.price) / product.originalPrice) * 100)}% OFF`}
+                                            color="error"
+                                            size="small"
+                                        />
+                                    </>
+                                )}
+                            </Stack>
+
+                            <Typography variant="body2" color="text.secondary">
+                                {product.description}
+                            </Typography>
+
+                            <Divider sx={{ borderStyle: 'dashed', width: '100%' }} />
+
+                            <Grid container spacing={2}>
+                                <Grid item xs={6}>
+                                    <Typography variant="body2" color="text.secondary">
+                                        Stock Quantity
+                                    </Typography>
+                                    <Typography variant="h6">
+                                        {product.stock} units
+                                    </Typography>
+                                </Grid>
+                                <Grid item xs={6}>
+                                    <Typography variant="body2" color="text.secondary">
+                                        Category
+                                    </Typography>
+                                    <Typography variant="h6" sx={{ textTransform: 'capitalize' }}>
+                                        {product.category}
+                                    </Typography>
+                                </Grid>
+                            </Grid>
+
+                            {/* Tags */}
+                            {product.tags && product.tags.length > 0 && (
+
+                                <Stack direction="column" spacing={1} flexWrap="wrap">
+                                    <Typography variant="body2" color="text.secondary">
+                                        Tags
+                                    </Typography>
+                                    <Stack direction="row" spacing={1} flexWrap="wrap">
+                                        {product.tags.map((tag) => (
+                                            <Chip
+                                                key={tag}
+                                                label={tag}
+                                                size="small"
+                                                variant="outlined"
+                                            />
+                                        ))}
+                                    </Stack>
+                                </Stack>
+
+                            )}
+
+                            <Divider sx={{ borderStyle: 'dashed', width: '100%' }} />
+
+                            <Stack spacing={1} direction="row" alignItems="center" justifyContent="space-between" sx={{ width: '100%' }}>
+                                <Typography variant="body2" color="text.secondary">
+                                    Added:
+                                </Typography>
+                                <Typography variant="body2">
+                                    {fDate(product.createdAt)}
+                                </Typography>
+                            </Stack>
+
+
+                            <Stack spacing={1} direction="row" alignItems="center" justifyContent="space-between" sx={{ width: '100%' }}>
+                                <Typography variant="body2" color="text.secondary">
+                                    By:
+                                </Typography>
+                                <Typography variant="body2">
+                                    {product.createdBy.name}
+                                </Typography>
+                            </Stack>
+                        </Stack>
                     </Stack>
                 </Grid>
             </Grid>

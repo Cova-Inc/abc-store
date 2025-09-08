@@ -16,12 +16,12 @@ import {
 } from '@mui/material';
 
 import { fDate } from 'src/utils/format-time';
-import { fCurrency } from 'src/utils/format-number';
-import { fNumber } from 'src/utils/format-number';
+import { fCurrency, fNumber, fShortenNumber } from 'src/utils/format-number';
 
 import { Label } from 'src/components/label';
 import { Image } from 'src/components/image';
 import { Iconify } from 'src/components/iconify';
+import { PRODUCT_STATUS_OPTIONS } from 'src/config-global';
 import Link from 'next/link';
 
 // ----------------------------------------------------------------------
@@ -35,43 +35,211 @@ export function ProductListItem({
     onEdit,
     onDelete,
     onProductUpdate,
+    isMobile,
     ...other
 }) {
     const theme = useTheme();
     const [imageError, setImageError] = useState(false);
-    const handleSelect = () => onSelect(product.id);
-    const handleEdit = () => onEdit(product.id);
-    const handleDelete = () => onDelete(product);
+    const handleSelect = (e) => {
+        e.stopPropagation();
+        onSelect(product.id);
+    }
+    const handleEdit = (e) => {
+        e.stopPropagation();
+        onEdit(product.id);
+    };
+    const handleDelete = (e) => {
+        e.stopPropagation();
+        onDelete(product);
+    };
     const handleImageError = () => setImageError(true);
-    
+
     // Determine if user can edit/delete this product
     const isAdmin = currentUser?.role === 'admin';
     const isOwner = product.createdBy?.id === currentUser?.id;
     const isDraft = product.status === 'draft';
-    
+
     // Show edit/delete buttons based on permissions
     const canEdit = isAdmin || (isOwner && isDraft);
     const canDelete = isAdmin || (isOwner && isDraft);
 
-    const getStatusColor = (status) => {
-        const statusMap = {
-            active: 'success',
-            inactive: 'warning',
-            draft: 'info'
-        };
-        return statusMap[status] || 'default';
+    // Get status config from global options
+    const statusConfig = PRODUCT_STATUS_OPTIONS.find(option => option.value === product.status) || {
+        value: product.status,
+        label: product.status,
+        color: 'default'
     };
 
-    const getStatusLabel = (status) => {
-        const statusMap = {
-            active: 'Active',
-            inactive: 'Inactive',
-            draft: 'Draft',
-            archived: 'Archived'
-        };
-        return statusMap[status] || status;
-    };
+    // Mobile card layout (compact)
+    if (isMobile) {
+        return (
+            <Card
+                sx={{
+                    p: 1.5,
+                    height: '100%',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    border: '1px solid',
+                    borderColor: isSelected ? alpha(theme.palette.primary.main, 0.4) : 'divider',
+                    backgroundColor: isSelected ? alpha(theme.palette.primary.main, 0.04) : 'background.paper',
+                    cursor: 'pointer',
+                    '&:hover': {
+                        borderColor: alpha(theme.palette.primary.main, 0.4),
+                        boxShadow: (t) => t.customShadows.z4,
+                    },
+                    transition: 'all 0.2s ease-in-out',
+                }}
+                onClick={() => onView(product.id)}
+                {...other}
+            >
+                {/* Mobile Layout */}
+                <Box sx={{ position: 'relative' }}>
+                    {/* Checkbox in corner */}
+                    <Checkbox
+                        checked={isSelected}
+                        onChange={handleSelect}
+                        onClick={(e) => e.stopPropagation()}
+                        size="small"
+                        sx={{
+                            position: 'absolute',
+                            top: -8,
+                            left: -8,
+                            zIndex: 1,
+                            bgcolor: 'background.paper',
+                            borderRadius: 1
+                        }}
+                    />
 
+                    {/* Product Image */}
+                    <Box
+                        sx={{
+                            width: '100%',
+                            paddingTop: '100%', // 1:1 aspect ratio
+                            position: 'relative',
+                            borderRadius: 1,
+                            overflow: 'hidden',
+                            backgroundColor: 'grey.100',
+                        }}
+                    >
+                        {product.image && !imageError ? (
+                            <Image
+                                src={product.image}
+                                alt={product.id}
+                                onError={handleImageError}
+                                sx={{
+                                    position: 'absolute',
+                                    top: 0,
+                                    left: 0,
+                                    width: '100%',
+                                    height: '100%',
+                                    objectFit: 'cover'
+                                }}
+                            />
+                        ) : (
+                            <Box
+                                sx={{
+                                    position: 'absolute',
+                                    top: '50%',
+                                    left: '50%',
+                                    transform: 'translate(-50%, -50%)',
+                                }}
+                            >
+                                <Iconify
+                                    icon="solar:box-bold"
+                                    width={48}
+                                    sx={{ color: 'text.disabled' }}
+                                />
+                            </Box>
+                        )}
+                    </Box>
+
+                    {/* Status Badge */}
+                    <Label
+                        color={statusConfig.color}
+                        variant="filled"
+                        size="small"
+                        sx={{
+                            position: 'absolute',
+                            top: 8,
+                            right: 8,
+                        }}
+                    >
+                        {statusConfig.label}
+                    </Label>
+                </Box>
+
+                {/* Product Details */}
+                <Stack spacing={0.5} sx={{ mt: 1.5, flex: 1 }}>
+                    <Stack direction="row" justifyContent="space-between" alignItems="center">
+                        {/* Name */}
+                        <Typography variant="subtitle2">
+                            {product.name}
+                        </Typography>
+
+                        {/* Price */}
+                        <Stack direction="row" alignItems="center" spacing={0.5}>
+                            {product.originalPrice && product.originalPrice > product.price && (
+                                <Typography
+                                    variant="caption"
+                                    color="text.disabled"
+                                    sx={{ textDecoration: 'line-through' }}
+                                >
+                                    {fCurrency(product.originalPrice)}
+                                </Typography>
+                            )}
+                            <Typography variant="subtitle1" color="primary.main" sx={{ fontWeight: 600 }}>
+                                {fCurrency(product.price)}
+                            </Typography>
+                        </Stack>
+                    </Stack>
+                    {/* Rating */}
+                    <Stack direction="row" alignItems="center" spacing={0.5}>
+                        <Rating
+                            value={product.rating}
+                            precision={0.1}
+                            size="small"
+                            readOnly
+                        />
+                        <Typography variant="caption" color="text.secondary">
+                            ({fShortenNumber(product.reviewCount)})
+                        </Typography>
+                    </Stack>
+
+
+
+                    {/* Stock & Category */}
+                    <Stack direction="row" spacing={0.5} alignItems="center">
+                        {product.category && (
+                            <Label color="default" variant="soft" size="small">
+                                {product.category}
+                            </Label>
+                        )}
+                        {product.stock !== undefined && (
+                            <Typography variant="caption" color="text.secondary">
+                                Stock: {product.stock}
+                            </Typography>
+                        )}
+                    </Stack>
+                </Stack>
+
+                {/* Action Buttons */}
+                <Stack direction="row" spacing={0.5} sx={{ mt: 1 }}>
+                    {canEdit && (
+                        <IconButton size="small" onClick={handleEdit}>
+                            <Iconify icon="solar:pen-bold" width={16} />
+                        </IconButton>
+                    )}
+                    {canDelete && (
+                        <IconButton size="small" onClick={handleDelete}>
+                            <Iconify icon="solar:trash-bin-trash-bold" width={16} />
+                        </IconButton>
+                    )}
+                </Stack>
+            </Card>
+        );
+    }
+
+    // Desktop layout (existing)
     return (
         <Card
             sx={{
@@ -80,6 +248,7 @@ export function ProductListItem({
                 border: '1px solid',
                 borderColor: isSelected ? alpha(theme.palette.primary.main, 0.4) : 'divider',
                 backgroundColor: isSelected ? alpha(theme.palette.primary.main, 0.04) : 'background.paper',
+                cursor: 'pointer',
                 '&:hover': {
                     borderColor: alpha(theme.palette.primary.main, 0.4),
                     boxShadow: (t) => t.customShadows.z8,
@@ -87,6 +256,7 @@ export function ProductListItem({
                 transition: 'all 0.2s ease-in-out',
             }}
             {...other}
+                onClick={() => onView(product.id)}
         >
             <Stack
                 direction={{ xs: 'column', md: 'row' }}
@@ -97,6 +267,7 @@ export function ProductListItem({
                 <Checkbox
                     checked={isSelected}
                     onChange={handleSelect}
+                    onClick={(e) => e.stopPropagation()}
                     size="small"
                     sx={{ alignSelf: { xs: 'flex-start', md: 'center' } }}
                 />
@@ -117,8 +288,8 @@ export function ProductListItem({
                 >
                     {product.image && !imageError ? (
                         <Image
-                            src={product.image.url || product.image}
-                            alt={product.image.alt || product.name}
+                            src={product.image}
+                            alt={product.id}
                             onError={handleImageError}
                             sx={{ width: '100%', height: '100%', objectFit: 'cover' }}
                         />
@@ -154,7 +325,7 @@ export function ProductListItem({
                             {/* Rating */}
                             <Stack alignItems={{ xs: 'center', md: 'flex-start' }} direction={{ xs: "column", md: "row" }} spacing={0.5}>
                                 <Rating
-                                    value={product.rating || 0}
+                                    value={product.rating}
                                     precision={0.1}
                                     size="small"
                                     readOnly
@@ -214,11 +385,11 @@ export function ProductListItem({
                             justifyContent={{ xs: 'center', md: 'flex-start' }}
                         >
                             <Label
-                                color={getStatusColor(product.status)}
+                                color={statusConfig.color}
                                 variant="soft"
                                 size="small"
                             >
-                                {getStatusLabel(product.status)}
+                                {statusConfig.label}
                             </Label>
 
                             {product.category && (

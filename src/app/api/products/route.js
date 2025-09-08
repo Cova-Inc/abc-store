@@ -1,7 +1,8 @@
 import { NextResponse } from 'next/server';
 import { connectToDatabase } from 'src/lib/mongodb';
 import Product from 'src/models/Product';
-import { processImages } from 'src/lib/upload';
+import { processMultipartImages } from 'src/lib/upload';
+import { CreateProductSchema, parseFormData, sanitizeProductData } from 'src/lib/validations/product';
 
 // GET /api/products - Get all products with filtering and pagination
 export async function GET(request) {
@@ -79,7 +80,7 @@ export async function GET(request) {
                 price: product.price,
                 originalPrice: product.originalPrice,
                 rating: product.rating,
-                reviewCount: product.reviews,
+                reviewCount: product.reviewCount,
                 image: primaryImage?.thumbnail || primaryImage?.url || null, // Primary image thumbnail for list
                 category: product.category,
                 status: product.status,
@@ -128,74 +129,70 @@ export async function POST(request) {
 
         await connectToDatabase();
 
-        const body = await request.json();
-        const {
-            name,
-            description,
-            price,
-            originalPrice,
-            category,
-            stock,
-            sku,
-            tags,
-            images,
-            status = userRole === 'admin' ? status || 'draft' : 'draft' // Non-admins cannot set status
-        } = body;
+        // Handle FormData submission
+        const formData = await request.formData();
+        
+        try {
+            // Parse and validate form data
+            const validatedData = parseFormData(formData, CreateProductSchema);
+            
+            // Sanitize data based on user role
+            const productData = sanitizeProductData(validatedData, userRole);
+            
+            // Process image files
+            const imageFiles = formData.getAll('images');
+            const processedImages = await processMultipartImages(imageFiles);
+            
+            // Create product with validated data
+            const product = new Product({
+                ...productData,
+                images: processedImages,
+                createdBy: userId
+            });
 
-        // Validate required fields
-        if (!name || !description || !price || !category) {
+            await product.save();
+            await product.populate('createdBy', 'name email');
+
+            // Transform to frontend format
+            const transformedProduct = {
+                id: product._id.toString(),
+                name: product.name,
+                description: product.description,
+                price: product.price,
+                originalPrice: product.originalPrice,
+                rating: product.rating || 0,
+                reviewCount: product.reviewCount || 0,
+                images: product.images || [],
+                category: product.category,
+                status: product.status,
+                stock: product.stock,
+                sku: product.sku,
+                tags: product.tags || [],
+                createdAt: product.createdAt,
+                updatedAt: product.updatedAt,
+                createdBy: product.createdBy ? {
+                    id: product.createdBy._id.toString(),
+                    name: product.createdBy.name,
+                    email: product.createdBy.email
+                } : null
+            };
+
+            return NextResponse.json(transformedProduct, { status: 201 });
+            
+        } catch (validationError) {
+            if (validationError.errors) {
+                // Zod validation error
+                const errors = validationError.errors.map(e => `${e.path.join('.')}: ${e.message}`);
+                return NextResponse.json(
+                    { error: 'Validation failed', details: errors },
+                    { status: 400 }
+                );
+            }
             return NextResponse.json(
-                { error: 'Missing required fields' },
+                { error: validationError.message || 'Invalid input' },
                 { status: 400 }
             );
         }
-
-        // Process images - convert base64 to files, save to disk
-        const processedImages = await processImages(images);
-
-        // Create product
-        const product = new Product({
-            name,
-            description,
-            price,
-            originalPrice,
-            category,
-            stock: stock || 0,
-            sku,
-            tags: tags || [],
-            images: processedImages,
-            status,
-            createdBy: userId
-        });
-
-        await product.save();
-        await product.populate('createdBy', 'name email');
-
-        // Transform to frontend format - return all images for created product
-        const transformedProduct = {
-            id: product._id.toString(),
-            name: product.name,
-            description: product.description,
-            price: product.price,
-            originalPrice: product.originalPrice,
-            rating: product.rating,
-            reviewCount: product.reviews,
-            images: product.images || [], // Return ALL images for single product
-            category: product.category,
-            status: product.status,
-            stock: product.stock,
-            sku: product.sku,
-            tags: product.tags || [],
-            createdAt: product.createdAt,
-            updatedAt: product.updatedAt,
-            createdBy: product.createdBy ? {
-                id: product.createdBy._id.toString(),
-                name: product.createdBy.name,
-                email: product.createdBy.email
-            } : null
-        };
-
-        return NextResponse.json(transformedProduct, { status: 201 });
 
     } catch (error) {
         console.error('Error creating product:', error);

@@ -37,9 +37,9 @@ export const PRODUCT_CATEGORY_OPTIONS = [
 ];
 
 export const PRODUCT_STATUS_OPTIONS = [
-  { value: 'active', label: 'Active' },
-  { value: 'inactive', label: 'Inactive' },
-  { value: 'draft', label: 'Draft' },
+  { value: 'active', label: 'Active', color: 'success' },
+  { value: 'inactive', label: 'Inactive', color: 'warning' },
+  { value: 'draft', label: 'Draft', color: 'info' },
 ];
 
 export const PRODUCT_FILTER_FIELD_OPTIONS = [

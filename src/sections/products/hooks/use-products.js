@@ -95,6 +95,11 @@ export function useProducts() {
             setPagination(prev => ({ ...prev, total: prev.total + 1 }));
             return product;
         } catch (error) {
+            const errorCode = error.status || error.response?.status || 500;
+            setError({
+                code: errorCode,
+                message: error.message || 'Failed to fetch product'
+            });
             throw error;
         } finally {
             setLoading(false);
@@ -108,6 +113,11 @@ export function useProducts() {
             setProducts(prev => prev.map(p => p.id === id ? product : p));
             return product;
         } catch (error) {
+            const errorCode = error.status || error.response?.status || 500;
+            setError({
+                code: errorCode,
+                message: error.message || 'Failed to fetch product'
+            });
             throw error;
         } finally {
             setLoading(false);
@@ -122,6 +132,11 @@ export function useProducts() {
             setPagination(prev => ({ ...prev, total: Math.max(0, prev.total - 1) }));
             return true;
         } catch (error) {
+            const errorCode = error.status || error.response?.status || 500;
+            setError({
+                code: errorCode,
+                message: error.message || 'Failed to fetch product'
+            });
             throw error;
         } finally {
             setLoading(false);
@@ -136,11 +151,35 @@ export function useProducts() {
             setPagination(prev => ({ ...prev, total: Math.max(0, prev.total - ids.length) }));
             return { count: ids.length };
         } catch (error) {
+            const errorCode = error.status || error.response?.status || 500;
+            setError({
+                code: errorCode,
+                message: error.message || 'Failed to delete products'
+            });
             throw error;
         } finally {
             setLoading(false);
         }
     }, []);
+
+    const deleteAllProducts = useCallback(async (deleteFilters) => {
+        try {
+            setLoading(true);
+            const result = await productActions.deleteAllProducts(deleteFilters);
+            // Refresh the products list after deletion
+            await fetchProducts(filters);
+            return { count: result.deletedCount };
+        } catch (error) {
+            const errorCode = error.status || error.response?.status || 500;
+            setError({
+                code: errorCode,
+                message: error.message || 'Failed to delete products'
+            });
+            throw error;
+        } finally {
+            setLoading(false);
+        }
+    }, [filters, fetchProducts]);
 
     // =============================================================================
     // ACTIONS
@@ -159,6 +198,11 @@ export function useProducts() {
             window.URL.revokeObjectURL(url);
             return true;
         } catch (error) {
+            const errorCode = error.status || error.response?.status || 500;
+            setError({
+                code: errorCode,
+                message: error.message || 'Failed to fetch product'
+            });
             throw error;
         }
     }, []);
@@ -176,6 +220,11 @@ export function useProducts() {
             window.URL.revokeObjectURL(url);
             return true;
         } catch (error) {
+            const errorCode = error.status || error.response?.status || 500;
+            setError({
+                code: errorCode,
+                message: error.message || 'Failed to fetch product'
+            });
             throw error;
         }
     }, [products]);
@@ -193,6 +242,11 @@ export function useProducts() {
             window.URL.revokeObjectURL(url);
             return true;
         } catch (error) {
+            const errorCode = error.status || error.response?.status || 500;
+            setError({
+                code: errorCode,
+                message: error.message || 'Failed to fetch product'
+            });
             throw error;
         }
     }, [products]);
@@ -215,6 +269,7 @@ export function useProducts() {
         updateProduct,
         deleteProduct,
         deleteProducts,
+        deleteAllProducts,
         
         // Actions
         downloadProduct,

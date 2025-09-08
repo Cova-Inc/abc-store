@@ -7,7 +7,7 @@ const DEFAULT_FILTERS = {
     searchInput: '',
     categoryFilter: 'all',
     search: '',
-    filterFields: [],
+    filterFields: ['name'],
 };
 
 export function useProductListFilters() {

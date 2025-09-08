@@ -36,6 +36,10 @@ const ProductSchema = new mongoose.Schema(
           type: String,
           default: '',
         },
+        size: {
+          type: Number,
+          default: 0,
+        },
         isPrimary: {
           type: Boolean,
           default: false,
@@ -50,10 +54,21 @@ const ProductSchema = new mongoose.Schema(
     originalPrice: {
       type: Number,
       min: [0, 'Original price cannot be negative'],
+      // If no original price provided, default to the current price
+      default: function() {
+        return this.price;
+      },
       validate: {
         validator: function(value) {
-          // originalPrice should be >= price if it exists
-          return !value || value >= this.price;
+          // For updates, 'this' might not have the price field
+          // So we need to check if we're in an update context
+          if (this.price !== undefined) {
+            // originalPrice should be >= price if both exist
+            return !value || value >= this.price;
+          }
+          // In update context, we can't validate against price here
+          // The validation will be handled at the application level
+          return true;
         },
         message: 'Original price should be greater than or equal to current price'
       }
@@ -68,6 +83,7 @@ const ProductSchema = new mongoose.Schema(
       unique: true,
       sparse: true, // Allows null values but ensures uniqueness when present
       trim: true,
+      maxlength: [50, 'SKU cannot be more than 50 characters'],
     },
     stock: {
       type: Number,
@@ -86,10 +102,10 @@ const ProductSchema = new mongoose.Schema(
       min: [0, 'Rating cannot be negative'],
       max: [5, 'Rating cannot be more than 5'],
     },
-    reviews: {
+    reviewCount: {
       type: Number,
       default: 0,
-      min: [0, 'Reviews cannot be negative'],
+      min: [0, 'Review count cannot be negative'],
     },
     createdBy: {
       type: mongoose.Schema.Types.ObjectId,
