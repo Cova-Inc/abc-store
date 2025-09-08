@@ -127,26 +127,53 @@ export default function ProductListView() {
   const handleDeleteConfirm = useCallback(async () => {
     try {
       let result;
+      let pageToFetch = page;
+
       if (productToDelete) {
         // Delete single product
         await deleteProduct(productToDelete.id);
         toast.success('Product deleted successfully');
         setProductToDelete(null);
+
+        // If this was the last item on the page and not on first page, go to previous page
+        if (products.length === 1 && page > 0) {
+          pageToFetch = page - 1;
+          setPage(pageToFetch);
+        }
       } else if (
         selectionManager.selectAllActive &&
         selectionManager.selectedRowIds.length === products.length
       ) {
-        // Delete all products with current filters
+        // Delete all products with current filters - go to first page
         const deleteFilters = buildFilters();
         result = await deleteAllProducts(deleteFilters);
         toast.success(`${result.count} products deleted successfully`);
+
+        // Go to first page after deleting all
+        pageToFetch = 0;
+        setPage(0);
       } else if (selectionManager.selectedRowIds.length > 0) {
         // Delete selected products
         result = await deleteProducts(selectionManager.selectedRowIds);
         toast.success(`${result.count} products deleted successfully`);
+
+        // If we deleted all items on current page and not on first page, go to previous page
+        if (selectionManager.selectedRowIds.length === products.length && page > 0) {
+          pageToFetch = page - 1;
+          setPage(pageToFetch);
+        }
       }
+
       selectionManager.clearSelection();
       confirmRows.onFalse();
+
+      // Refresh the list after delete with appropriate page
+      const filters = buildFilters();
+      await fetchProducts({
+        ...filters,
+        page: pageToFetch + 1, // API uses 1-based pagination
+        limit: pageSize,
+      });
     } catch (err) {
       console.error('Delete failed:', err);
       toast.error(err.message || 'Failed to delete products');
@@ -154,12 +181,16 @@ export default function ProductListView() {
   }, [
     productToDelete,
     selectionManager,
-    products.length,
+    products,
     deleteProduct,
     deleteProducts,
     deleteAllProducts,
     buildFilters,
     confirmRows,
+    fetchProducts,
+    page,
+    pageSize,
+    setPage,
   ]);
 
   const handleDelete = useCallback(() => {
@@ -182,7 +213,6 @@ export default function ProductListView() {
   useEffect(() => {
     if (initialized) {
       const filters = buildFilters();
-      // Call fetchProducts directly to avoid circular dependency
       fetchProducts({
         ...filters,
         page: page + 1, // API uses 1-based pagination
@@ -214,13 +244,14 @@ export default function ProductListView() {
         title={error.code === 403 ? 'Access Denied' : 'Failed to Load Products'}
         description={error.message}
         actionText="Retry"
-        onAction={() =>
+        onAction={() => {
+          const filters = buildFilters();
           fetchProducts({
-            ...buildFilters(),
+            ...filters,
             page: page + 1, // API uses 1-based pagination
             limit: pageSize,
-          })
-        }
+          });
+        }}
         icon={<Iconify icon="eva:refresh-fill" />}
       />
     );
@@ -233,7 +264,7 @@ export default function ProductListView() {
         <CommonToolbar
           filterValue={categoryFilter}
           setFilterValue={setCategoryFilter}
-          filterOptions={[{ value: 'all', label: 'All Categories' }, ...PRODUCT_CATEGORY_OPTIONS]}
+          filterOptions={PRODUCT_CATEGORY_OPTIONS}
           filterLabel="Category"
           placeholder="Search products..."
           searchInput={searchInput}

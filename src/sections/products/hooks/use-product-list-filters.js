@@ -7,7 +7,7 @@ const DEFAULT_FILTERS = {
   searchInput: '',
   categoryFilter: 'all',
   search: '',
-  filterFields: ['name'],
+  filterFields: ['name', 'description'],
 };
 
 export function useProductListFilters() {
@@ -26,19 +26,27 @@ export function useProductListFilters() {
     setInitialized(true);
   }, []);
 
-  // Build filters object for API calls
+  // Build filters object for API calls (excluding pagination)
   const buildFilters = useCallback(() => {
-    const filters = {
-      page,
-      pageSize,
-      search: search.trim(),
-      category: categoryFilter !== 'all' ? categoryFilter : undefined,
-      filterFields: filterFields.length > 0 ? filterFields : undefined,
-    };
+    const filters = {};
 
-    // Remove undefined values
-    return Object.fromEntries(Object.entries(filters).filter(([_, value]) => value !== undefined));
-  }, [page, pageSize, search, categoryFilter, filterFields]);
+    // Only add search if it's not empty
+    if (search.trim()) {
+      filters.search = search.trim();
+    }
+
+    // Only add category if it's not 'all'
+    if (categoryFilter && categoryFilter !== 'all') {
+      filters.category = categoryFilter;
+    }
+
+    // Only add filterFields if specified
+    if (filterFields && filterFields.length > 0) {
+      filters.filterFields = filterFields;
+    }
+
+    return filters;
+  }, [search, categoryFilter, filterFields]);
 
   // Apply search filter
   const applyFilter = useCallback(() => {
@@ -47,26 +55,26 @@ export function useProductListFilters() {
   }, [searchInput]);
 
   // Handle search input enter key
-  const handleSearchEnter = useCallback(
-    (event) => {
-      if (event.key === 'Enter') {
-        applyFilter();
-      }
-    },
-    [applyFilter]
-  );
+  const handleSearchEnter = useCallback(() => {
+    setSearch(searchInput);
+    setPage(0); // Reset to first page when applying new filter
+  }, [searchInput]);
 
   // Clear all filters
   const clearFilter = useCallback(() => {
     setSearchInput('');
     setSearch('');
     setCategoryFilter('all');
-    setFilterFields([]);
     setPage(0);
   }, []);
 
   // Reset page when other filters change
   const resetPage = useCallback(() => {
+    setPage(0);
+  }, []);
+
+  const setCategoryFilterWithReset = useCallback((value) => {
+    setCategoryFilter(value);
     setPage(0);
   }, []);
 
@@ -89,7 +97,7 @@ export function useProductListFilters() {
     setPage,
     setPageSize,
     setSearchInput,
-    setCategoryFilter,
+    setCategoryFilter: setCategoryFilterWithReset,
     setFilterFields,
     buildFilters,
     applyFilter,

@@ -18,51 +18,34 @@ export function useProducts() {
     total: 0,
     pages: 0,
   });
-  const [filters, setFilters] = useState({
-    search: '',
-    category: '',
-    status: '',
-    sortBy: 'createdAt',
-    sortOrder: 'desc',
-  });
 
   // =============================================================================
   // DATA FETCHING
   // =============================================================================
 
-  const fetchProducts = useCallback(
-    async (newFilters = {}) => {
-      try {
-        setLoading(true);
-        setError(null);
-        const params = {
-          ...filters,
-          ...newFilters,
-          page: newFilters.page || pagination.page,
-          limit: newFilters.limit || pagination.limit,
-        };
+  const fetchProducts = useCallback(async (params = {}) => {
+    try {
+      setLoading(true);
+      setError(null);
 
-        const response = await productActions.getProducts(params);
+      const response = await productActions.getProducts(params);
 
-        setProducts(response.products);
-        setPagination(response.pagination);
+      setProducts(response.products);
+      setPagination(response.pagination);
 
-        if (Object.keys(newFilters).length > 0) {
-          setFilters((prev) => ({ ...prev, ...newFilters }));
-        }
-      } catch (err) {
-        const errorCode = err.response?.status || 500;
-        setError({
-          code: errorCode,
-          message: err.message || 'Failed to fetch products',
-        });
-        console.error('Error fetching products:', err);
-      } finally {
-        setLoading(false);
-      }
-    },
-    [filters, pagination.page, pagination.limit]
-  );
+      return response;
+    } catch (err) {
+      const errorCode = err.response?.status || 500;
+      setError({
+        code: errorCode,
+        message: err.message || 'Failed to fetch products',
+      });
+      console.error('Error fetching products:', err);
+      throw err;
+    } finally {
+      setLoading(false);
+    }
+  }, []);
 
   // Fetch single product
   const fetchProduct = useCallback(async (id) => {
@@ -166,27 +149,22 @@ export function useProducts() {
     }
   }, []);
 
-  const deleteAllProducts = useCallback(
-    async (deleteFilters) => {
-      try {
-        setLoading(true);
-        const result = await productActions.deleteAllProducts(deleteFilters);
-        // Refresh the products list after deletion
-        await fetchProducts(filters);
-        return { count: result.deletedCount };
-      } catch (err) {
-        const errorCode = err.status || err.response?.status || 500;
-        setError({
-          code: errorCode,
-          message: err.message || 'Failed to delete products',
-        });
-        throw err;
-      } finally {
-        setLoading(false);
-      }
-    },
-    [filters, fetchProducts]
-  );
+  const deleteAllProducts = useCallback(async (deleteFilters) => {
+    try {
+      setLoading(true);
+      const result = await productActions.deleteAllProducts(deleteFilters);
+      return { count: result.deletedCount };
+    } catch (err) {
+      const errorCode = err.status || err.response?.status || 500;
+      setError({
+        code: errorCode,
+        message: err.message || 'Failed to delete products',
+      });
+      throw err;
+    } finally {
+      setLoading(false);
+    }
+  }, []);
 
   // =============================================================================
   // ACTIONS
@@ -269,7 +247,6 @@ export function useProducts() {
     loading,
     error,
     pagination,
-    filters,
 
     // CRUD
     createProduct,
