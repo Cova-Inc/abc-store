@@ -3,7 +3,7 @@ import mongoose from 'mongoose';
 // Import all models to ensure they're registered with Mongoose
 import '../models';
 
-const { MONGODB_URI, ENVIRONMENT, DB_NAME, DB_NAME_DEV } = process.env;
+const { MONGODB_URI, NODE_ENV, DB_NAME, DB_NAME_DEV } = process.env;
 
 if (!MONGODB_URI) {
   throw new Error('⚠️ Please define the MONGODB_URI environment variable');
@@ -24,7 +24,7 @@ export async function connectToDatabase() {
   if (!cached.promise) {
     cached.promise = mongoose
       .connect(MONGODB_URI, {
-        dbName: ENVIRONMENT === 'development' ? DB_NAME_DEV : DB_NAME,
+        dbName: NODE_ENV === 'development' ? DB_NAME_DEV : DB_NAME,
       })
       .then((_mongoose) => _mongoose)
       .catch((error) => {

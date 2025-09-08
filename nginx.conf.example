@@ -1,0 +1,92 @@
+# Nginx configuration for ABC Store production deployment
+# Place this in /etc/nginx/sites-available/abc-store and create a symlink to sites-enabled
+
+server {
+    listen 80;
+    listen [::]:80;
+    # server_name your-domain.com www.your-domain.com;
+    server_name localhost _ 192.168.217.129;
+
+    # Set maximum upload size (adjust as needed)
+    client_max_body_size 50M;
+    client_body_buffer_size 50M;
+
+    # Redirect HTTP to HTTPS (uncomment when SSL is configured)
+    # return 301 https://$server_name$request_uri;
+
+    # For initial setup without SSL, comment the return above and uncomment below:
+    location / {
+        proxy_pass http://localhost:3000;
+        proxy_http_version 1.1;
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection 'upgrade';
+        proxy_set_header Host $host;
+        proxy_cache_bypass $http_upgrade;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+    }
+
+    # Serve uploaded images directly from nginx (much faster than Node.js)
+    location /uploads/ {
+        alias /home/cova/uploads/;
+        expires 30d;
+        add_header Cache-Control "public, immutable";
+        
+        # Security headers
+        add_header X-Content-Type-Options nosniff;
+        
+        # Allow images to be embedded
+        add_header X-Frame-Options "SAMEORIGIN";
+        
+        # CORS headers if needed
+        add_header Access-Control-Allow-Origin "*";
+        
+        # Serve webp with proper content type
+        location ~ \.webp$ {
+            add_header Content-Type "image/webp";
+        }
+    }
+}
+
+# HTTPS configuration (uncomment and configure when ready)
+# server {
+#     listen 443 ssl http2;
+#     listen [::]:443 ssl http2;
+#     server_name your-domain.com www.your-domain.com;
+#
+#     ssl_certificate /etc/ssl/certs/your-cert.pem;
+#     ssl_certificate_key /etc/ssl/private/your-key.pem;
+#
+#     # SSL configuration
+#     ssl_protocols TLSv1.2 TLSv1.3;
+#     ssl_ciphers HIGH:!aNULL:!MD5;
+#     ssl_prefer_server_ciphers on;
+#
+#     # Main application
+#     location / {
+#         proxy_pass http://localhost:3000;
+#         proxy_http_version 1.1;
+#         proxy_set_header Upgrade $http_upgrade;
+#         proxy_set_header Connection 'upgrade';
+#         proxy_set_header Host $host;
+#         proxy_cache_bypass $http_upgrade;
+#         proxy_set_header X-Real-IP $remote_addr;
+#         proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+#         proxy_set_header X-Forwarded-Proto $scheme;
+#     }
+#
+#     # Serve uploaded images
+#     location /uploads/ {
+#         alias /var/www/html/uploads/;
+#         expires 30d;
+#         add_header Cache-Control "public, immutable";
+#         add_header X-Content-Type-Options nosniff;
+#         add_header X-Frame-Options "SAMEORIGIN";
+#         add_header Access-Control-Allow-Origin "*";
+#         
+#         location ~ \.webp$ {
+#             add_header Content-Type "image/webp";
+#         }
+#     }
+# }
