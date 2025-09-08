@@ -4,7 +4,10 @@ import multer from 'multer';
 import fs from 'fs/promises';
 import { v4 as uuidv4 } from 'uuid';
 
-const UPLOAD_DIR = path.join(process.cwd(), 'public', 'uploads', 'products');
+// Use environment-specific upload directory
+const UPLOAD_DIR = process.env.NODE_ENV === 'production' && process.env.UPLOAD_DIR
+  ? path.resolve(process.env.UPLOAD_DIR) // Production: /var/www/html/uploads/products
+  : path.join(process.cwd(), 'public', 'uploads', 'products'); // Development: ./public/uploads/products
 
 // Ensure upload directory exists
 async function ensureUploadDir() {
