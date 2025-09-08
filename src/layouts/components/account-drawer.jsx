@@ -6,13 +6,11 @@ import Box from '@mui/material/Box';
 import Stack from '@mui/material/Stack';
 // import Avatar from '@mui/material/Avatar';
 import Drawer from '@mui/material/Drawer';
-import Tooltip from '@mui/material/Tooltip';
 import MenuItem from '@mui/material/MenuItem';
 import { useTheme } from '@mui/material/styles';
 import Typography from '@mui/material/Typography';
 import IconButton from '@mui/material/IconButton';
 
-import { paths } from 'src/routes/paths';
 import { useRouter, usePathname } from 'src/routes/hooks';
 
 import { varAlpha } from 'src/theme/styles';
@@ -24,11 +22,12 @@ import { AnimateAvatar } from 'src/components/animate';
 
 // import { useMockedUser } from 'src/auth/hooks';
 
+import { useSettingsContext } from 'src/components/settings';
+
 import { AuthContext } from 'src/auth/context/auth-context';
 
 import { AccountButton } from './account-button';
 import { SignOutButton } from './sign-out-button';
-import { useSettingsContext } from 'src/components/settings';
 
 // ----------------------------------------------------------------------
 
@@ -55,7 +54,7 @@ export function AccountDrawer({ data = [], sx, ...other }) {
   const handleClickItem = useCallback(
     (option) => {
       handleCloseDrawer();
-      
+
       // Handle special actions
       if (option.action === 'logout') {
         // The logout will be handled by the SignOutButton
@@ -77,7 +76,7 @@ export function AccountDrawer({ data = [], sx, ...other }) {
     if (!option.roles) {
       return true;
     }
-    
+
     // Check if user's role is in the allowed roles
     return user?.role && option.roles.includes(user.role);
   });
@@ -142,32 +141,30 @@ export function AccountDrawer({ data = [], sx, ...other }) {
               px: 2.5,
             }}
           >
-            {filteredData.map((option) => {
-              return (
-                <MenuItem
-                  key={option.label}
-                  onClick={() => handleClickItem(option)}
-                  sx={{
-                    py: 1,
-                    color: 'text.secondary',
-                    '& svg': { width: 24, height: 24 },
-                    '&:hover': { color: 'text.primary' },
-                  }}
-                >
-                  {option.icon}
+            {filteredData.map((option) => (
+              <MenuItem
+                key={option.label}
+                onClick={() => handleClickItem(option)}
+                sx={{
+                  py: 1,
+                  color: 'text.secondary',
+                  '& svg': { width: 24, height: 24 },
+                  '&:hover': { color: 'text.primary' },
+                }}
+              >
+                {option.icon}
 
-                  <Box component="span" sx={{ ml: 2 }}>
-                    {option.label}
-                  </Box>
+                <Box component="span" sx={{ ml: 2 }}>
+                  {option.label}
+                </Box>
 
-                  {option.info && (
-                    <Label color="error" sx={{ ml: 1 }}>
-                      {option.info}
-                    </Label>
-                  )}
-                </MenuItem>
-              );
-            })}
+                {option.info && (
+                  <Label color="error" sx={{ ml: 1 }}>
+                    {option.info}
+                  </Label>
+                )}
+              </MenuItem>
+            ))}
           </Stack>
 
           {/* <Box sx={{ px: 2.5, py: 3 }}>

@@ -1,4 +1,5 @@
 import { useState, useCallback } from 'react';
+
 import * as productActions from '../actions';
 
 // =============================================================================
@@ -6,278 +7,284 @@ import * as productActions from '../actions';
 // =============================================================================
 
 export function useProducts() {
-    // State
-    const [products, setProducts] = useState([]);
-    const [product, setProduct] = useState(null);
-    const [loading, setLoading] = useState(false);
-    const [error, setError] = useState(null);
-    const [pagination, setPagination] = useState({
-        page: 1,
-        limit: 10,
-        total: 0,
-        pages: 0
-    });
-    const [filters, setFilters] = useState({
-        search: '',
-        category: '',
-        status: '',
-        sortBy: 'createdAt',
-        sortOrder: 'desc'
-    });
+  // State
+  const [products, setProducts] = useState([]);
+  const [product, setProduct] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
+  const [pagination, setPagination] = useState({
+    page: 1,
+    limit: 10,
+    total: 0,
+    pages: 0,
+  });
+  const [filters, setFilters] = useState({
+    search: '',
+    category: '',
+    status: '',
+    sortBy: 'createdAt',
+    sortOrder: 'desc',
+  });
 
-    // =============================================================================
-    // DATA FETCHING
-    // =============================================================================
+  // =============================================================================
+  // DATA FETCHING
+  // =============================================================================
 
-    const fetchProducts = useCallback(async (newFilters = {}) => {
-        try {
-            setLoading(true);
-            setError(null);
-            const params = {
-                ...filters,
-                ...newFilters,
-                page: newFilters.page || pagination.page,
-                limit: newFilters.limit || pagination.limit
-            };
+  const fetchProducts = useCallback(
+    async (newFilters = {}) => {
+      try {
+        setLoading(true);
+        setError(null);
+        const params = {
+          ...filters,
+          ...newFilters,
+          page: newFilters.page || pagination.page,
+          limit: newFilters.limit || pagination.limit,
+        };
 
-            const response = await productActions.getProducts(params);
-            
-            setProducts(response.products);
-            setPagination(response.pagination);
-            
-            if (Object.keys(newFilters).length > 0) {
-                setFilters(prev => ({ ...prev, ...newFilters }));
-            }
-        } catch (err) {
-            const errorCode = err.response?.status || 500;
-            setError({
-                code: errorCode,
-                message: err.message || 'Failed to fetch products'
-            });
-            console.error('Error fetching products:', err);
-        } finally {
-            setLoading(false);
+        const response = await productActions.getProducts(params);
+
+        setProducts(response.products);
+        setPagination(response.pagination);
+
+        if (Object.keys(newFilters).length > 0) {
+          setFilters((prev) => ({ ...prev, ...newFilters }));
         }
-    }, [filters, pagination.page, pagination.limit]);
+      } catch (err) {
+        const errorCode = err.response?.status || 500;
+        setError({
+          code: errorCode,
+          message: err.message || 'Failed to fetch products',
+        });
+        console.error('Error fetching products:', err);
+      } finally {
+        setLoading(false);
+      }
+    },
+    [filters, pagination.page, pagination.limit]
+  );
 
-    // Fetch single product
-    const fetchProduct = useCallback(async (id) => {
-        try {
-            setLoading(true);
-            setError(null);
-            
-            const response = await productActions.getProduct(id);
-            setProduct(response);
-            
-            return response;
-        } catch (err) {
-            const errorCode = err.status || err.response?.status || 500;
-            setError({
-                code: errorCode,
-                message: err.message || 'Failed to fetch product'
-            });
-            setProduct(null);
-            throw err;
-        } finally {
-            setLoading(false);
-        }
-    }, []);
+  // Fetch single product
+  const fetchProduct = useCallback(async (id) => {
+    try {
+      setLoading(true);
+      setError(null);
 
-    // =============================================================================
-    // CRUD OPERATIONS
-    // =============================================================================
+      const response = await productActions.getProduct(id);
+      setProduct(response);
 
-    const createProduct = useCallback(async (productData) => {
-        try {
-            setLoading(true);
-            const product = await productActions.createProduct(productData);
-            setProducts(prev => [product, ...prev]);
-            setPagination(prev => ({ ...prev, total: prev.total + 1 }));
-            return product;
-        } catch (error) {
-            const errorCode = error.status || error.response?.status || 500;
-            setError({
-                code: errorCode,
-                message: error.message || 'Failed to fetch product'
-            });
-            throw error;
-        } finally {
-            setLoading(false);
-        }
-    }, []);
+      return response;
+    } catch (err) {
+      const errorCode = err.status || err.response?.status || 500;
+      setError({
+        code: errorCode,
+        message: err.message || 'Failed to fetch product',
+      });
+      setProduct(null);
+      throw err;
+    } finally {
+      setLoading(false);
+    }
+  }, []);
 
-    const updateProduct = useCallback(async (id, productData) => {
-        try {
-            setLoading(true);
-            const product = await productActions.updateProduct(id, productData);
-            setProducts(prev => prev.map(p => p.id === id ? product : p));
-            return product;
-        } catch (error) {
-            const errorCode = error.status || error.response?.status || 500;
-            setError({
-                code: errorCode,
-                message: error.message || 'Failed to fetch product'
-            });
-            throw error;
-        } finally {
-            setLoading(false);
-        }
-    }, []);
+  // =============================================================================
+  // CRUD OPERATIONS
+  // =============================================================================
 
-    const deleteProduct = useCallback(async (id) => {
-        try {
-            setLoading(true);
-            await productActions.deleteProduct(id);
-            setProducts(prev => prev.filter(p => p.id !== id));
-            setPagination(prev => ({ ...prev, total: Math.max(0, prev.total - 1) }));
-            return true;
-        } catch (error) {
-            const errorCode = error.status || error.response?.status || 500;
-            setError({
-                code: errorCode,
-                message: error.message || 'Failed to fetch product'
-            });
-            throw error;
-        } finally {
-            setLoading(false);
-        }
-    }, []);
+  const createProduct = useCallback(async (productData) => {
+    try {
+      setLoading(true);
+      const newProduct = await productActions.createProduct(productData);
+      setProducts((prev) => [newProduct, ...prev]);
+      setPagination((prev) => ({ ...prev, total: prev.total + 1 }));
+      return newProduct;
+    } catch (err) {
+      const errorCode = err.status || err.response?.status || 500;
+      setError({
+        code: errorCode,
+        message: err.message || 'Failed to fetch product',
+      });
+      throw err;
+    } finally {
+      setLoading(false);
+    }
+  }, []);
 
-    const deleteProducts = useCallback(async (ids) => {
-        try {
-            setLoading(true);
-            await productActions.deleteProducts(ids);
-            setProducts(prev => prev.filter(p => !ids.includes(p.id)));
-            setPagination(prev => ({ ...prev, total: Math.max(0, prev.total - ids.length) }));
-            return { count: ids.length };
-        } catch (error) {
-            const errorCode = error.status || error.response?.status || 500;
-            setError({
-                code: errorCode,
-                message: error.message || 'Failed to delete products'
-            });
-            throw error;
-        } finally {
-            setLoading(false);
-        }
-    }, []);
+  const updateProduct = useCallback(async (id, productData) => {
+    try {
+      setLoading(true);
+      const updatedProduct = await productActions.updateProduct(id, productData);
+      setProducts((prev) => prev.map((p) => (p.id === id ? updatedProduct : p)));
+      return updatedProduct;
+    } catch (err) {
+      const errorCode = err.status || err.response?.status || 500;
+      setError({
+        code: errorCode,
+        message: err.message || 'Failed to fetch product',
+      });
+      throw err;
+    } finally {
+      setLoading(false);
+    }
+  }, []);
 
-    const deleteAllProducts = useCallback(async (deleteFilters) => {
-        try {
-            setLoading(true);
-            const result = await productActions.deleteAllProducts(deleteFilters);
-            // Refresh the products list after deletion
-            await fetchProducts(filters);
-            return { count: result.deletedCount };
-        } catch (error) {
-            const errorCode = error.status || error.response?.status || 500;
-            setError({
-                code: errorCode,
-                message: error.message || 'Failed to delete products'
-            });
-            throw error;
-        } finally {
-            setLoading(false);
-        }
-    }, [filters, fetchProducts]);
+  const deleteProduct = useCallback(async (id) => {
+    try {
+      setLoading(true);
+      await productActions.deleteProduct(id);
+      setProducts((prev) => prev.filter((p) => p.id !== id));
+      setPagination((prev) => ({ ...prev, total: Math.max(0, prev.total - 1) }));
+      return true;
+    } catch (err) {
+      const errorCode = err.status || err.response?.status || 500;
+      setError({
+        code: errorCode,
+        message: err.message || 'Failed to fetch product',
+      });
+      throw err;
+    } finally {
+      setLoading(false);
+    }
+  }, []);
 
-    // =============================================================================
-    // ACTIONS
-    // =============================================================================
+  const deleteProducts = useCallback(async (ids) => {
+    try {
+      setLoading(true);
+      await productActions.deleteProducts(ids);
+      setProducts((prev) => prev.filter((p) => !ids.includes(p.id)));
+      setPagination((prev) => ({ ...prev, total: Math.max(0, prev.total - ids.length) }));
+      return { count: ids.length };
+    } catch (err) {
+      const errorCode = err.status || err.response?.status || 500;
+      setError({
+        code: errorCode,
+        message: err.message || 'Failed to delete products',
+      });
+      throw err;
+    } finally {
+      setLoading(false);
+    }
+  }, []);
 
-    const downloadProduct = useCallback(async (productId) => {
-        try {
-            const blob = await productActions.downloadProduct(productId);
-            const url = window.URL.createObjectURL(blob);
-            const link = document.createElement('a');
-            link.href = url;
-            link.download = `product-${productId}.json`;
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
-            window.URL.revokeObjectURL(url);
-            return true;
-        } catch (error) {
-            const errorCode = error.status || error.response?.status || 500;
-            setError({
-                code: errorCode,
-                message: error.message || 'Failed to fetch product'
-            });
-            throw error;
-        }
-    }, []);
+  const deleteAllProducts = useCallback(
+    async (deleteFilters) => {
+      try {
+        setLoading(true);
+        const result = await productActions.deleteAllProducts(deleteFilters);
+        // Refresh the products list after deletion
+        await fetchProducts(filters);
+        return { count: result.deletedCount };
+      } catch (err) {
+        const errorCode = err.status || err.response?.status || 500;
+        setError({
+          code: errorCode,
+          message: err.message || 'Failed to delete products',
+        });
+        throw err;
+      } finally {
+        setLoading(false);
+      }
+    },
+    [filters, fetchProducts]
+  );
 
-    const exportCSV = useCallback(async () => {
-        try {
-            const blob = await productActions.exportProductsToCSV(products);
-            const url = window.URL.createObjectURL(blob);
-            const link = document.createElement('a');
-            link.href = url;
-            link.download = `products-${new Date().toISOString().split('T')[0]}.csv`;
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
-            window.URL.revokeObjectURL(url);
-            return true;
-        } catch (error) {
-            const errorCode = error.status || error.response?.status || 500;
-            setError({
-                code: errorCode,
-                message: error.message || 'Failed to fetch product'
-            });
-            throw error;
-        }
-    }, [products]);
+  // =============================================================================
+  // ACTIONS
+  // =============================================================================
 
-    const exportExcel = useCallback(async () => {
-        try {
-            const blob = await productActions.exportProductsToExcel(products);
-            const url = window.URL.createObjectURL(blob);
-            const link = document.createElement('a');
-            link.href = url;
-            link.download = `products-${new Date().toISOString().split('T')[0]}.xlsx`;
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
-            window.URL.revokeObjectURL(url);
-            return true;
-        } catch (error) {
-            const errorCode = error.status || error.response?.status || 500;
-            setError({
-                code: errorCode,
-                message: error.message || 'Failed to fetch product'
-            });
-            throw error;
-        }
-    }, [products]);
+  const downloadProduct = useCallback(async (productId) => {
+    try {
+      const blob = await productActions.downloadProduct(productId);
+      const url = window.URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = `product-${productId}.json`;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      window.URL.revokeObjectURL(url);
+      return true;
+    } catch (err) {
+      const errorCode = err.status || err.response?.status || 500;
+      setError({
+        code: errorCode,
+        message: err.message || 'Failed to fetch product',
+      });
+      throw err;
+    }
+  }, []);
 
-    // =============================================================================
-    // RETURN EVERYTHING
-    // =============================================================================
+  const exportCSV = useCallback(async () => {
+    try {
+      const blob = await productActions.exportProductsToCSV(products);
+      const url = window.URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = `products-${new Date().toISOString().split('T')[0]}.csv`;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      window.URL.revokeObjectURL(url);
+      return true;
+    } catch (err) {
+      const errorCode = err.status || err.response?.status || 500;
+      setError({
+        code: errorCode,
+        message: err.message || 'Failed to fetch product',
+      });
+      throw err;
+    }
+  }, [products]);
 
-    return {
-        // Data
-        products,
-        product,
-        loading,
-        error,
-        pagination,
-        filters,
-        
-        // CRUD
-        createProduct,
-        updateProduct,
-        deleteProduct,
-        deleteProducts,
-        deleteAllProducts,
-        
-        // Actions
-        downloadProduct,
-        exportCSV,
-        exportExcel,
-        fetchProducts,
-        fetchProduct
-    };
+  const exportExcel = useCallback(async () => {
+    try {
+      const blob = await productActions.exportProductsToExcel(products);
+      const url = window.URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = `products-${new Date().toISOString().split('T')[0]}.xlsx`;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      window.URL.revokeObjectURL(url);
+      return true;
+    } catch (err) {
+      const errorCode = err.status || err.response?.status || 500;
+      setError({
+        code: errorCode,
+        message: err.message || 'Failed to fetch product',
+      });
+      throw err;
+    }
+  }, [products]);
+
+  // =============================================================================
+  // RETURN EVERYTHING
+  // =============================================================================
+
+  return {
+    // Data
+    products,
+    product,
+    loading,
+    error,
+    pagination,
+    filters,
+
+    // CRUD
+    createProduct,
+    updateProduct,
+    deleteProduct,
+    deleteProducts,
+    deleteAllProducts,
+
+    // Actions
+    downloadProduct,
+    exportCSV,
+    exportExcel,
+    fetchProducts,
+    fetchProduct,
+  };
 }
 
 export default useProducts;

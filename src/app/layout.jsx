@@ -21,8 +21,7 @@ import { SettingsDrawer, defaultSettings, SettingsProvider } from 'src/component
 import { AuthProvider as JwtAuthProvider } from 'src/auth/context/jwt';
 // ----------------------------------------------------------------------
 
-const AuthProvider =
-  JwtAuthProvider;
+const AuthProvider = JwtAuthProvider;
 
 export const viewport = {
   width: 'device-width',
@@ -31,7 +30,6 @@ export const viewport = {
 };
 
 export default async function RootLayout({ children }) {
-
   const lang = CONFIG.isStaticExport ? 'en' : await detectLanguage();
 
   const settings = CONFIG.isStaticExport ? defaultSettings : await detectSettings();
@@ -46,12 +44,13 @@ export default async function RootLayout({ children }) {
             <AuthProvider>
               <SettingsProvider
                 settings={settings}
-                caches={CONFIG.isStaticExport ? 'localStorage' : 'cookie'}>
+                caches={CONFIG.isStaticExport ? 'localStorage' : 'cookie'}
+              >
                 <ThemeProvider>
                   <MotionLazy>
                     <Snackbar />
                     <ProgressBar />
-                    <SettingsDrawer hideNavLayout={true} hideNavColor={true}/>
+                    <SettingsDrawer hideNavLayout hideNavColor />
                     {children}
                   </MotionLazy>
                 </ThemeProvider>

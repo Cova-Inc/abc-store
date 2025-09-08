@@ -2,18 +2,21 @@
 
 import { m } from 'framer-motion';
 import PropTypes from 'prop-types';
-import Container from '@mui/material/Container';
-import { SimpleLayout } from 'src/layouts/simple';
+
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
+import Container from '@mui/material/Container';
 import Typography from '@mui/material/Typography';
+
+import { SimpleLayout } from 'src/layouts/simple';
 import {
-  PageNotFoundIllustration,
   ForbiddenIllustration,
-  ServerErrorIllustration
+  ServerErrorIllustration,
+  PageNotFoundIllustration,
 } from 'src/assets/illustrations';
 
 import { varBounce, MotionContainer } from 'src/components/animate';
+
 import { Iconify } from '../iconify';
 
 // ----------------------------------------------------------------------
@@ -21,7 +24,8 @@ import { Iconify } from '../iconify';
 const ERROR_CONFIGS = {
   403: {
     title: 'No permission',
-    description: "You don't have permission to access this resource. Please contact your administrator.",
+    description:
+      "You don't have permission to access this resource. Please contact your administrator.",
     illustration: ForbiddenIllustration,
   },
   404: {
@@ -60,23 +64,27 @@ export function ErrorSection({
   const finalDescription = description || config.description;
 
   return (
-    <SimpleLayout content={{ compact: true }} sx={sx} header={action || onAction ? (
-      <Box sx={{ display: 'flex', justifyContent: 'flex-start', p: 2 }}>
-        {action || onAction ? (
-          <Button onClick={onAction} size="large" startIcon={icon} >
-            {actionText}
-          </Button>
-        ) : null}
-      </Box>
-    ) : null}>
-
+    <SimpleLayout
+      content={{ compact: true }}
+      sx={sx}
+      header={
+        action || onAction ? (
+          <Box sx={{ display: 'flex', justifyContent: 'flex-start', p: 2 }}>
+            {action || onAction ? (
+              <Button onClick={onAction} size="large" startIcon={icon}>
+                {actionText}
+              </Button>
+            ) : null}
+          </Box>
+        ) : null
+      }
+    >
       <Container component={MotionContainer}>
         <m.div variants={varBounce().in}>
           <Typography variant="h2" sx={{ mb: 2 }}>
             {finalTitle}
           </Typography>
         </m.div>
-
 
         {Illustration && (
           <m.div variants={varBounce().in}>
@@ -90,11 +98,8 @@ export function ErrorSection({
         )}
 
         <m.div variants={varBounce().in}>
-          <Typography sx={{ color: 'text.secondary', mb: 5 }}>
-            {finalDescription}
-          </Typography>
+          <Typography sx={{ color: 'text.secondary', mb: 5 }}>{finalDescription}</Typography>
         </m.div>
-
       </Container>
     </SimpleLayout>
   );
@@ -107,5 +112,5 @@ ErrorSection.propTypes = {
   action: PropTypes.node,
   onAction: PropTypes.func,
   actionText: PropTypes.string,
-  sx: PropTypes.object,
+  sx: PropTypes.oneOfType([PropTypes.object, PropTypes.func]),
 };

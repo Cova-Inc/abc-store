@@ -44,110 +44,105 @@ export function DashboardLayout({ sx, children, data }) {
   const isNavHorizontal = settings.navLayout === 'horizontal';
 
   const isNavVertical = isNavMini || settings.navLayout === 'vertical';
-  
+
   // Hide navigation for regular users since they only have access to Products page
   return (
-    <>
-
-      <LayoutSection
-        /** **************************************
-         * Header
-         *************************************** */
-        headerSection={
-          <HeaderBase
-            layoutQuery={layoutQuery}
-            disableElevation={isNavVertical}
-            onOpenNav={mobileNavOpen.onTrue}
-            data={{
-              nav: navData,
-              account: _account,
-            }}
-            slots={{
-              topArea: (
-                <Alert severity="info" sx={{ display: 'none', borderRadius: 0 }}>
-                  This is an info Alert.
-                </Alert>
-              ),
-        
-            }}
-            slotProps={{
-              toolbar: {
-                sx: {
+    <LayoutSection
+      /** **************************************
+       * Header
+       *************************************** */
+      headerSection={
+        <HeaderBase
+          layoutQuery={layoutQuery}
+          disableElevation={isNavVertical}
+          onOpenNav={mobileNavOpen.onTrue}
+          data={{
+            nav: navData,
+            account: _account,
+          }}
+          slots={{
+            topArea: (
+              <Alert severity="info" sx={{ display: 'none', borderRadius: 0 }}>
+                This is an info Alert.
+              </Alert>
+            ),
+          }}
+          slotProps={{
+            toolbar: {
+              sx: {
+                [`& [data-slot="logo"]`]: {
+                  display: 'none',
+                },
+                [`& [data-area="right"]`]: {
+                  gap: { xs: 0, sm: 0.75 },
+                },
+                ...(isNavHorizontal && {
+                  bgcolor: 'var(--layout-nav-bg)',
+                  [`& .${iconButtonClasses.root}`]: {
+                    color: 'var(--layout-nav-text-secondary-color)',
+                  },
+                  [theme.breakpoints.up(layoutQuery)]: {
+                    height: 'var(--layout-nav-horizontal-height)',
+                  },
+                  [`& [data-slot="workspaces"]`]: {
+                    color: 'var(--layout-nav-text-primary-color)',
+                  },
                   [`& [data-slot="logo"]`]: {
                     display: 'none',
-                  },
-                  [`& [data-area="right"]`]: {
-                    gap: { xs: 0, sm: 0.75 },
-                  },
-                  ...(isNavHorizontal && {
-                    bgcolor: 'var(--layout-nav-bg)',
-                    [`& .${iconButtonClasses.root}`]: {
-                      color: 'var(--layout-nav-text-secondary-color)',
-                    },
                     [theme.breakpoints.up(layoutQuery)]: {
-                      height: 'var(--layout-nav-horizontal-height)',
+                      display: 'inline-flex',
                     },
-                    [`& [data-slot="workspaces"]`]: {
-                      color: 'var(--layout-nav-text-primary-color)',
+                  },
+                  [`& [data-slot="divider"]`]: {
+                    [theme.breakpoints.up(layoutQuery)]: {
+                      display: 'flex',
                     },
-                    [`& [data-slot="logo"]`]: {
-                      display: 'none',
-                      [theme.breakpoints.up(layoutQuery)]: {
-                        display: 'inline-flex',
-                      },
-                    },
-                    [`& [data-slot="divider"]`]: {
-                      [theme.breakpoints.up(layoutQuery)]: {
-                        display: 'flex',
-                      },
-                    },
-                  }),
-                },
+                  },
+                }),
               },
-              container: {
-                maxWidth: false,
-                sx: {
-                  ...(isNavVertical && { px: { [layoutQuery]: 5 } }),
-                },
-              },
-            }}
-          />
-        }
-     
-        /** **************************************
-         * Footer
-         *************************************** */
-        footerSection={null}
-        /** **************************************
-         * Style
-         *************************************** */
-        cssVars={{
-          ...navColorVars.layout,
-          '--layout-transition-easing': 'linear',
-          '--layout-transition-duration': '120ms',
-          '--layout-nav-mini-width': '88px',
-          '--layout-nav-vertical-width': '300px',
-          '--layout-nav-horizontal-height': '64px',
-          '--layout-dashboard-content-pt': theme.spacing(1),
-          '--layout-dashboard-content-pb': theme.spacing(8),
-          '--layout-dashboard-content-px': theme.spacing(5),
-        }}
-        sx={{
-          [`& .${layoutClasses.hasSidebar}`]: {
-            [theme.breakpoints.up(layoutQuery)]: {
-              transition: theme.transitions.create(['padding-left'], {
-                easing: 'var(--layout-transition-easing)',
-                duration: 'var(--layout-transition-duration)',
-              }),
-              pl: isNavMini ? 'var(--layout-nav-mini-width)' : 'var(--layout-nav-vertical-width)',
             },
+            container: {
+              maxWidth: false,
+              sx: {
+                ...(isNavVertical && { px: { [layoutQuery]: 5 } }),
+              },
+            },
+          }}
+        />
+      }
+      /** **************************************
+       * Footer
+       *************************************** */
+      footerSection={null}
+      /** **************************************
+       * Style
+       *************************************** */
+      cssVars={{
+        ...navColorVars.layout,
+        '--layout-transition-easing': 'linear',
+        '--layout-transition-duration': '120ms',
+        '--layout-nav-mini-width': '88px',
+        '--layout-nav-vertical-width': '300px',
+        '--layout-nav-horizontal-height': '64px',
+        '--layout-dashboard-content-pt': theme.spacing(1),
+        '--layout-dashboard-content-pb': theme.spacing(8),
+        '--layout-dashboard-content-px': theme.spacing(5),
+      }}
+      sx={{
+        [`& .${layoutClasses.hasSidebar}`]: {
+          [theme.breakpoints.up(layoutQuery)]: {
+            transition: theme.transitions.create(['padding-left'], {
+              easing: 'var(--layout-transition-easing)',
+              duration: 'var(--layout-transition-duration)',
+            }),
+            pl: isNavMini ? 'var(--layout-nav-mini-width)' : 'var(--layout-nav-vertical-width)',
           },
-          ...sx,
-        }}
-      >
-        <Main isNavHorizontal={isNavHorizontal}>{children}</Main>
-      </LayoutSection>
-    </>
+        },
+        ...sx,
+      }}
+    >
+      <Main isNavHorizontal={isNavHorizontal}>{children}</Main>
+    </LayoutSection>
   );
 }
 

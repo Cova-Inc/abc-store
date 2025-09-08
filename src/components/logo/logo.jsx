@@ -28,9 +28,17 @@ export const Logo = forwardRef(
 
     /*
      * OR using local (public folder)
-     * const logo = 
+     * const logo =
      */
-    const logo = (<Box alt="logo" component="img" src={`${CONFIG.site.basePath}/logo/logo.png`} width={width} height={height} />);
+    const logo = (
+      <Box
+        alt="logo"
+        component="img"
+        src={`${CONFIG.site.basePath}/logo/logo.png`}
+        width={width}
+        height={height}
+      />
+    );
 
     // const logo = (
     //   <svg xmlns="http://www.w3.org/2000/svg" width="100%" height="100%" viewBox="0 0 512 512">

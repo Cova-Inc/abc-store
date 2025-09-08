@@ -5,7 +5,6 @@ import { LoadingButton } from '@mui/lab';
 import { signOut } from 'src/auth/context/jwt/action';
 
 export function SignOutButton({ onClose, ...other }) {
-
   const handleLogout = useCallback(async () => {
     try {
       await signOut?.();
@@ -16,7 +15,14 @@ export function SignOutButton({ onClose, ...other }) {
   }, [onClose]);
 
   return (
-    <LoadingButton fullWidth variant="soft" size="large" color="error" onClick={handleLogout} {...other}>
+    <LoadingButton
+      fullWidth
+      variant="soft"
+      size="large"
+      color="error"
+      onClick={handleLogout}
+      {...other}
+    >
       Logout
     </LoadingButton>
   );

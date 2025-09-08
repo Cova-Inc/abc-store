@@ -47,7 +47,7 @@ export const signUp = async ({ email, password, name, confirmPassword }) => {
     }
 
     setSession(accessToken);
-    
+
     return { user, accessToken };
   } catch (error) {
     console.error('Error during sign up:', error);
@@ -62,10 +62,10 @@ export const signOut = async () => {
   try {
     // Clear session and token
     await setSession(null);
-    
+
     // Clear any cached data
     sessionStorage.removeItem(STORAGE_KEY);
-    
+
     // Redirect to sign in page
     window.location.href = '/auth/jwt/sign-in';
   } catch (error) {

@@ -99,7 +99,7 @@ export function UserListView() {
   const renderHead = (
     <Box sx={{ p: 2.5, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
       <Typography variant="h6">User Management</Typography>
-      
+
       <Button
         component={RouterLink}
         href={paths.main.users.new}
@@ -139,11 +139,7 @@ export function UserListView() {
 
           <TableBody>
             {MOCK_USERS.map((user) => (
-              <TableRow
-                key={user.id}
-                hover
-                selected={selected.indexOf(user.id) !== -1}
-              >
+              <TableRow key={user.id} hover selected={selected.indexOf(user.id) !== -1}>
                 <TableCell padding="checkbox">
                   <Checkbox
                     checked={selected.indexOf(user.id) !== -1}
@@ -158,17 +154,11 @@ export function UserListView() {
                 <TableCell>{user.email}</TableCell>
 
                 <TableCell>
-                  <Label
-                    color={user.role === 'admin' ? 'error' : 'success'}
-                  >
-                    {user.role}
-                  </Label>
+                  <Label color={user.role === 'admin' ? 'error' : 'success'}>{user.role}</Label>
                 </TableCell>
 
                 <TableCell>
-                  <Label
-                    color={user.status === 'active' ? 'success' : 'warning'}
-                  >
+                  <Label color={user.status === 'active' ? 'success' : 'warning'}>
                     {user.status}
                   </Label>
                 </TableCell>
@@ -178,28 +168,19 @@ export function UserListView() {
                 <TableCell align="center">
                   <Box sx={{ display: 'flex', gap: 1, justifyContent: 'center' }}>
                     <Tooltip title="View">
-                      <IconButton
-                        component={RouterLink}
-                        href={paths.main.users.details(user.id)}
-                      >
+                      <IconButton component={RouterLink} href={paths.main.users.details(user.id)}>
                         <Iconify icon="solar:eye-bold" />
                       </IconButton>
                     </Tooltip>
 
                     <Tooltip title="Edit">
-                      <IconButton
-                        component={RouterLink}
-                        href={paths.main.users.edit(user.id)}
-                      >
+                      <IconButton component={RouterLink} href={paths.main.users.edit(user.id)}>
                         <Iconify icon="solar:pen-bold" />
                       </IconButton>
                     </Tooltip>
 
                     <Tooltip title="Delete">
-                      <IconButton
-                        color="error"
-                        onClick={confirm.onTrue}
-                      >
+                      <IconButton color="error" onClick={confirm.onTrue}>
                         <Iconify icon="solar:trash-bin-trash-bold" />
                       </IconButton>
                     </Tooltip>

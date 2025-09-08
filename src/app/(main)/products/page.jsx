@@ -7,9 +7,9 @@ import ProductListView from 'src/sections/products/view/product-list-view';
 // ----------------------------------------------------------------------
 
 export default function Page() {
-    return (
-        <Suspense fallback={<LoadingScreen />}>
-            <ProductListView />
-        </Suspense>
-    );
+  return (
+    <Suspense fallback={<LoadingScreen />}>
+      <ProductListView />
+    </Suspense>
+  );
 }

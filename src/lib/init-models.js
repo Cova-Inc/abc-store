@@ -4,4 +4,4 @@
 // Import all models to register them with Mongoose
 import '../models';
 
-console.log('✅ All Mongoose models have been registered'); 
+console.log('✅ All Mongoose models have been registered');

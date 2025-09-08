@@ -14,4 +14,4 @@ export { useScrollOffSetTop } from './use-scroll-offset-top';
 export { usePaginationScroll } from './use-pagination-scroll';
 export { usePreventScrollToTop } from './use-prevent-scroll-to-top';
 export { useCountdownDate, useCountdownSeconds } from './use-countdown';
-export { useScrollToTop, useScrollPreservation } from './use-scroll-preservation'; 
+export { useScrollToTop, useScrollPreservation } from './use-scroll-preservation';

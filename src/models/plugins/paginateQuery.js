@@ -11,7 +11,7 @@ export async function paginateQuery({
   customFilterHandler,
   select,
   sort = { createdAt: -1 },
-  enableCache = true
+  enableCache = true,
 }) {
   try {
     const { searchParams } = new URL(requestUrl);
@@ -24,7 +24,7 @@ export async function paginateQuery({
     const filterObj = decodeParam(filterEncoded);
     const filter = { ...filterObj };
 
-    console.log(filter)
+    console.log(filter);
     // Apply optional custom filter handler (e.g. for regex on name)
     if (typeof customFilterHandler === 'function') {
       customFilterHandler(filter);
@@ -60,7 +60,7 @@ export async function paginateQuery({
     if (enableCache && cacheKey) {
       QUERY_CACHE.set(cacheKey, {
         data: result,
-        timestamp: Date.now()
+        timestamp: Date.now(),
       });
 
       // Clean up old cache entries

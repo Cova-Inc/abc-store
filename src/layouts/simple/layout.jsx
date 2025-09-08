@@ -1,11 +1,8 @@
 'use client';
 
-import Alert from '@mui/material/Alert';
-
 import { useBoolean } from 'src/hooks/use-boolean';
 
 import { Main, CompactContent } from './main';
-import { HeaderBase } from '../core/header-base';
 import { LayoutSection } from '../core/layout-section';
 
 // ----------------------------------------------------------------------

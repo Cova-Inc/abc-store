@@ -54,4 +54,4 @@ UserSchema.index({ isActive: 1 });
 
 UserSchema.plugin(toJSON);
 
-export default mongoose.models.User || mongoose.model('User', UserSchema); 
+export default mongoose.models.User || mongoose.model('User', UserSchema);

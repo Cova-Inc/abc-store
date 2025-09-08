@@ -45,7 +45,13 @@ export function Upload({
 
   const renderMultiPreview = hasFiles && (
     <>
-      <MultiFilePreview files={value} thumbnail={thumbnail} onRemove={onRemove} sx={{ my: 3 }} slotProps={other?.slotProps} />
+      <MultiFilePreview
+        files={value}
+        thumbnail={thumbnail}
+        onRemove={onRemove}
+        sx={{ my: 3 }}
+        slotProps={other?.slotProps}
+      />
 
       {(onRemoveAll || onUpload) && (
         <Stack direction="row" justifyContent="flex-end" spacing={1.5}>

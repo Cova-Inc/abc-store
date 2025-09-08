@@ -22,18 +22,12 @@ export async function POST(req) {
 
     // Validation
     if (!name || !email || !password || !confirmPassword) {
-      return NextResponse.json(
-        { message: 'All fields are required' },
-        { status: 400 }
-      );
+      return NextResponse.json({ message: 'All fields are required' }, { status: 400 });
     }
 
     // Check if passwords match
     if (password !== confirmPassword) {
-      return NextResponse.json(
-        { message: 'Passwords do not match' },
-        { status: 400 }
-      );
+      return NextResponse.json({ message: 'Passwords do not match' }, { status: 400 });
     }
 
     // Password strength validation
@@ -56,10 +50,7 @@ export async function POST(req) {
     // Check if user already exists
     const existingUser = await User.findOne({ email: email.toLowerCase() });
     if (existingUser) {
-      return NextResponse.json(
-        { message: 'User with this email already exists' },
-        { status: 409 }
-      );
+      return NextResponse.json({ message: 'User with this email already exists' }, { status: 409 });
     }
 
     // Hash password
@@ -112,24 +103,15 @@ export async function POST(req) {
 
     // Handle MongoDB validation errors
     if (error.name === 'ValidationError') {
-      const errors = Object.values(error.errors).map(err => err.message);
-      return NextResponse.json(
-        { message: 'Validation failed', errors },
-        { status: 400 }
-      );
+      const errors = Object.values(error.errors).map((err) => err.message);
+      return NextResponse.json({ message: 'Validation failed', errors }, { status: 400 });
     }
 
     // Handle duplicate key error
     if (error.code === 11000) {
-      return NextResponse.json(
-        { message: 'User with this email already exists' },
-        { status: 409 }
-      );
+      return NextResponse.json({ message: 'User with this email already exists' }, { status: 409 });
     }
 
-    return NextResponse.json(
-      { message: 'Internal server error' },
-      { status: 500 }
-    );
+    return NextResponse.json({ message: 'Internal server error' }, { status: 500 });
   }
 }

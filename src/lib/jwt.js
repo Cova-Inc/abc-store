@@ -10,10 +10,10 @@ const JWT_SECRET = process.env.JWT_SECRET || 'your-secret-key';
 export function verifyToken(token) {
   try {
     if (!token) return null;
-    
+
     // Remove 'Bearer ' prefix if present
     const cleanToken = token.replace(/^Bearer\s+/, '');
-    
+
     const decoded = jwt.verify(cleanToken, JWT_SECRET);
     return decoded;
   } catch (error) {
@@ -40,7 +40,7 @@ export function generateToken(payload, expiresIn = '24h') {
 export function extractTokenFromRequest(req) {
   const authHeader = req.headers.get('authorization');
   if (!authHeader) return null;
-  
+
   return authHeader.replace(/^Bearer\s+/, '');
 }
 

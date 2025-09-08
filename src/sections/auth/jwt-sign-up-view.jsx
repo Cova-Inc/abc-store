@@ -27,23 +27,23 @@ import { signUp } from 'src/auth/context/jwt';
 import { useAuthContext } from 'src/auth/hooks';
 // ----------------------------------------------------------------------
 
-export const SignUpSchema = zod.object({
-  name: zod.string().min(1, { message: 'Display name is required!' }),
-  email: zod
-    .string()
-    .min(1, { message: 'Email is required!' })
-    .email({ message: 'Email must be a valid email address!' }),
-  password: zod
-    .string()
-    .min(1, { message: 'Password is required!' })
-    .min(6, { message: 'Password must be at least 6 characters!' }),
-  confirmPassword: zod
-    .string()
-    .min(1, { message: 'Please confirm your password!' }),
-}).refine((data) => data.password === data.confirmPassword, {
-  message: "Passwords don't match",
-  path: ["confirmPassword"],
-});
+export const SignUpSchema = zod
+  .object({
+    name: zod.string().min(1, { message: 'Display name is required!' }),
+    email: zod
+      .string()
+      .min(1, { message: 'Email is required!' })
+      .email({ message: 'Email must be a valid email address!' }),
+    password: zod
+      .string()
+      .min(1, { message: 'Password is required!' })
+      .min(6, { message: 'Password must be at least 6 characters!' }),
+    confirmPassword: zod.string().min(1, { message: 'Please confirm your password!' }),
+  })
+  .refine((data) => data.password === data.confirmPassword, {
+    message: "Passwords don't match",
+    path: ['confirmPassword'],
+  });
 
 // ----------------------------------------------------------------------
 
@@ -82,7 +82,7 @@ export function JwtSignUpView() {
         confirmPassword: data.confirmPassword,
       });
       await checkUserSession?.();
-      
+
       toast.success('Account created successfully!');
       router.push(paths.main.products.root);
     } catch (error) {
@@ -109,18 +109,18 @@ export function JwtSignUpView() {
 
   const renderForm = (
     <Stack spacing={3}>
-      <Field.Text 
-        name="name" 
-        label="Display Name" 
+      <Field.Text
+        name="name"
+        label="Display Name"
         placeholder="Enter your display name"
-        InputLabelProps={{ shrink: true }} 
+        InputLabelProps={{ shrink: true }}
       />
 
-      <Field.Text 
-        name="email" 
-        label="Email address" 
+      <Field.Text
+        name="email"
+        label="Email address"
         placeholder="Enter your email address"
-        InputLabelProps={{ shrink: true }} 
+        InputLabelProps={{ shrink: true }}
       />
 
       <Field.Text

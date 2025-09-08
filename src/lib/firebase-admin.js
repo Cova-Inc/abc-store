@@ -16,9 +16,9 @@ const firebaseAdminKey = {
 };
 
 if (!admin.apps.length) {
-    admin.initializeApp({
-        credential: admin.credential.cert(firebaseAdminKey),
-    });
+  admin.initializeApp({
+    credential: admin.credential.cert(firebaseAdminKey),
+  });
 }
 
 export const firebaseAdmin = admin;

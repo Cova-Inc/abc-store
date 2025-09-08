@@ -7,5 +7,5 @@ import { CommonPagination } from 'src/components/pagination';
 // ----------------------------------------------------------------------
 
 export function CommonListPagination(props) {
-    return <CommonPagination {...props} />;
-} 
+  return <CommonPagination {...props} />;
+}

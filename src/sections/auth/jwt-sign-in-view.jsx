@@ -74,7 +74,8 @@ export function JwtSignInView() {
       router.push(paths.main.products.root);
     } catch (error) {
       console.error(error);
-      const errorMessage = error?.response?.data?.message || error?.message || 'Login failed. Please try again.';
+      const errorMessage =
+        error?.response?.data?.message || error?.message || 'Login failed. Please try again.';
       setErrorMsg(errorMessage);
     }
   });
@@ -97,11 +98,11 @@ export function JwtSignInView() {
 
   const renderForm = (
     <Stack spacing={3}>
-      <Field.Text 
-        name="email" 
+      <Field.Text
+        name="email"
         label="Email address"
         placeholder="Enter your email address"
-        InputLabelProps={{ shrink: true }} 
+        InputLabelProps={{ shrink: true }}
       />
 
       <Stack spacing={1.5}>

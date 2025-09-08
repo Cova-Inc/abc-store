@@ -16,32 +16,23 @@ export async function POST(req) {
 
     // Validation
     if (!email || !password) {
-      return NextResponse.json(
-        { message: 'Email and password are required' },
-        { status: 400 }
-      );
+      return NextResponse.json({ message: 'Email and password are required' }, { status: 400 });
     }
 
     // Find user by email
-    const user = await User.findOne({ 
+    const user = await User.findOne({
       email: email.toLowerCase().trim(),
-      isActive: true 
+      isActive: true,
     });
 
     if (!user) {
-      return NextResponse.json(
-        { message: 'Invalid email or password' },
-        { status: 401 }
-      );
+      return NextResponse.json({ message: 'Invalid email or password' }, { status: 401 });
     }
 
     // Verify password
     const isPasswordValid = await bcrypt.compare(password, user.passwordHash);
     if (!isPasswordValid) {
-      return NextResponse.json(
-        { message: 'Invalid email or password' },
-        { status: 401 }
-      );
+      return NextResponse.json({ message: 'Invalid email or password' }, { status: 401 });
     }
 
     // Generate JWT token
@@ -72,9 +63,6 @@ export async function POST(req) {
     });
   } catch (error) {
     console.error('Signin error:', error);
-    return NextResponse.json(
-      { message: 'Internal server error' },
-      { status: 500 }
-    );
+    return NextResponse.json({ message: 'Internal server error' }, { status: 500 });
   }
 }

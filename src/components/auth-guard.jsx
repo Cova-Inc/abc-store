@@ -30,19 +30,20 @@ export function AuthGuard({ children, requireAuth = true, allowedRoles = [] }) {
     if (!requireAuth && user) {
       // User is authenticated but shouldn't be on this page (e.g., auth pages)
       router.push('/');
-      
     }
   }, [user, loading, requireAuth, allowedRoles, router]);
 
   // Show loading while checking authentication
   if (loading) {
     return (
-      <div style={{ 
-        display: 'flex', 
-        justifyContent: 'center', 
-        alignItems: 'center', 
-        height: '100vh' 
-      }}>
+      <div
+        style={{
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center',
+          height: '100vh',
+        }}
+      >
         Loading...
       </div>
     );

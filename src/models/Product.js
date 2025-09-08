@@ -1,11 +1,10 @@
 import mongoose from 'mongoose';
 
 import { toJSON } from './plugins';
-
 import { PRODUCT_STATUS_OPTIONS, PRODUCT_CATEGORY_OPTIONS } from '../config-global';
 
-const enumCategories = PRODUCT_CATEGORY_OPTIONS.map(option => option.value);
-const enumStatuses = PRODUCT_STATUS_OPTIONS.map(option => option.value);
+const enumCategories = PRODUCT_CATEGORY_OPTIONS.map((option) => option.value);
+const enumStatuses = PRODUCT_STATUS_OPTIONS.map((option) => option.value);
 // Product schema for ABC Store
 // Core fields: name, description, images, price, category
 const ProductSchema = new mongoose.Schema(
@@ -57,7 +56,7 @@ const ProductSchema = new mongoose.Schema(
       min: [0, 'Original price cannot be negative'],
       default: 0,
       validate: {
-        validator: function(value) {
+        validator(value) {
           // Only validate if originalPrice is greater than 0 (0 means no discount)
           if (value > 0) {
             // originalPrice should be >= price if both exist
@@ -67,8 +66,8 @@ const ProductSchema = new mongoose.Schema(
           }
           return true;
         },
-        message: 'Original price should be greater than or equal to current price'
-      }
+        message: 'Original price should be greater than or equal to current price',
+      },
     },
     category: {
       type: String,
@@ -124,7 +123,7 @@ ProductSchema.index({ createdAt: -1 }); // Recent products
 
 // Virtual for primary image
 ProductSchema.virtual('primaryImage').get(function () {
-  const primaryImg = this.images.find(img => img.isPrimary);
+  const primaryImg = this.images.find((img) => img.isPrimary);
   return primaryImg || this.images[0] || null;
 });
 
@@ -132,14 +131,14 @@ ProductSchema.virtual('primaryImage').get(function () {
 ProductSchema.pre('save', function (next) {
   if (this.images && this.images.length > 0) {
     // If no primary image is set, make the first one primary
-    const hasPrimary = this.images.some(img => img.isPrimary);
+    const hasPrimary = this.images.some((img) => img.isPrimary);
     if (!hasPrimary) {
       this.images[0].isPrimary = true;
     }
-    
+
     // Ensure only one primary image
     let primaryCount = 0;
-    this.images.forEach(img => {
+    this.images.forEach((img) => {
       if (img.isPrimary) {
         primaryCount++;
         if (primaryCount > 1) {

@@ -65,7 +65,14 @@ export function NavUpgrade({ sx, ...other }) {
           </Typography>
         </Stack>
 
-        <SignOutButton variant="contained" target="_blank" fullWidth={false} size="mediumn" rel="noopener" color="inherit" />
+        <SignOutButton
+          variant="contained"
+          target="_blank"
+          fullWidth={false}
+          size="mediumn"
+          rel="noopener"
+          color="inherit"
+        />
         {/* <Button variant="contained" href={paths.minimalStore} target="_blank" rel="noopener">
           Logout
         </Button> */}
