@@ -180,7 +180,7 @@ Create a `.env.local` file in the root directory:
 
 ```env
 # Database
-MONGODB_URI=mongodb://localhost:27017/cova-admin
+MONGODB_URI=mongodb://localhost:27017/abc-store
 JWT_SECRET=your-jwt-secret-key
 
 # Next.js
@@ -290,9 +290,9 @@ pm2 save
 Other PM2 commands:
 ```bash
 pm2 list                    # Show running processes
-pm2 logs cova-backend      # View logs
-pm2 stop cova-backend      # Stop the process
-pm2 restart cova-backend   # Restart the process
-pm2 delete cova-backend    # Remove from PM2
+pm2 logs abc-store      # View logs
+pm2 stop abc-store      # Stop the process
+pm2 restart abc-store   # Restart the process
+pm2 delete abc-store    # Remove from PM2
 pm2 startup               # Setup PM2 to start on system boot
 ```
