@@ -39,7 +39,7 @@ server {
 
     # Serve uploaded images directly from nginx (much faster than Node.js)
     location /uploads/ {
-        alias /home/administrator/abc-store/public/uploads/;
+        alias /var/www/html/uploads/;
         expires 30d;
         add_header Cache-Control "public, immutable";
         

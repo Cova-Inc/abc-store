@@ -1,6 +1,6 @@
 import { z } from 'zod';
 
-import { PRODUCT_STATUS_OPTIONS, PRODUCT_CATEGORY_OPTIONS } from '../../config-global';
+import { PRODUCT_STATUS_OPTIONS, PRODUCT_CATEGORY_OPTIONS, MAX_UPLOAD_SIZE } from '../../config-global';
 
 // Dynamically get allowed values from config
 const enumCategories = PRODUCT_CATEGORY_OPTIONS.map((option) => option.value);
@@ -68,7 +68,7 @@ const BaseProductSchema = z.object({
         return images.every((image) => {
           // Only validate File objects in browser environment
           if (typeof File !== 'undefined' && image instanceof File) {
-            return image.size <= 3145728; // 3MB
+            return image.size <= MAX_UPLOAD_SIZE; // 50MB
           }
           // Strings (URLs) or objects are considered valid
           return true;

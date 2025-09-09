@@ -3,6 +3,7 @@ import sharp from 'sharp';
 import multer from 'multer';
 import fs from 'fs/promises';
 import { v4 as uuidv4 } from 'uuid';
+import { MAX_UPLOAD_SIZE } from 'src/config-global';
 
 // Use environment-specific upload directory
 const UPLOAD_DIR = process.env.NODE_ENV === 'production' && process.env.UPLOAD_DIR
@@ -37,7 +38,7 @@ export const upload = multer({
   storage,
   fileFilter,
   limits: {
-    fileSize: 5 * 1024 * 1024, // 5MB limit
+    fileSize: MAX_UPLOAD_SIZE, // 50MB limit
   },
 });
 

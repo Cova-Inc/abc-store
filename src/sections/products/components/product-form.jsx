@@ -18,7 +18,7 @@ import {
   Autocomplete,
 } from '@mui/material';
 
-import { PRODUCT_STATUS_OPTIONS, PRODUCT_CATEGORY_OPTIONS } from 'src/config-global';
+import { PRODUCT_STATUS_OPTIONS, PRODUCT_CATEGORY_OPTIONS, MAX_UPLOAD_SIZE } from 'src/config-global';
 
 import { Field } from 'src/components/hook-form';
 
@@ -133,12 +133,12 @@ export function ProductForm({
                 accept={{
                   'image/*': ['.jpeg', '.jpg', '.png', '.gif', '.bmp', '.webp'],
                 }}
-                maxSize={3145728} // 3MB
+                maxSize={MAX_UPLOAD_SIZE} // 50MB
                 multiple
                 onDrop={handleImageDrop}
                 helperText={
                   <Typography variant="caption" color="text.secondary">
-                    Max 10 images, 3MB each, JPG, PNG, GIF, BMP, WEBP
+                    Max 10 images, 50MB each, JPG, PNG, GIF, BMP, WEBP
                   </Typography>
                 }
                 // files={images}

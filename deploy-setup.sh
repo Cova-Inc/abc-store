@@ -17,6 +17,15 @@ echo "📁 Creating upload directory..."
 mkdir -p /var/www/html/uploads/products
 chown -R www-data:www-data /var/www/html/uploads
 chmod -R 755 /var/www/html/uploads
+
+sudo groupadd uploads 2>/dev/null || true
+sudo usermod -aG uploads administrator
+sudo usermod -aG uploads www-data
+
+# Set ownership to the shared group and grant group write
+sudo chown -R administrator:uploads /var/www/html/uploads
+sudo chmod -R 2775 /var/www/html/uploads
+
 echo "✅ Upload directory created at /var/www/html/uploads/products"
 
 # Check if nginx is installed
@@ -44,6 +53,7 @@ else
 fi
 
 sudo ln -sf /etc/nginx/sites-available/abc-store /etc/nginx/sites-enabled/abc-store
+sudo rm -f /etc/nginx/sites-enabled/default
 sudo nginx -t
 sudo systemctl reload nginx
 
