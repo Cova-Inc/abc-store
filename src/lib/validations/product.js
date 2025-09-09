@@ -116,7 +116,7 @@ export const CreateProductSchema = BaseProductSchema.refine(
     return true;
   },
   {
-    message: 'Original price must be greater than or equal to current price',
+    message: '元の価格は現在の値段以上でなければなりません。',
     path: ['originalPrice'],
   }
 );
@@ -131,7 +131,7 @@ export const UpdateProductSchema = BaseProductSchema.partial().refine(
     return true;
   },
   {
-    message: 'Original price must be greater than or equal to current price',
+    message: '元の価格は現在の値段以上でなければなりません。',
     path: ['originalPrice'],
   }
 );

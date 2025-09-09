@@ -265,8 +265,8 @@ export default function ProductListView() {
           filterValue={categoryFilter}
           setFilterValue={setCategoryFilter}
           filterOptions={PRODUCT_CATEGORY_OPTIONS}
-          filterLabel="Category"
-          placeholder="Search products..."
+          filterLabel="カテゴリー"
+          placeholder="商品を検索..."
           searchInput={searchInput}
           setSearchInput={setSearchInput}
           onFilter={applyFilter}
