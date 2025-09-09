@@ -100,8 +100,8 @@ export function JwtSignInView() {
     <Stack spacing={3}>
       <Field.Text
         name="email"
-        label="Email address"
-        placeholder="Enter your email address"
+        label="メールアドレス"
+        placeholder="メールアドレスを入力してください"
         InputLabelProps={{ shrink: true }}
       />
 
@@ -118,8 +118,8 @@ export function JwtSignInView() {
 
         <Field.Text
           name="password"
-          label="Password"
-          placeholder="Enter your password"
+          label="パスワード"
+          placeholder="パスワードを入力してください"
           type={password.value ? 'text' : 'password'}
           InputLabelProps={{ shrink: true }}
           InputProps={{
@@ -143,7 +143,7 @@ export function JwtSignInView() {
         loading={isSubmitting}
         loadingPosition="end"
       >
-        Sign in
+        ログイン
       </LoadingButton>
     </Stack>
   );

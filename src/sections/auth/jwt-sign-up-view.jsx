@@ -101,7 +101,7 @@ export function JwtSignUpView() {
         </Typography>
 
         <Link component={RouterLink} href={paths.auth.jwt.signIn} variant="subtitle2">
-          Sign in
+          ログイン
         </Link>
       </Stack>
     </Stack>
@@ -118,14 +118,14 @@ export function JwtSignUpView() {
 
       <Field.Text
         name="email"
-        label="Email address"
+        label="メールアドレス"
         placeholder="Enter your email address"
         InputLabelProps={{ shrink: true }}
       />
 
       <Field.Text
         name="password"
-        label="Password"
+        label="パスワード"
         placeholder="6+ characters"
         type={password.value ? 'text' : 'password'}
         InputLabelProps={{ shrink: true }}
@@ -142,7 +142,7 @@ export function JwtSignUpView() {
 
       <Field.Text
         name="confirmPassword"
-        label="Confirm Password"
+        label="パスワードの確認"
         placeholder="Confirm your password"
         type={password.value ? 'text' : 'password'}
         InputLabelProps={{ shrink: true }}
@@ -166,7 +166,7 @@ export function JwtSignUpView() {
         loading={isSubmitting}
         loadingPosition="end"
       >
-        Create account
+        登録
       </LoadingButton>
     </Stack>
   );

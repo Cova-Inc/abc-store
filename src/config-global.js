@@ -26,26 +26,24 @@ export const CONFIG = {
 
 // Product configuration
 export const PRODUCT_CATEGORY_OPTIONS = [
-  { value: 'electronics', label: 'Electronics' },
-  { value: 'clothing', label: 'Clothing' },
-  { value: 'books', label: 'Books' },
-  { value: 'home', label: 'Home & Garden' },
-  { value: 'sports', label: 'Sports' },
-  { value: 'beauty', label: 'Beauty' },
-  { value: 'toys', label: 'Toys' },
-  { value: 'automotive', label: 'Automotive' },
+  { value: 'electronics', label: '家電' },
+  { value: 'books', label: '本' },
+  { value: 'sports', label: 'スポーツ' },
+  { value: 'beauty', label: 'コスメ' },
+  { value: 'shoes', label: '靴' },
+  { value: 'underwear', label: '下着' },
 ];
 
 export const PRODUCT_STATUS_OPTIONS = [
-  { value: 'approved', label: 'Approved', color: 'success' },
-  { value: 'declined', label: 'Declined', color: 'error' },
-  { value: 'draft', label: 'Draft', color: 'info' },
+  { value: 'approved', label: '承認済み', color: 'success' },
+  { value: 'declined', label: '拒否', color: 'error' },
+  { value: 'draft', label: '承認待ち', color: 'info' },
 ];
 
 export const PRODUCT_FILTER_FIELD_OPTIONS = [
-  { value: 'name', label: 'Product Name' },
-  { value: 'description', label: 'Description' },
+  { value: 'name', label: '商品名' },
+  { value: 'description', label: '説明' },
   { value: 'sku', label: 'SKU' },
-  { value: 'category', label: 'Category' },
-  { value: 'tags', label: 'Tags' },
+  { value: 'category', label: 'カテゴリー' },
+  { value: 'tags', label: 'タグ' },
 ];
