@@ -248,3 +248,51 @@ This project is private and not licensed for public use.
 ---
 
 **NOTE:** When copying folders, remember to also copy hidden files like `.env`. These files contain environment variables crucial for the application to function properly.
+
+
+### Production
+## run backend as production
+
+First, install PM2 globally:
+```bash
+npm install -g pm2
+```
+
+Then create a PM2 ecosystem file `ecosystem.config.cjs` in root:
+
+```cjs
+module.exports = {
+  apps: [
+    {
+      name: "abc-store",
+      script: "npm",
+      args: "start",            // runs your "start" script (Next.js -> starts on 3000 by default)
+      cwd: "/home/administrator/abc-store",// set to your app path (Windows e.g. "C:/apps/abc-store")
+      env: {
+        NODE_ENV: "production",
+        PORT: 3000,
+      },
+      instances: 4,             // or "max" for all CPU cores
+      exec_mode: "fork",        // or "cluster" for stateless apps
+      watch: false,             // keep false in prod
+      max_memory_restart: "1G"
+    }
+  ]
+}
+
+```
+Start as daemon:
+```bash
+pm2 start ecosystem.config.cjs
+pm2 save
+```
+
+Other PM2 commands:
+```bash
+pm2 list                    # Show running processes
+pm2 logs cova-backend      # View logs
+pm2 stop cova-backend      # Stop the process
+pm2 restart cova-backend   # Restart the process
+pm2 delete cova-backend    # Remove from PM2
+pm2 startup               # Setup PM2 to start on system boot
+```
