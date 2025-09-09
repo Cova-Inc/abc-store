@@ -157,7 +157,7 @@ export default function ProductEditView({ params }) {
           size="large"
           startIcon={<Iconify icon="eva:arrow-back-fill" />}
         >
-          Back
+          戻る
         </Button>
       </Stack>
 
@@ -166,7 +166,7 @@ export default function ProductEditView({ params }) {
         <Box>
           <Typography variant="h4">Edit Product</Typography>
           <Typography variant="body2" sx={{ color: 'text.secondary' }}>
-            Fill in the details below to update the product.
+            以下の詳細を入力して、製品を更新してください。
           </Typography>
         </Box>
         <Divider sx={{ my: 2, borderStyle: 'dashed' }} />

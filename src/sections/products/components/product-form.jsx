@@ -161,12 +161,12 @@ export function ProductForm({
               {/* Basic Information */}
               <Box>
                 <Typography variant="h6" gutterBottom>
-                  Basic Information
+                  基本情報
                 </Typography>
                 <Stack spacing={2}>
                   <Field.Text
                     name="name"
-                    label="Product Name"
+                    label="商品名"
                     placeholder="Enter product name"
                     error={!!errors.name}
                     helperText={errors.name?.message}
@@ -174,7 +174,7 @@ export function ProductForm({
 
                   <Field.Text
                     name="description"
-                    label="Description"
+                    label="説明"
                     multiline
                     rows={3}
                     placeholder="Enter product description"
@@ -218,17 +218,17 @@ export function ProductForm({
               {/* Pricing */}
               <Box>
                 <Typography variant="h6" gutterBottom>
-                  Pricing
+                  価格設定
                 </Typography>
                 <Grid container spacing={2}>
                   <Grid item xs={12} sm={6}>
                     <Field.Text
                       name="price"
-                      label="Price"
+                      label="値段"
                       type="number"
                       placeholder="0.00"
                       InputProps={{
-                        startAdornment: '$',
+                        startAdornment: '¥',
                       }}
                       error={!!errors.price}
                       helperText={errors.price?.message}
@@ -237,11 +237,11 @@ export function ProductForm({
                   <Grid item xs={12} sm={6}>
                     <Field.Text
                       name="originalPrice"
-                      label="Original Price (List Price)"
+                      label="元の価格（定価）"
                       type="number"
                       placeholder="0.00"
                       InputProps={{
-                        startAdornment: '$',
+                        startAdornment: '¥',
                       }}
                       error={!!errors.originalPrice}
                       helperText={
@@ -309,13 +309,13 @@ export function ProductForm({
               {/* Inventory */}
               <Box>
                 <Typography variant="h6" gutterBottom>
-                  Inventory
+                  在庫
                 </Typography>
                 <Grid container spacing={2}>
                   <Grid item xs={12} sm={6}>
                     <Field.Text
                       name="stock"
-                      label="Stock Quantity"
+                      label="在庫数量"
                       type="number"
                       placeholder="0"
                       error={!!errors.stock}
@@ -325,7 +325,7 @@ export function ProductForm({
                   <Grid item xs={12} sm={6}>
                     <Field.Select
                       name="category"
-                      label="Category"
+                      label="カテゴリー"
                       error={!!errors.category}
                       helperText={errors.category?.message}
                     >
@@ -344,7 +344,7 @@ export function ProductForm({
               {/* Tags */}
               <Box>
                 <Typography variant="h6" gutterBottom>
-                  Tags
+                  タグ
                 </Typography>
                 <Controller
                   name="tags"
@@ -373,11 +373,11 @@ export function ProductForm({
                       renderInput={(params) => (
                         <TextField
                           {...params}
-                          placeholder="Add tags... (press Enter to add custom tags)"
+                          placeholder="タグを追加...(Enterキーでカスタムタグを追加)"
                           error={!!errors.tags}
                           helperText={
                             errors.tags?.message ||
-                            'Select from suggestions or type and press Enter for custom tags'
+                            '候補から選択するか入力し、Enterキーでカスタムタグを追加'
                           }
                         />
                       )}
@@ -400,7 +400,7 @@ export function ProductForm({
               }}
               disabled={isSubmitting}
             >
-              Reset
+              リセット
             </Button>
             <LoadingButton
               type="submit"
@@ -408,7 +408,7 @@ export function ProductForm({
               loading={isSubmitting}
               disabled={!isDirty}
             >
-              {defaultValues ? 'Update Product' : 'Create Product'}
+              {defaultValues ? '商品を更新' : '商品を作成'}
             </LoadingButton>
           </Stack>
         </Box>

@@ -55,16 +55,16 @@ export default function ProductNewView() {
           size="large"
           startIcon={<Iconify icon="eva:arrow-back-fill" />}
         >
-          Back
+          戻る
         </Button>
       </Stack>
 
       {/* Product Form */}
       <Card sx={{ p: 3, mt: 3 }}>
         <Box>
-          <Typography variant="h4">New Product</Typography>
+          <Typography variant="h4">新しい商品</Typography>
           <Typography variant="body2" sx={{ color: 'text.secondary' }}>
-            Fill in the details below to add a new product.
+            以下の詳細を入力して新しい商品を追加してください。
           </Typography>
         </Box>
         <Divider sx={{ my: 2, borderStyle: 'dashed' }} />

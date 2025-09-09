@@ -170,7 +170,7 @@ export default function ProductDetailsView({ params }) {
       <Box sx={{ mb: 3 }}>
         <Stack direction="row" alignItems="center" spacing={2} justifyContent="space-between">
           <Button onClick={handleBack} startIcon={<Iconify icon="eva:arrow-back-fill" />}>
-            Back
+            戻る
           </Button>
 
           <Stack direction="row" alignItems="center" spacing={2}>
@@ -278,13 +278,13 @@ export default function ProductDetailsView({ params }) {
               <Grid container spacing={2}>
                 <Grid item xs={6}>
                   <Typography variant="body2" color="text.secondary">
-                    Stock Quantity
+                    在庫数量
                   </Typography>
                   <Typography variant="h6">{product.stock} units</Typography>
                 </Grid>
                 <Grid item xs={6}>
                   <Typography variant="body2" color="text.secondary">
-                    Category
+                    カテゴリー
                   </Typography>
                   <Typography variant="h6" sx={{ textTransform: 'capitalize' }}>
                     {product.category}
@@ -296,7 +296,7 @@ export default function ProductDetailsView({ params }) {
               {product.tags && product.tags.length > 0 && (
                 <Stack direction="column" spacing={1} flexWrap="wrap">
                   <Typography variant="body2" color="text.secondary">
-                    Tags
+                    タグ
                   </Typography>
                   <Stack direction="row" spacing={1} flexWrap="wrap">
                     {product.tags.map((tag) => (
@@ -345,14 +345,14 @@ export default function ProductDetailsView({ params }) {
         title="Delete Product"
         content={
           <>
-            Are you sure you want to delete <strong>{product?.name}</strong>?
+            本当に削除しますか <strong>{product?.name}</strong>?
             <br />
-            This action cannot be undone.
+            この操作は元に戻せません。
           </>
         }
         action={
           <Button variant="contained" color="error" onClick={handleDeleteConfirm}>
-            Delete
+            削除
           </Button>
         }
       />
