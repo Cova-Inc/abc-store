@@ -345,7 +345,7 @@ export default function ProductDetailsView({ params }) {
         title="Delete Product"
         content={
           <>
-            本当に削除しますか <strong>{product?.name}</strong>?
+            <strong>{product?.name}</strong>を本当に削除しますか?
             <br />
             この操作は元に戻せません。
           </>
