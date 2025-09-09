@@ -18,7 +18,7 @@ import {
   Autocomplete,
 } from '@mui/material';
 
-import { PRODUCT_STATUS_OPTIONS, PRODUCT_CATEGORY_OPTIONS, MAX_UPLOAD_SIZE } from 'src/config-global';
+import { MAX_UPLOAD_SIZE, PRODUCT_STATUS_OPTIONS, PRODUCT_CATEGORY_OPTIONS } from 'src/config-global';
 
 import { Field } from 'src/components/hook-form';
 

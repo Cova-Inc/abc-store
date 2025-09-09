@@ -1,6 +1,6 @@
 import { z } from 'zod';
 
-import { PRODUCT_STATUS_OPTIONS, PRODUCT_CATEGORY_OPTIONS, MAX_UPLOAD_SIZE } from '../../config-global';
+import { MAX_UPLOAD_SIZE, PRODUCT_STATUS_OPTIONS, PRODUCT_CATEGORY_OPTIONS } from '../../config-global';
 
 // Dynamically get allowed values from config
 const enumCategories = PRODUCT_CATEGORY_OPTIONS.map((option) => option.value);
