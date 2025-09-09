@@ -5,7 +5,7 @@ server {
     listen 80;
     listen [::]:80;
     # server_name your-domain.com www.your-domain.com;
-    server_name localhost _ 192.168.217.129;
+    server_name localhost _;
 
     # Set maximum upload size (adjust as needed)
     client_max_body_size 50M;
