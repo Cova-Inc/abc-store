@@ -120,7 +120,7 @@ export function ProductForm({
           <Grid item xs={12} md={4}>
             <Box>
               <Typography variant="subtitle2" gutterBottom>
-                Product Images (Max 10)
+                商品画像（最大10枚）
               </Typography>
               <Field.Upload
                 name="images"
@@ -159,6 +159,7 @@ export function ProductForm({
                 </Typography>
                 <Stack spacing={2}>
                   <Field.Text
+                    required
                     name="name"
                     label="商品名"
                     placeholder="Enter product name"
@@ -217,6 +218,7 @@ export function ProductForm({
                 <Grid container spacing={2}>
                   <Grid item xs={12} sm={6}>
                     <Field.Text
+                      required
                       name="price"
                       label="値段"
                       type="number"
@@ -240,7 +242,7 @@ export function ProductForm({
                       error={!!errors.originalPrice}
                       helperText={
                         errors.originalPrice?.message ||
-                        'Original price before discount (must be ≥ sale price)'
+                        '元の価格は現在の値段以上でなければありません。'
                       }
                     />
                   </Grid>

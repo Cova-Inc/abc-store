@@ -19,7 +19,7 @@ export function UploadPlaceholder({ ...other }) {
       <UploadIllustration hideBackground sx={{ width: 200 }} />
 
       <Stack spacing={1} sx={{ textAlign: 'center' }}>
-        <Box sx={{ typography: 'h6' }}>Drop or select file</Box>
+        <Box sx={{ typography: 'h6' }}>ドロップまたは選択</Box>
         <Box sx={{ typography: 'body2', color: 'text.secondary' }}>
           Drop files here or click to
           <Box
