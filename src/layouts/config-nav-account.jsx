@@ -22,6 +22,7 @@ export const _account = [
         />
       </SvgIcon>
     ),
+    roles: ['admin'],
   },
   {
     label: 'Products',

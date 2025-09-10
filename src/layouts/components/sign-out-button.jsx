@@ -23,7 +23,7 @@ export function SignOutButton({ onClose, ...other }) {
       onClick={handleLogout}
       {...other}
     >
-      Logout
+      ログアウト
     </LoadingButton>
   );
 }
