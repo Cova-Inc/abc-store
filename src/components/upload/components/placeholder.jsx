@@ -21,7 +21,8 @@ export function UploadPlaceholder({ ...other }) {
       <Stack spacing={1} sx={{ textAlign: 'center' }}>
         <Box sx={{ typography: 'h6' }}>ドロップまたは選択</Box>
         <Box sx={{ typography: 'body2', color: 'text.secondary' }}>
-          ここにドラッグ＆ドロップまたは<br></br>
+          ここにドラッグ＆ドロップまたは
+          <br />
           <Box
             component="span"
             sx={{ mx: 0.5, color: 'primary.main', textDecoration: 'underline' }}

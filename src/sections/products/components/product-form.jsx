@@ -158,60 +158,59 @@ export function ProductForm({
                 </Typography>
                 <Stack spacing={2}>
                   <Grid container spacing={2}>
-                  <Grid item xs={12} sm={6}>
-                  <Field.Text
-                    required
-                    name="name"
-                    label="商品名"
-                    placeholder="Enter product name"
-                    error={!!errors.name}
-                    helperText={errors.name?.message}
-                  />
-                  </Grid>
-                  <Grid item xs={12} sm={6}>
-                    <Field.Select
-                      required
-                      name="category"
-                      label="カテゴリー"
-                      error={!!errors.category}
-                      helperText={errors.category?.message}
-                    >
-                      {PRODUCT_CATEGORY_OPTIONS.map((option) => (
-                        <MenuItem key={option.value} value={option.value}>
-                          {option.label}
-                        </MenuItem>
-                      ))}
-                    </Field.Select>
-                  </Grid>
+                    <Grid item xs={12} sm={6}>
+                      <Field.Text
+                        required
+                        name="name"
+                        label="商品名"
+                        placeholder="Enter product name"
+                        error={!!errors.name}
+                        helperText={errors.name?.message}
+                      />
+                    </Grid>
+                    <Grid item xs={12} sm={6}>
+                      <Field.Select
+                        required
+                        name="category"
+                        label="カテゴリー"
+                        error={!!errors.category}
+                        helperText={errors.category?.message}
+                      >
+                        {PRODUCT_CATEGORY_OPTIONS.map((option) => (
+                          <MenuItem key={option.value} value={option.value}>
+                            {option.label}
+                          </MenuItem>
+                        ))}
+                      </Field.Select>
+                    </Grid>
                   </Grid>
                   <Grid container spacing={2}>
-                  <Grid item xs={12} sm={6}>
-                    <Field.Text
-                      required
-                      name="price"
-                      label="値段"
-                      type="number"
-                      placeholder="0.00"
-                      InputProps={{
-                        startAdornment: '¥',
-                      }}
-                      error={!!errors.price}
-                      helperText={errors.price?.message}
-                    />
+                    <Grid item xs={12} sm={6}>
+                      <Field.Text
+                        required
+                        name="price"
+                        label="値段"
+                        type="number"
+                        placeholder="0.00"
+                        InputProps={{
+                          startAdornment: '¥',
+                        }}
+                        error={!!errors.price}
+                        helperText={errors.price?.message}
+                      />
+                    </Grid>
+                    <Grid item xs={12} sm={6}>
+                      <Field.Text
+                        required
+                        name="stock"
+                        label="在庫数量"
+                        type="number"
+                        placeholder="1"
+                        error={!!errors.stock}
+                        helperText={errors.stock?.message}
+                      />
+                    </Grid>
                   </Grid>
-                  <Grid item xs={12} sm={6}>
-                    <Field.Text
-                      required
-                      name="stock"
-                      label="在庫数量"
-                      type="number"
-                      placeholder="1"
-                      error={!!errors.stock}
-                      helperText={errors.stock?.message}
-                    />
-                  </Grid>
-                  
-                </Grid>
 
                   <Field.Text
                     name="description"
@@ -314,13 +313,13 @@ export function ProductForm({
                 </Typography>
                 <Grid container spacing={2}>
                   <Grid item xs={12} sm={6}>
-                  <Field.Text
-                    name="supplier"
-                    label="仕入先"
-                    placeholder="仕入先を入力してください"
-                    error={!!errors.name}
-                    helperText={errors.name?.message}
-                  />
+                    <Field.Text
+                      name="supplier"
+                      label="仕入先"
+                      placeholder="仕入先を入力してください"
+                      error={!!errors.name}
+                      helperText={errors.name?.message}
+                    />
                   </Grid>
                   <Grid item xs={12} sm={6}>
                     <Field.Text
@@ -338,7 +337,6 @@ export function ProductForm({
                       }
                     />
                   </Grid>
-                  
                 </Grid>
               </Box>
 
