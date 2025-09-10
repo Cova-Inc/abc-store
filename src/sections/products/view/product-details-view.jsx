@@ -164,7 +164,9 @@ export default function ProductDetailsView({ params }) {
     color: 'default',
   };
 
-  const categoryConfig = PRODUCT_CATEGORY_OPTIONS.find((option) => option.value === product.category) || {
+  const categoryConfig = PRODUCT_CATEGORY_OPTIONS.find(
+    (option) => option.value === product.category
+  ) || {
     value: product?.category,
     label: product?.category,
   };

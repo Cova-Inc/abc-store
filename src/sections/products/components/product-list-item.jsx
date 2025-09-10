@@ -72,7 +72,9 @@ export function ProductListItem({
   };
 
   // Get category config for Japanese label
-  const categoryConfig = PRODUCT_CATEGORY_OPTIONS.find((option) => option.value === product.category) || {
+  const categoryConfig = PRODUCT_CATEGORY_OPTIONS.find(
+    (option) => option.value === product.category
+  ) || {
     value: product?.category,
     label: product?.category,
   };
