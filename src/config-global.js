@@ -26,12 +26,11 @@ export const CONFIG = {
 
 // Product configuration
 export const PRODUCT_CATEGORY_OPTIONS = [
-  { value: 'electronics', label: '家電' },
-  { value: 'books', label: '本' },
-  { value: 'sports', label: 'スポーツ' },
   { value: 'beauty', label: 'コスメ' },
   { value: 'shoes', label: '靴' },
   { value: 'underwear', label: '下着' },
+  { value: 'books', label: '本' },
+  { value: 'electronics', label: '家電' },
 ];
 
 export const PRODUCT_STATUS_OPTIONS = [
