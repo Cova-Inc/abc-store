@@ -383,7 +383,7 @@ export default function ProductListView() {
           confirmRows.onFalse();
           setProductToDelete(null);
         }}
-        title='商品を削除する'
+        title="商品を削除する"
         content={
           productToDelete
             ? `"${productToDelete.name}"を本当に削除しますか? この操作は元に戻せません。`

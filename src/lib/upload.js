@@ -7,9 +7,10 @@ import { v4 as uuidv4 } from 'uuid';
 import { MAX_UPLOAD_SIZE } from 'src/config-global';
 
 // Use environment-specific upload directory
-const UPLOAD_DIR = process.env.NODE_ENV === 'production' && process.env.UPLOAD_DIR
-  ? path.resolve(process.env.UPLOAD_DIR) // Production: /var/www/html/uploads/products
-  : path.join(process.cwd(), 'public', 'uploads', 'products'); // Development: ./public/uploads/products
+const UPLOAD_DIR =
+  process.env.NODE_ENV === 'production' && process.env.UPLOAD_DIR
+    ? path.resolve(process.env.UPLOAD_DIR) // Production: /var/www/html/uploads/products
+    : path.join(process.cwd(), 'public', 'uploads', 'products'); // Development: ./public/uploads/products
 
 // Ensure upload directory exists
 async function ensureUploadDir() {

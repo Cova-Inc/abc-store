@@ -18,18 +18,17 @@ import {
   Autocomplete,
 } from '@mui/material';
 
-import { MAX_UPLOAD_SIZE, PRODUCT_STATUS_OPTIONS, PRODUCT_CATEGORY_OPTIONS } from 'src/config-global';
+import {
+  MAX_UPLOAD_SIZE,
+  PRODUCT_STATUS_OPTIONS,
+  PRODUCT_CATEGORY_OPTIONS,
+} from 'src/config-global';
 
 import { Field } from 'src/components/hook-form';
 
 // ----------------------------------------------------------------------
 
-const PRODUCT_TAGS_OPTIONS = [
-  '新品',
-  '割引',
-  '皮',
-  '手作り',
-];
+const PRODUCT_TAGS_OPTIONS = ['新品', '割引', '皮', '手作り'];
 
 export function ProductForm({
   methods,

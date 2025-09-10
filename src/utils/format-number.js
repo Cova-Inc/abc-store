@@ -1,9 +1,7 @@
 import { parsePhoneNumberWithError } from 'libphonenumber-js';
 
 // import { formatNumberLocale } from 'src/locales';
-const formatNumberLocale = () => {
-  return null;
-}
+const formatNumberLocale = () => null;
 
 // ----------------------------------------------------------------------
 
