@@ -164,7 +164,7 @@ export default function ProductEditView({ params }) {
       {/* Product Form */}
       <Card sx={{ p: 3, mt: 3 }}>
         <Box>
-          <Typography variant="h4">Edit Product</Typography>
+          <Typography variant="h4">商品を編集</Typography>
           <Typography variant="body2" sx={{ color: 'text.secondary' }}>
             以下の詳細を入力して、製品を更新してください。
           </Typography>

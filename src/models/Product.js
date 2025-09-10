@@ -80,10 +80,16 @@ const ProductSchema = new mongoose.Schema(
       trim: true,
       maxlength: [50, 'SKU cannot be more than 50 characters'],
     },
+    supplier: {
+      type: String,
+      trim: true,
+      maxlength: [200, 'Supplier name cannot be more than 200 characters'],
+    },
     stock: {
       type: Number,
-      default: 0,
-      min: [0, 'Stock cannot be negative'],
+      required: [true, 'Stock quantity is required'],
+      default: 1,
+      min: [1, 'Stock must be at least 1'],
     },
     status: {
       type: String,

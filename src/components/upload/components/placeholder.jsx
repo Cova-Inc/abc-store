@@ -21,14 +21,14 @@ export function UploadPlaceholder({ ...other }) {
       <Stack spacing={1} sx={{ textAlign: 'center' }}>
         <Box sx={{ typography: 'h6' }}>ドロップまたは選択</Box>
         <Box sx={{ typography: 'body2', color: 'text.secondary' }}>
-          Drop files here or click to
+          ここにドラッグ＆ドロップまたは<br></br>
           <Box
             component="span"
             sx={{ mx: 0.5, color: 'primary.main', textDecoration: 'underline' }}
           >
-            browse
+            ファイルを選択
           </Box>
-          through your machine.
+          してアップロード
         </Box>
       </Stack>
     </Box>

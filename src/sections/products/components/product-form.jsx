@@ -157,6 +157,8 @@ export function ProductForm({
                   基本情報
                 </Typography>
                 <Stack spacing={2}>
+                  <Grid container spacing={2}>
+                  <Grid item xs={12} sm={6}>
                   <Field.Text
                     required
                     name="name"
@@ -165,10 +167,55 @@ export function ProductForm({
                     error={!!errors.name}
                     helperText={errors.name?.message}
                   />
+                  </Grid>
+                  <Grid item xs={12} sm={6}>
+                    <Field.Select
+                      required
+                      name="category"
+                      label="カテゴリー"
+                      error={!!errors.category}
+                      helperText={errors.category?.message}
+                    >
+                      {PRODUCT_CATEGORY_OPTIONS.map((option) => (
+                        <MenuItem key={option.value} value={option.value}>
+                          {option.label}
+                        </MenuItem>
+                      ))}
+                    </Field.Select>
+                  </Grid>
+                  </Grid>
+                  <Grid container spacing={2}>
+                  <Grid item xs={12} sm={6}>
+                    <Field.Text
+                      required
+                      name="price"
+                      label="値段"
+                      type="number"
+                      placeholder="0.00"
+                      InputProps={{
+                        startAdornment: '¥',
+                      }}
+                      error={!!errors.price}
+                      helperText={errors.price?.message}
+                    />
+                  </Grid>
+                  <Grid item xs={12} sm={6}>
+                    <Field.Text
+                      required
+                      name="stock"
+                      label="在庫数量"
+                      type="number"
+                      placeholder="1"
+                      error={!!errors.stock}
+                      helperText={errors.stock?.message}
+                    />
+                  </Grid>
+                  
+                </Grid>
 
                   <Field.Text
                     name="description"
-                    label="説明"
+                    label="詳細説明"
                     multiline
                     rows={3}
                     placeholder="Enter product description"
@@ -205,47 +252,6 @@ export function ProductForm({
                     )}
                   </Grid>
                 </Stack>
-              </Box>
-
-              <Divider sx={{ borderStyle: 'dashed' }} />
-
-              {/* Pricing */}
-              <Box>
-                <Typography variant="h6" gutterBottom>
-                  価格設定
-                </Typography>
-                <Grid container spacing={2}>
-                  <Grid item xs={12} sm={6}>
-                    <Field.Text
-                      required
-                      name="price"
-                      label="値段"
-                      type="number"
-                      placeholder="0.00"
-                      InputProps={{
-                        startAdornment: '¥',
-                      }}
-                      error={!!errors.price}
-                      helperText={errors.price?.message}
-                    />
-                  </Grid>
-                  <Grid item xs={12} sm={6}>
-                    <Field.Text
-                      name="originalPrice"
-                      label="元の価格（定価）"
-                      type="number"
-                      placeholder="0.00"
-                      InputProps={{
-                        startAdornment: '¥',
-                      }}
-                      error={!!errors.originalPrice}
-                      helperText={
-                        errors.originalPrice?.message ||
-                        '元の価格は現在の値段以上でなければありません。'
-                      }
-                    />
-                  </Grid>
-                </Grid>
               </Box>
 
               <Divider sx={{ borderStyle: 'dashed' }} />
@@ -304,33 +310,35 @@ export function ProductForm({
               {/* Inventory */}
               <Box>
                 <Typography variant="h6" gutterBottom>
-                  在庫
+                  サプライヤー情報
                 </Typography>
                 <Grid container spacing={2}>
                   <Grid item xs={12} sm={6}>
-                    <Field.Text
-                      name="stock"
-                      label="在庫数量"
-                      type="number"
-                      placeholder="0"
-                      error={!!errors.stock}
-                      helperText={errors.stock?.message}
-                    />
+                  <Field.Text
+                    name="supplier"
+                    label="仕入先"
+                    placeholder="仕入先を入力してください"
+                    error={!!errors.name}
+                    helperText={errors.name?.message}
+                  />
                   </Grid>
                   <Grid item xs={12} sm={6}>
-                    <Field.Select
-                      name="category"
-                      label="カテゴリー"
-                      error={!!errors.category}
-                      helperText={errors.category?.message}
-                    >
-                      {PRODUCT_CATEGORY_OPTIONS.map((option) => (
-                        <MenuItem key={option.value} value={option.value}>
-                          {option.label}
-                        </MenuItem>
-                      ))}
-                    </Field.Select>
+                    <Field.Text
+                      name="originalPrice"
+                      label="元の価格（定価）"
+                      type="number"
+                      placeholder="0.00"
+                      InputProps={{
+                        startAdornment: '¥',
+                      }}
+                      error={!!errors.originalPrice}
+                      helperText={
+                        errors.originalPrice?.message ||
+                        '元の価格は現在の値段以上でなければなりません。'
+                      }
+                    />
                   </Grid>
+                  
                 </Grid>
               </Box>
 

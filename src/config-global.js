@@ -31,6 +31,7 @@ export const PRODUCT_CATEGORY_OPTIONS = [
   { value: 'underwear', label: '下着' },
   { value: 'books', label: '本' },
   { value: 'electronics', label: '家電' },
+  { value: 'others', label: 'その他' },
 ];
 
 export const PRODUCT_STATUS_OPTIONS = [
