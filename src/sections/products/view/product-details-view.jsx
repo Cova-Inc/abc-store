@@ -342,7 +342,7 @@ export default function ProductDetailsView({ params }) {
       <ConfirmDialog
         open={confirmDelete.value}
         onClose={confirmDelete.onFalse}
-        title="Delete Product"
+        title="商品を削除する"
         content={
           <>
             <strong>{product?.name}</strong>を本当に削除しますか?

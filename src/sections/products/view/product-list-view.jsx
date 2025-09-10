@@ -383,14 +383,14 @@ export default function ProductListView() {
           confirmRows.onFalse();
           setProductToDelete(null);
         }}
-        title={productToDelete ? 'Delete Product' : 'Delete Products'}
+        title='商品を削除する'
         content={
           productToDelete
-            ? `Are you sure you want to delete "${productToDelete.name}"? This action cannot be undone.`
+            ? `"${productToDelete.name}"を本当に削除しますか? この操作は元に戻せません。`
             : selectionManager.selectAllActive &&
                 selectionManager.selectedRowIds.length === products.length
-              ? `Are you sure you want to delete ALL ${products.length} product(s) matching the current filters? This action cannot be undone.`
-              : `Are you sure you want to delete ${selectionManager.selectedCount} selected product(s)? This action cannot be undone.`
+              ? `すべての商品を削除してもよろしいですか？ この操作は元に戻せません。`
+              : `現在選択中の${selectionManager.selectedCount}つの商品を削除してもよろしいですか？ この操作は元に戻せません。`
         }
         action={
           <LoadingButton
