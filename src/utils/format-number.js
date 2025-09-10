@@ -1,13 +1,13 @@
 import { parsePhoneNumberWithError } from 'libphonenumber-js';
 
-import { formatNumberLocale } from 'src/locales';
-// const formatNumberLocale = () => {
-//   return null;
-// }
+// import { formatNumberLocale } from 'src/locales';
+const formatNumberLocale = () => {
+  return null;
+}
 
 // ----------------------------------------------------------------------
 
-const DEFAULT_LOCALE = { code: 'en-US', currency: 'USD' };
+const DEFAULT_LOCALE = { code: 'ja-JP', currency: 'JPY' };
 
 function processInput(inputValue) {
   if (inputValue == null || Number.isNaN(inputValue)) return null;
