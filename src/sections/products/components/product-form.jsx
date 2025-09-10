@@ -319,6 +319,7 @@ export function ProductForm({
                   </Grid>
                   <Grid item xs={12} sm={6}>
                     <Field.Select
+                      required
                       name="category"
                       label="カテゴリー"
                       error={!!errors.category}
