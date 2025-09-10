@@ -19,7 +19,7 @@ import {
 import { fDate } from 'src/utils/format-time';
 import { fNumber, fCurrency, fShortenNumber } from 'src/utils/format-number';
 
-import { PRODUCT_STATUS_OPTIONS } from 'src/config-global';
+import { PRODUCT_STATUS_OPTIONS, PRODUCT_CATEGORY_OPTIONS } from 'src/config-global';
 
 import { Label } from 'src/components/label';
 import { Image } from 'src/components/image';
@@ -69,6 +69,12 @@ export function ProductListItem({
     value: product.status,
     label: product.status,
     color: 'default',
+  };
+
+  // Get category config for Japanese label
+  const categoryConfig = PRODUCT_CATEGORY_OPTIONS.find((option) => option.value === product.category) || {
+    value: product?.category,
+    label: product?.category,
   };
 
   // Mobile card layout (compact)
@@ -212,7 +218,7 @@ export function ProductListItem({
           <Stack direction="row" spacing={0.5} alignItems="center">
             {product.category && (
               <Label color="default" variant="soft" size="small">
-                {product.category}
+                {categoryConfig.label}
               </Label>
             )}
             {product.stock !== undefined && (
@@ -330,7 +336,7 @@ export function ProductListItem({
               >
                 <Rating value={product.rating} precision={0.1} size="small" readOnly />
                 <Typography variant="caption" color="text.secondary">
-                  ({fNumber(product.reviewCount || 0)} reviews)
+                  ({fNumber(product.reviewCount || 0)} レビュー)
                 </Typography>
               </Stack>
             </Box>
@@ -389,7 +395,7 @@ export function ProductListItem({
 
               {product.category && (
                 <Label color="info" variant="soft" size="small">
-                  {product.category}
+                  {categoryConfig.label}
                 </Label>
               )}
 
@@ -399,7 +405,7 @@ export function ProductListItem({
                   color="text.secondary"
                   sx={{ textDecorationLine: product.stock === 0 ? 'line-through' : 'none' }}
                 >
-                  Stock: {product.stock}
+                  在庫: {product.stock}
                 </Typography>
               )}
             </Stack>
