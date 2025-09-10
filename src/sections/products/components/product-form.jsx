@@ -163,7 +163,7 @@ export function ProductForm({
                         required
                         name="name"
                         label="商品名"
-                        placeholder="Enter product name"
+                        placeholder="商品名を入力してください"
                         error={!!errors.name}
                         helperText={errors.name?.message}
                       />
@@ -217,7 +217,7 @@ export function ProductForm({
                     label="詳細説明"
                     multiline
                     rows={3}
-                    placeholder="Enter product description"
+                    placeholder="商品詳細を入力してください"
                     error={!!errors.description}
                     helperText={errors.description?.message}
                   />
@@ -227,7 +227,7 @@ export function ProductForm({
                       <Field.Text
                         name="sku"
                         label="SKU"
-                        placeholder="Enter SKU"
+                        placeholder="SKUを入力してください"
                         error={!!errors.sku}
                         helperText={errors.sku?.message}
                       />

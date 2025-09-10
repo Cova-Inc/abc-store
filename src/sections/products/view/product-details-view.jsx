@@ -24,7 +24,7 @@ import { fCurrency, fShortenNumber } from 'src/utils/format-number';
 
 import { useBoolean } from 'src/hooks';
 import { DashboardContent } from 'src/layouts/dashboard';
-import { PRODUCT_STATUS_OPTIONS } from 'src/config-global';
+import { PRODUCT_STATUS_OPTIONS, PRODUCT_CATEGORY_OPTIONS } from 'src/config-global';
 
 import { Label } from 'src/components/label';
 import { toast } from 'src/components/snackbar';
@@ -164,6 +164,11 @@ export default function ProductDetailsView({ params }) {
     color: 'default',
   };
 
+  const categoryConfig = PRODUCT_CATEGORY_OPTIONS.find((option) => option.value === product.category) || {
+    value: product?.category,
+    label: product?.category,
+  };
+
   return (
     <DashboardContent>
       {/* Header */}
@@ -287,7 +292,7 @@ export default function ProductDetailsView({ params }) {
                     カテゴリー
                   </Typography>
                   <Typography variant="h6" sx={{ textTransform: 'capitalize' }}>
-                    {product.category}
+                    {categoryConfig.label}
                   </Typography>
                 </Grid>
               </Grid>
