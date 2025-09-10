@@ -15,8 +15,8 @@ const BaseProductSchema = z.object({
 
   description: z
     .string()
-    .min(1, 'Product description must be at least 1 characters')
-    .max(2000, 'Product description must be less than 2000 characters'),
+    .max(2000, 'Product description must be less than 2000 characters')
+    .optional(),
 
   sku: z.string().max(50, 'SKU must be less than 50 characters').optional(),
 
