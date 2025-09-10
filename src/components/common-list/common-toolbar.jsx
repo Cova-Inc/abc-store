@@ -40,7 +40,7 @@ export function CommonToolbar({
             label={filterLabel}
             onChange={(e) => setFilterValue(e.target.value)}
           >
-            <MenuItem value="all">All</MenuItem>
+            <MenuItem value="all">すべて</MenuItem>
             {filterOptions.map((option) => (
               <MenuItem key={option.value} value={option.value}>
                 {option.label}

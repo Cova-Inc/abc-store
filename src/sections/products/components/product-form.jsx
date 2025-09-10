@@ -25,16 +25,10 @@ import { Field } from 'src/components/hook-form';
 // ----------------------------------------------------------------------
 
 const PRODUCT_TAGS_OPTIONS = [
-  'new',
-  'sale',
-  'featured',
-  'trending',
-  'limited',
-  'organic',
-  'premium',
-  'eco-friendly',
-  'handmade',
-  'vintage',
+  '新品',
+  '割引',
+  '皮',
+  '手作り',
 ];
 
 export function ProductForm({
