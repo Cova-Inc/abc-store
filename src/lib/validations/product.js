@@ -41,9 +41,9 @@ const BaseProductSchema = z.object({
   stock: z
     .number()
     .int('Stock quantity must be a whole number')
-    .min(0, 'Stock quantity cannot be negative')
+    .min(1, 'Stock quantity must be at least 1')
     .max(999999, 'Stock quantity must be less than 999,999')
-    .default(0),
+    .default(1),
 
   rating: z
     .number()
@@ -156,7 +156,7 @@ export const ProductFormSchema = BaseProductSchema.omit({
     return true;
   },
   {
-    message: 'Original price must be greater than or equal to current price',
+    message: '元の価格は現在の値段以上でなければなりません。',
     path: ['originalPrice'],
   }
 );
@@ -252,7 +252,7 @@ export const defaultProductValues = {
   supplier: '',
   price: 0,
   originalPrice: 0, // Default to 0 for input fields
-  stock: 0,
+  stock: 1,
   rating: 0,
   reviewCount: 0,
   category: enumCategories[0] || 'electronics',
