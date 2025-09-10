@@ -24,6 +24,8 @@ const BaseProductSchema = z.object({
 
   sku: z.string().max(50, 'SKU must be less than 50 characters').optional(),
 
+  supplier: z.string().max(200, 'Supplier name must be less than 200 characters').optional(),
+
   price: z
     .number()
     .min(0.01, 'Price must be greater than 0')
@@ -247,6 +249,7 @@ export const defaultProductValues = {
   name: '',
   description: '',
   sku: '',
+  supplier: '',
   price: 0,
   originalPrice: 0, // Default to 0 for input fields
   stock: 0,
