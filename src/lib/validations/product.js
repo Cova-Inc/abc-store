@@ -18,7 +18,7 @@ const BaseProductSchema = z.object({
     .min(1, 'Product description must be at least 1 characters')
     .max(2000, 'Product description must be less than 2000 characters'),
 
-  sku: z.string().max(50, 'SKU must be less than 50 characters').optional().or(z.literal('')),
+  sku: z.string().max(50, 'SKU must be less than 50 characters').optional(),
 
   price: z
     .number()
@@ -181,8 +181,8 @@ export function parseFormData(formData, schema) {
       const num = parseInt(value, 10);
       if (!Number.isNaN(num)) data[key] = num;
     } else if (key === 'sku') {
-      // Allow empty string for SKU to clear it
-      data[key] = value || '';
+      // Convert empty SKU to undefined to avoid unique constraint issues
+      data[key] = value && value.trim() ? value.trim() : undefined;
     } else if (value !== '' && value !== null && value !== undefined) {
       data[key] = value;
     }
