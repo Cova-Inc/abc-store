@@ -247,7 +247,7 @@ export default function ProductDetailsView({ params }) {
                   readOnly
                   sx={{ mr: 1 }}
                 />
-                {`(${fShortenNumber(product.reviewCount)} reviews)`}
+                {`(${fShortenNumber(product.reviewCount)} レビュー)`}
               </Stack>
 
               <Stack direction="row" alignItems="center" spacing={2}>
@@ -272,7 +272,7 @@ export default function ProductDetailsView({ params }) {
                 )}
               </Stack>
               <Typography variant="body2" color="text.secondary">
-                {product.sku ? `SKU: ${product.sku}` : 'No SKU'}
+                {product.sku ? `SKU: ${product.sku}` : 'SKUなし'}
               </Typography>
               <Typography variant="body2" color="text.secondary">
                 {product.description}
@@ -285,7 +285,7 @@ export default function ProductDetailsView({ params }) {
                   <Typography variant="body2" color="text.secondary">
                     在庫数量
                   </Typography>
-                  <Typography variant="h6">{product.stock} units</Typography>
+                  <Typography variant="h6">{product.stock}</Typography>
                 </Grid>
                 <Grid item xs={6}>
                   <Typography variant="body2" color="text.secondary">
