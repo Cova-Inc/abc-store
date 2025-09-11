@@ -93,11 +93,11 @@ export function JwtSignUpView() {
 
   const renderHead = (
     <Stack spacing={1.5} sx={{ mb: 5 }}>
-      <Typography variant="h5">Get started absolutely free</Typography>
+      <Typography variant="h5">登録後、すぐにお使いいただけます</Typography>
 
       <Stack direction="row" spacing={0.5}>
         <Typography variant="body2" sx={{ color: 'text.secondary' }}>
-          Already have an account?
+          すでにアカウントお持ちの方はこちら
         </Typography>
 
         <Link component={RouterLink} href={paths.auth.jwt.signIn} variant="subtitle2">
@@ -111,22 +111,22 @@ export function JwtSignUpView() {
     <Stack spacing={3}>
       <Field.Text
         name="name"
-        label="Display Name"
-        placeholder="Enter your display name"
+        label="表示名"
+        placeholder="表示名を入力してください"
         InputLabelProps={{ shrink: true }}
       />
 
       <Field.Text
         name="email"
         label="メールアドレス"
-        placeholder="Enter your email address"
+        placeholder="メールアドレスを入力してください"
         InputLabelProps={{ shrink: true }}
       />
 
       <Field.Text
         name="password"
         label="パスワード"
-        placeholder="6+ characters"
+        placeholder="６文字以上"
         type={password.value ? 'text' : 'password'}
         InputLabelProps={{ shrink: true }}
         InputProps={{
@@ -143,7 +143,7 @@ export function JwtSignUpView() {
       <Field.Text
         name="confirmPassword"
         label="パスワードの確認"
-        placeholder="Confirm your password"
+        placeholder="パスワードを確認してください"
         type={password.value ? 'text' : 'password'}
         InputLabelProps={{ shrink: true }}
         InputProps={{

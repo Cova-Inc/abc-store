@@ -70,27 +70,27 @@ export function JwtSignInView() {
       setErrorMsg(''); // Clear previous errors
       await signInWithPassword({ email: data.email, password: data.password });
       await checkUserSession?.();
-      toast.success('Login successful!');
+      toast.success('ログインに成功しました!');
       router.push(paths.main.products.root);
     } catch (error) {
       console.error(error);
       const errorMessage =
-        error?.response?.data?.message || error?.message || 'Login failed. Please try again.';
+        error?.response?.data?.message || error?.message || 'ログインに失敗しました。もう一度お試しください。';
       setErrorMsg(errorMessage);
     }
   });
 
   const renderHead = (
     <Stack spacing={1.5} sx={{ mb: 5 }}>
-      <Typography variant="h5">Sign in to your account</Typography>
+      <Typography variant="h5">アカウントにログイン</Typography>
 
       <Stack direction="row" spacing={0.5}>
         <Typography variant="body2" sx={{ color: 'text.secondary' }}>
-          {`Don't have an account?`}
+          {`アカウントをお持ちでないですか?`}
         </Typography>
 
         <Link component={RouterLink} href={paths.auth.jwt.signUp} variant="subtitle2">
-          Get started
+          今すぐ登録
         </Link>
       </Stack>
     </Stack>
@@ -113,7 +113,7 @@ export function JwtSignInView() {
           color="inherit"
           sx={{ alignSelf: 'flex-end' }}
         >
-          Forgot password?
+          パスワードがわからない場合はこちら
         </Link>
 
         <Field.Text
