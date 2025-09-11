@@ -71,7 +71,7 @@ export function DashboardLayout({ sx, children, data }) {
             toolbar: {
               sx: {
                 [`& [data-slot="logo"]`]: {
-                  display: 'none',
+                  display: 'inline-flex',
                 },
                 [`& [data-area="right"]`]: {
                   gap: { xs: 0, sm: 0.75 },
@@ -88,7 +88,7 @@ export function DashboardLayout({ sx, children, data }) {
                     color: 'var(--layout-nav-text-primary-color)',
                   },
                   [`& [data-slot="logo"]`]: {
-                    display: 'none',
+                    display: 'inline-flex',
                     [theme.breakpoints.up(layoutQuery)]: {
                       display: 'inline-flex',
                     },
