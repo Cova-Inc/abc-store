@@ -75,7 +75,9 @@ export function JwtSignInView() {
     } catch (error) {
       console.error(error);
       const errorMessage =
-        error?.response?.data?.message || error?.message || 'ログインに失敗しました。もう一度お試しください。';
+        error?.response?.data?.message ||
+        error?.message ||
+        'ログインに失敗しました。もう一度お試しください。';
       setErrorMsg(errorMessage);
     }
   });
@@ -86,7 +88,7 @@ export function JwtSignInView() {
 
       <Stack direction="row" spacing={0.5}>
         <Typography variant="body2" sx={{ color: 'text.secondary' }}>
-          {`アカウントをお持ちでないですか?`}
+          アカウントをお持ちでないですか?
         </Typography>
 
         <Link component={RouterLink} href={paths.auth.jwt.signUp} variant="subtitle2">
