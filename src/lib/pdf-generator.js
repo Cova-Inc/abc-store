@@ -4,7 +4,7 @@ import path from 'path';
 import fs from 'fs/promises';
 
 // Helper function to load and process image
-async function loadImageAsBase64(imageUrl) {
+async function loadImageAsBase64(imageUrl, maxWidthMm = 190) {
   try {
     // Convert relative URL to absolute path
     const imagePath = imageUrl.startsWith('/uploads/products/')
@@ -15,13 +15,14 @@ async function loadImageAsBase64(imageUrl) {
     const imageBuffer = await fs.readFile(imagePath);
     const imageInfo = await sharp(imageBuffer).metadata();
 
-    // Calculate dimensions to fit within max size while preserving aspect ratio
-    const maxSize = 300;
+    // Convert mm to pixels for processing (assuming 96 DPI)
+    const maxWidthPixels = Math.round(maxWidthMm / 0.264583);
+    
+    // Calculate dimensions to fit within max width while preserving aspect ratio
     let { width, height } = imageInfo;
-    0;
 
-    if (width > maxSize || height > maxSize) {
-      const ratio = Math.min(maxSize / width, maxSize / height);
+    if (width > maxWidthPixels) {
+      const ratio = maxWidthPixels / width;
       width = Math.round(width * ratio);
       height = Math.round(height * ratio);
     }
@@ -52,7 +53,7 @@ export async function generateProductImagesPDF(products) {
   let currentY = margin;
 
   const addImage = async (imageUrl, x, y, maxWidth, maxHeight) => {
-    const imageData = await loadImageAsBase64(imageUrl);
+    const imageData = await loadImageAsBase64(imageUrl, maxWidth);
 
     if (imageData && imageData.data) {
       // Scale image to fit within bounds while preserving aspect ratio
@@ -96,7 +97,7 @@ export async function generateProductImagesPDF(products) {
     if (product.images?.length > 0) {
       for (const image of product.images) {
         // Get image dimensions first without adding to PDF
-        const imageData = await loadImageAsBase64(image.url);
+        const imageData = await loadImageAsBase64(image.url, contentWidth);
         const actualHeight = imageData ? Math.min(100, imageData.height) : 0;
 
         // Check page break with actual image height
