@@ -338,7 +338,7 @@ export default function ProductDetailsView({ params }) {
                 <Typography variant="body2" color="text.secondary">
                   By:
                 </Typography>
-                <Typography variant="body2">{product.createdBy.name}</Typography>
+                <Typography variant="body2">{product.createdBy?.name || 'Admin'}</Typography>
               </Stack>
             </Stack>
           </Stack>
