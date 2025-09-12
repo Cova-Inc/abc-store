@@ -1,0 +1,27 @@
+{
+  "title": "产品",
+  "searchPlaceholder": "搜索产品...",
+  "category": "类别",
+  "noProductsTitle": "未找到产品",
+  "noProductsDescription": "尚未添加任何产品。添加您的第一个产品开始使用。",
+  "selectedCount": "已选择 {{selected}} / {{count}} 项",
+  "deleteConfirmTitle": "删除产品",
+  "deleteConfirmSingle": "确定要删除\"{{name}}\"吗？此操作无法撤销。",
+  "deleteConfirmMultiple": "确定要删除选定的 {{count}} 个产品吗？此操作无法撤销。",
+  "deleteConfirmAll": "确定要删除所有产品吗？此操作无法撤销。",
+  "deleteButton": "删除",
+  "deleteSuccess": "产品删除成功",
+  "deleteMultipleSuccess": "{{count}} 个产品删除成功",
+  "deleteFailed": "删除产品失败",
+  "addProduct": "添加新产品",
+  "view": "查看",
+  "edit": "编辑",
+  "delete": "删除",
+  "loading": "加载中...",
+  "error": {
+    "403": "拒绝访问",
+    "404": "加载产品失败",
+    "500": "加载产品失败"
+  },
+  "retry": "重试"
+}

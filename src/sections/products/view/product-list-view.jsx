@@ -21,6 +21,7 @@ import { paths } from 'src/routes/paths';
 import { useRouter } from 'src/routes/hooks';
 
 import { useBoolean } from 'src/hooks';
+import { useTranslate } from 'src/locales/use-locales';
 import { DashboardContent } from 'src/layouts/dashboard';
 import { PRODUCT_CATEGORY_OPTIONS, PRODUCT_FILTER_FIELD_OPTIONS } from 'src/config-global';
 
@@ -51,6 +52,7 @@ export default function ProductListView() {
   const isMobile = useMediaQuery(theme.breakpoints.down('md'));
   const { user } = useAuthContext();
   const [productToDelete, setProductToDelete] = useState(null);
+  const { t } = useTranslate('products');
 
   // ONE HOOK FOR EVERYTHING
   const {
@@ -132,7 +134,7 @@ export default function ProductListView() {
       if (productToDelete) {
         // Delete single product
         await deleteProduct(productToDelete.id);
-        toast.success('Product deleted successfully');
+        toast.success(t('deleteSuccess'));
         setProductToDelete(null);
 
         // If this was the last item on the page and not on first page, go to previous page
@@ -147,7 +149,7 @@ export default function ProductListView() {
         // Delete all products with current filters - go to first page
         const deleteFilters = buildFilters();
         result = await deleteAllProducts(deleteFilters);
-        toast.success(`${result.count} products deleted successfully`);
+        toast.success(t('deleteMultipleSuccess', { count: result.count }));
 
         // Go to first page after deleting all
         pageToFetch = 0;
@@ -155,7 +157,7 @@ export default function ProductListView() {
       } else if (selectionManager.selectedRowIds.length > 0) {
         // Delete selected products
         result = await deleteProducts(selectionManager.selectedRowIds);
-        toast.success(`${result.count} products deleted successfully`);
+        toast.success(t('deleteMultipleSuccess', { count: result.count }));
 
         // If we deleted all items on current page and not on first page, go to previous page
         if (selectionManager.selectedRowIds.length === products.length && page > 0) {
@@ -176,7 +178,7 @@ export default function ProductListView() {
       });
     } catch (err) {
       console.error('Delete failed:', err);
-      toast.error(err.message || 'Failed to delete products');
+      toast.error(err.message || t('deleteFailed'));
     }
   }, [
     productToDelete,
@@ -191,6 +193,7 @@ export default function ProductListView() {
     page,
     pageSize,
     setPage,
+    t,
   ]);
 
   const handleDelete = useCallback(() => {
@@ -241,9 +244,9 @@ export default function ProductListView() {
     return (
       <ErrorSection
         error={error.code === 403 ? '403' : error.code === 404 ? '404' : '500'}
-        title={error.code === 403 ? 'Access Denied' : 'Failed to Load Products'}
+        title={error.code === 403 ? t('error.403') : t('error.404')}
         description={error.message}
-        actionText="Retry"
+        actionText={t('retry')}
         onAction={() => {
           const filters = buildFilters();
           fetchProducts({
@@ -265,8 +268,8 @@ export default function ProductListView() {
           filterValue={categoryFilter}
           setFilterValue={setCategoryFilter}
           filterOptions={PRODUCT_CATEGORY_OPTIONS}
-          filterLabel="カテゴリー"
-          placeholder="商品を検索..."
+          filterLabel={t('category')}
+          placeholder={t('searchPlaceholder')}
           searchInput={searchInput}
           setSearchInput={setSearchInput}
           onFilter={applyFilter}
@@ -293,7 +296,7 @@ export default function ProductListView() {
                 aria-label="Select all products"
               />
               <Typography variant="body2" color="text.secondary">
-                {selectionManager.selectedCount} of {totalCount} selected
+                {t('selectedCount', { selected: selectionManager.selectedCount, count: totalCount })}
               </Typography>
             </Stack>
             {hasSelection && (
@@ -321,8 +324,8 @@ export default function ProductListView() {
           ) : products.length === 0 ? (
             <EmptyContent
               sx={{ height: '500px' }}
-              title="No Products Found"
-              description="No products have been added yet. Add your first product to get started."
+              title={t('noProductsTitle')}
+              description={t('noProductsDescription')}
             />
           ) : isMobile ? (
             // Mobile Grid Layout
@@ -383,14 +386,14 @@ export default function ProductListView() {
           confirmRows.onFalse();
           setProductToDelete(null);
         }}
-        title="商品を削除する"
+        title={t('deleteConfirmTitle')}
         content={
           productToDelete
-            ? `"${productToDelete.name}"を本当に削除しますか? この操作は元に戻せません。`
+            ? t('deleteConfirmSingle', { name: productToDelete.name })
             : selectionManager.selectAllActive &&
                 selectionManager.selectedRowIds.length === products.length
-              ? `すべての商品を削除してもよろしいですか？ この操作は元に戻せません。`
-              : `現在選択中の${selectionManager.selectedCount}つの商品を削除してもよろしいですか？ この操作は元に戻せません。`
+              ? t('deleteConfirmAll')
+              : t('deleteConfirmMultiple', { count: selectionManager.selectedCount })
         }
         action={
           <LoadingButton
@@ -399,7 +402,7 @@ export default function ProductListView() {
             onClick={handleDeleteConfirm}
             loading={loading}
           >
-            Delete
+            {t('deleteButton')}
           </LoadingButton>
         }
       />
@@ -411,9 +414,9 @@ export default function ProductListView() {
           aria-label="Add new product"
           onClick={handleNewProduct}
           sx={{
-            boxShadow: (t) => t.customShadows.primary,
+            boxShadow: (muiTheme) => muiTheme.customShadows.primary,
             '&:hover': {
-              boxShadow: (t) => t.customShadows.primaryHover,
+              boxShadow: (muiTheme) => muiTheme.customShadows.primaryHover,
             },
           }}
         >

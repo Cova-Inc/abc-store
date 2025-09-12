@@ -1,0 +1,27 @@
+{
+  "title": "Products",
+  "searchPlaceholder": "Search products...",
+  "category": "Category",
+  "noProductsTitle": "No Products Found",
+  "noProductsDescription": "No products have been added yet. Add your first product to get started.",
+  "selectedCount": "{{selected}} of {{count}} selected",
+  "deleteConfirmTitle": "Delete Product",
+  "deleteConfirmSingle": "Are you sure you want to delete \"{{name}}\"? This action cannot be undone.",
+  "deleteConfirmMultiple": "Are you sure you want to delete the selected {{count}} products? This action cannot be undone.",
+  "deleteConfirmAll": "Are you sure you want to delete all products? This action cannot be undone.",
+  "deleteButton": "Delete",
+  "deleteSuccess": "Product deleted successfully",
+  "deleteMultipleSuccess": "{{count}} products deleted successfully",
+  "deleteFailed": "Failed to delete products",
+  "addProduct": "Add new product",
+  "view": "View",
+  "edit": "Edit",
+  "delete": "Delete",
+  "loading": "Loading...",
+  "error": {
+    "403": "Access Denied",
+    "404": "Failed to Load Products",
+    "500": "Failed to Load Products"
+  },
+  "retry": "Retry"
+}

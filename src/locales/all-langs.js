@@ -2,6 +2,7 @@
 
 // core (MUI)
 import {
+  jaJP as jaJPCore,
   frFR as frFRCore,
   viVN as viVNCore,
   zhCN as zhCNCore,
@@ -10,6 +11,7 @@ import {
 // date pickers (MUI)
 import {
   enUS as enUSDate,
+  jaJP as jaJPDate,
   frFR as frFRDate,
   viVN as viVNDate,
   zhCN as zhCNDate,
@@ -17,6 +19,7 @@ import {
 // data grid (MUI)
 import {
   enUS as enUSDataGrid,
+  jaJP as jaJPDataGrid,
   frFR as frFRDataGrid,
   viVN as viVNDataGrid,
   zhCN as zhCNDataGrid,
@@ -34,6 +37,16 @@ export const allLangs = [
     numberFormat: { code: 'en-US', currency: 'USD' },
     systemValue: {
       components: { ...enUSDate.components, ...enUSDataGrid.components },
+    },
+  },
+  {
+    value: 'jp',
+    label: 'Japanese',
+    countryCode: 'JP',
+    adapterLocale: 'ja',
+    numberFormat: { code: 'ja-JP', currency: 'JPY' },
+    systemValue: {
+      components: { ...jaJPCore.components, ...jaJPDate.components, ...jaJPDataGrid.components },
     },
   },
   {
