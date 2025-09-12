@@ -38,7 +38,7 @@ import {
 import { useAuthContext } from 'src/auth/hooks';
 
 import { ProductListItem } from '../components';
-import { useProducts, useSelectionManager, useProductListFilters } from '../hooks';
+import { useProducts, useSelectionManager, useProductListFilters, usePdfDownload } from '../hooks';
 
 // =============================================================================
 // MAIN COMPONENT - SIMPLE AND CLEAN
@@ -86,6 +86,9 @@ export default function ProductListView() {
 
   // Selection management
   const selectionManager = useSelectionManager(products);
+
+  // PDF download functionality
+  const { isDownloading, downloadProductsPDF } = usePdfDownload();
 
   // =============================================================================
   // HANDLERS
@@ -205,6 +208,14 @@ export default function ProductListView() {
     [confirmRows]
   );
 
+  const handleDownloadPDF = useCallback(() => {
+    if (selectionManager.selectedRowIds.length === 0) {
+      toast.error('Please select products to download');
+      return;
+    }
+    downloadProductsPDF(selectionManager.selectedRowIds);
+  }, [selectionManager.selectedRowIds, downloadProductsPDF]);
+
   // =============================================================================
   // EFFECTS
   // =============================================================================
@@ -299,20 +310,31 @@ export default function ProductListView() {
             {hasSelection && (
               <Stack direction="row" spacing={1}>
                 <IconButton
-                  onClick={() => {/* Add your handler here */}}
+                  onClick={handleDownloadPDF}
+                  disabled={isDownloading}
                   size="medium"
-                  aria-label="Your button action"
+                  aria-label="Download selected products as PDF"
+                  title="Download PDF"
                 >
-                  <Iconify icon="eva:download-outline" />
+                  <Iconify
+                    icon={isDownloading ? 'eos-icons:loading' : 'eva:download-outline'}
+                    sx={{
+                      animation: isDownloading ? 'spin 1s linear infinite' : 'none',
+                      '@keyframes spin': {
+                        '0%': { transform: 'rotate(0deg)' },
+                        '100%': { transform: 'rotate(360deg)' },
+                      },
+                    }}
+                  />
                 </IconButton>
                 <IconButton
                   onClick={handleDelete}
                   size="medium"
                   aria-label="Delete selected products"
+                  title="Delete selected products"
                 >
                   <Iconify icon="solar:trash-bin-trash-bold" />
                 </IconButton>
-                
               </Stack>
             )}
           </Stack>
