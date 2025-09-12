@@ -26,8 +26,8 @@ export const CONFIG = {
 
 // Product configuration
 export const PRODUCT_CATEGORY_OPTIONS = [
-  { value: 'beauty', label: 'コスメ' },
   { value: 'shoes', label: '靴' },
+  { value: 'beauty', label: 'コスメ' },
   { value: 'underwear', label: '下着' },
   { value: 'books', label: '本' },
   { value: 'electronics', label: '家電' },
