@@ -297,14 +297,23 @@ export default function ProductListView() {
               </Typography>
             </Stack>
             {hasSelection && (
-              <IconButton
-                onClick={handleDelete}
-                size="medium"
-                sx={{ ml: 'auto' }}
-                aria-label="Delete selected products"
-              >
-                <Iconify icon="solar:trash-bin-trash-bold" />
-              </IconButton>
+              <Stack direction="row" spacing={1}>
+                <IconButton
+                  onClick={() => {/* Add your handler here */}}
+                  size="medium"
+                  aria-label="Your button action"
+                >
+                  <Iconify icon="eva:download-outline" />
+                </IconButton>
+                <IconButton
+                  onClick={handleDelete}
+                  size="medium"
+                  aria-label="Delete selected products"
+                >
+                  <Iconify icon="solar:trash-bin-trash-bold" />
+                </IconButton>
+                
+              </Stack>
             )}
           </Stack>
         </Box>
