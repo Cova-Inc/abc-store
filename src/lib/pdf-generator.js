@@ -1,7 +1,7 @@
 import path from 'path';
-import { jsPDF as JsPDF } from 'jspdf';
 import sharp from 'sharp';
 import fs from 'fs/promises';
+import { jsPDF as JsPDF } from 'jspdf';
 
 // Helper function to load and process image
 async function loadImageAsBase64(imageUrl, maxWidthMm = 190) {
