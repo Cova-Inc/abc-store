@@ -97,7 +97,7 @@ export async function generateProductImagesPDF(products) {
     // Add images
     if (product.images?.length > 0) {
       // Pre-load all images for this product in parallel
-      const imageDataPromises = product.images.map(image =>
+      const imageDataPromises = product.images.map((image) =>
         loadImageAsBase64(image.url, contentWidth)
       );
       const imageDataArray = await Promise.all(imageDataPromises);
@@ -134,7 +134,7 @@ export async function generateProductImagesPDF(products) {
 
   // Add page numbers
   const totalPages = doc.internal.getNumberOfPages();
-  Array.from({ length: totalPages }, (_, i) => i + 1).forEach(pageNum => {
+  Array.from({ length: totalPages }, (_, i) => i + 1).forEach((pageNum) => {
     doc.setPage(pageNum);
     doc.setFontSize(8);
     doc.setTextColor(100, 100, 100);
