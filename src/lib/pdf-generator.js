@@ -1,6 +1,6 @@
+import path from 'path';
 import jsPDF from 'jspdf';
 import sharp from 'sharp';
-import path from 'path';
 import fs from 'fs/promises';
 
 // Helper function to load and process image
@@ -61,22 +61,22 @@ export async function generateProductImagesPDF(products) {
       if (width > maxWidth) {
         const ratio = maxWidth / width;
         width = maxWidth;
-        height = height * ratio;
+        height *= ratio;
       }
       if (height > maxHeight) {
         const ratio = maxHeight / height;
         height = maxHeight;
-        width = width * ratio;
+        width *= ratio;
       }
 
       // Center image
       const centerX = x + (maxWidth - width) / 2;
       doc.addImage(imageData.data, 'JPEG', centerX, y, width, height);
       return { width, height };
-    } else {
+    } 
       console.warn(`⚠️ Skipping invalid image: ${imageUrl}`);
       return { width: 0, height: 0 };
-    }
+    
   };
 
   // Add title

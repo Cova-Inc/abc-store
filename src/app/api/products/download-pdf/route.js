@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
-import { connectToDatabase } from 'src/lib/mongodb';
+
 import Product from 'src/models/Product';
+import { connectToDatabase } from 'src/lib/mongodb';
 import { generateProductImagesPDF } from 'src/lib/pdf-generator';
 
 // POST /api/products/download-pdf - Generate PDF for selected products

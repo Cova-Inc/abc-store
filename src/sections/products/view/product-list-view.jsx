@@ -38,7 +38,7 @@ import {
 import { useAuthContext } from 'src/auth/hooks';
 
 import { ProductListItem } from '../components';
-import { useProducts, useSelectionManager, useProductListFilters, usePdfDownload } from '../hooks';
+import { useProducts, usePdfDownload, useSelectionManager, useProductListFilters } from '../hooks';
 
 // =============================================================================
 // MAIN COMPONENT - SIMPLE AND CLEAN
