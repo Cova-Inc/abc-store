@@ -54,7 +54,7 @@ export async function generateProductImagesPDF(products) {
   const doc = new JsPDF('p', 'mm', 'a2');
   const pageWidth = doc.internal.pageSize.getWidth();
   const pageHeight = doc.internal.pageSize.getHeight();
-  const margin = 10;
+  const margin = 30;
   const contentWidth = pageWidth - margin * 2;
   let currentY = margin;
 
