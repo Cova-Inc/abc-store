@@ -7,9 +7,15 @@ import { jsPDF as JsPDF } from 'jspdf';
 async function loadImageAsBase64(imageUrl, maxWidthMm = 190) {
   try {
     // Convert relative URL to absolute path
-    const imagePath = imageUrl.startsWith('/uploads/products/')
-      ? path.join(process.cwd(), 'public', imageUrl)
-      : imageUrl;
+    let imagePath;
+    if (imageUrl.startsWith('/uploads/products/')) {
+      // Use UPLOAD_DIR from environment variables for proper path resolution
+      const uploadDir = process.env.UPLOAD_DIR || './public/uploads/products';
+      const fileName = path.basename(imageUrl);
+      imagePath = path.join(uploadDir, fileName);
+    } else {
+      imagePath = imageUrl;
+    }
 
     // Read and process image
     const imageBuffer = await fs.readFile(imagePath);
