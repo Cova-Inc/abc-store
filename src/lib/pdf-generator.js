@@ -3,6 +3,8 @@ import jsPDF from 'jspdf';
 import sharp from 'sharp';
 import fs from 'fs/promises';
 
+const JsPDF = jsPDF;
+
 // Helper function to load and process image
 async function loadImageAsBase64(imageUrl, maxWidthMm = 190) {
   try {
@@ -45,7 +47,7 @@ async function loadImageAsBase64(imageUrl, maxWidthMm = 190) {
 }
 
 export async function generateProductImagesPDF(products) {
-  const doc = new jsPDF('p', 'mm', 'a4');
+  const doc = new JsPDF('p', 'mm', 'a4');
   const pageWidth = doc.internal.pageSize.getWidth();
   const pageHeight = doc.internal.pageSize.getHeight();
   const margin = 10;
@@ -53,29 +55,24 @@ export async function generateProductImagesPDF(products) {
   let currentY = margin;
 
   const addImage = async (imageUrl, x, y, maxWidth, maxHeight) => {
-    const imageData = await loadImageAsBase64(imageUrl, maxWidth);
+    if (!imageData || !imageData.data) return { width: 0, height: 0 };
 
-    if (imageData && imageData.data) {
-      // Scale image to fit within bounds while preserving aspect ratio
-      let { width, height } = imageData;
-      if (width > maxWidth) {
-        const ratio = maxWidth / width;
-        width = maxWidth;
-        height *= ratio;
-      }
-      if (height > maxHeight) {
-        const ratio = maxHeight / height;
-        height = maxHeight;
-        width *= ratio;
-      }
+    let { width, height } = imageData;
 
-      // Center image
-      const centerX = x + (maxWidth - width) / 2;
-      doc.addImage(imageData.data, 'JPEG', centerX, y, width, height);
-      return { width, height };
+    if (width > maxWidth) {
+      const ratio = maxWidth / width;
+      width = maxWidth;
+      height *= ratio;
     }
-    console.warn(`⚠️ Skipping invalid image: ${imageUrl}`);
-    return { width: 0, height: 0 };
+    if (height > maxHeight) {
+      const ratio = maxHeight / height;
+      height = maxHeight;
+      width *= ratio;
+    }
+
+    const centerX = x + (maxWidth - width) / 2;
+    doc.addImage(imageData.data, 'JPEG', centerX, y, width, height);
+    return { width, height };
   };
 
   // Add title
@@ -84,29 +81,35 @@ export async function generateProductImagesPDF(products) {
   doc.text('Product Images', margin, currentY);
   currentY += 20;
 
-  // Process each product
-  for (const product of products) {
-    // Add product name
+  // Preload all images in parallel
+  const productImageDataMap = await Promise.all(
+    products.map(async (product) => {
+      const imagesData = await Promise.all(
+        (product.images || []).map((image) => loadImageAsBase64(image.url, contentWidth))
+      );
+      return { product, imagesData };
+    })
+  );
+
+  // Sequentially add products and images to PDF
+
+  for (const { product, imagesData } of productImageDataMap) {
+    // Product name
     doc.setFontSize(20);
     doc.setFont('helvetica', 'bold');
     doc.text(product.name, margin, currentY);
     currentY += 15;
 
-    // Add images
-    if (product.images?.length > 0) {
-      for (const image of product.images) {
-        // Get image dimensions first without adding to PDF
-        const imageData = await loadImageAsBase64(image.url, contentWidth);
+    if (imagesData.length > 0) {
+      for (const imageData of imagesData) {
         const actualHeight = imageData ? Math.min(100, imageData.height) : 0;
 
-        // Check page break with actual image height
         if (currentY + actualHeight > pageHeight - margin) {
           doc.addPage();
           currentY = margin;
         }
 
-        // Add image
-        const imageResult = await addImage(image.url, margin, currentY, contentWidth, 100);
+        const imageResult = await addImage(imageData ? imageData.data : null, margin, currentY, contentWidth, 100);
         currentY += Math.max(imageResult.height, 20) + 10;
       }
       currentY += 15; // Space after images
