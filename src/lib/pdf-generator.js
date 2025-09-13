@@ -1,5 +1,5 @@
 import path from 'path';
-import { jsPDF } from 'jspdf';
+import { jsPDF as JsPDF } from 'jspdf';
 import sharp from 'sharp';
 import fs from 'fs/promises';
 
@@ -45,7 +45,7 @@ async function loadImageAsBase64(imageUrl, maxWidthMm = 190) {
 }
 
 export async function generateProductImagesPDF(products) {
-  const doc = new jsPDF('p', 'mm', 'a4');
+  const doc = new JsPDF('p', 'mm', 'a4');
   const pageWidth = doc.internal.pageSize.getWidth();
   const pageHeight = doc.internal.pageSize.getHeight();
   const margin = 10;
