@@ -109,6 +109,12 @@ export async function generateProductImagesPDF(products) {
       );
       const imageDataArray = await Promise.all(imageDataPromises);
 
+      // Pre-load full width image data for odd numbered images
+      const fullWidthPromises = product.images.map((image) =>
+        loadImageAsBase64(image.url, contentWidth)
+      );
+      const fullWidthDataArray = await Promise.all(fullWidthPromises);
+
       // Process images in pairs for two-column layout
       for (let i = 0; i < imageDataArray.length; i += 2) {
         const leftImageData = imageDataArray[i];
@@ -119,7 +125,7 @@ export async function generateProductImagesPDF(products) {
 
         // If this is the last image and it's odd numbered, show it full width
         if (i === imageDataArray.length - 1 && !rightImage) {
-          const fullImageData = await loadImageAsBase64(leftImage.url, contentWidth);
+          const fullImageData = fullWidthDataArray[i];
           const fullHeight = fullImageData ? fullImageData.height : 20;
 
           // Check page break
@@ -129,7 +135,9 @@ export async function generateProductImagesPDF(products) {
           }
 
           // Add full width image
-          await addImage(leftImage.url, margin, currentY, contentWidth, fullHeight);
+          if (fullImageData && fullImageData.data) {
+            doc.addImage(fullImageData.data, 'JPEG', margin, currentY, contentWidth, fullHeight);
+          }
           currentY += fullHeight + 10;
         } else {
           // Regular two-column layout
@@ -144,13 +152,13 @@ export async function generateProductImagesPDF(products) {
           }
 
           // Add left image
-          if (leftImage) {
-            await addImage(leftImage.url, margin, currentY, imageWidth, leftHeight);
+          if (leftImageData && leftImageData.data) {
+            doc.addImage(leftImageData.data, 'JPEG', margin, currentY, imageWidth, leftHeight);
           }
 
           // Add right image (if exists)
-          if (rightImage) {
-            await addImage(rightImage.url, margin + imageWidth + 10, currentY, imageWidth, rightHeight);
+          if (rightImageData && rightImageData.data) {
+            doc.addImage(rightImageData.data, 'JPEG', margin + imageWidth + 10, currentY, imageWidth, rightHeight);
           }
 
           currentY += rowHeight + 10;
