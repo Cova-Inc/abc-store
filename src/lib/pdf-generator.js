@@ -51,7 +51,7 @@ async function loadImageAsBase64(imageUrl, maxWidthMm = 190) {
 }
 
 export async function generateProductImagesPDF(products) {
-  const doc = new JsPDF('p', 'mm', 'a4');
+  const doc = new JsPDF('p', 'mm', 'a2');
   const pageWidth = doc.internal.pageSize.getWidth();
   const pageHeight = doc.internal.pageSize.getHeight();
   const margin = 10;
@@ -103,28 +103,59 @@ export async function generateProductImagesPDF(products) {
     // Add images
     if (product.images?.length > 0) {
       // Pre-load all images for this product in parallel
+      const imageWidth = (contentWidth - 10) / 2; // Two images per row with 10mm gap
       const imageDataPromises = product.images.map((image) =>
-        loadImageAsBase64(image.url, contentWidth)
+        loadImageAsBase64(image.url, imageWidth)
       );
       const imageDataArray = await Promise.all(imageDataPromises);
 
-      // Process images sequentially for layout purposes
-      await imageDataArray.reduce(async (prevPromise, imageData, index) => {
-        await prevPromise;
+      // Process images in pairs for two-column layout
+      for (let i = 0; i < imageDataArray.length; i += 2) {
+        const leftImageData = imageDataArray[i];
+        const rightImageData = imageDataArray[i + 1];
 
-        const image = product.images[index];
-        const actualHeight = imageData ? Math.min(100, imageData.height) : 0;
+        const leftImage = product.images[i];
+        const rightImage = product.images[i + 1];
 
-        // Check page break with actual image height
-        if (currentY + actualHeight > pageHeight - margin) {
-          doc.addPage();
-          currentY = margin;
+        // If this is the last image and it's odd numbered, show it full width
+        if (i === imageDataArray.length - 1 && !rightImage) {
+          const fullImageData = await loadImageAsBase64(leftImage.url, contentWidth);
+          const fullHeight = fullImageData ? fullImageData.height : 20;
+
+          // Check page break
+          if (currentY + fullHeight > pageHeight - margin) {
+            doc.addPage();
+            currentY = margin;
+          }
+
+          // Add full width image
+          await addImage(leftImage.url, margin, currentY, contentWidth, fullHeight);
+          currentY += fullHeight + 10;
+        } else {
+          // Regular two-column layout
+          const leftHeight = leftImageData ? leftImageData.height : 0;
+          const rightHeight = rightImageData ? rightImageData.height : 0;
+          const rowHeight = Math.max(leftHeight, rightHeight, 20);
+
+          // Check page break with row height
+          if (currentY + rowHeight > pageHeight - margin) {
+            doc.addPage();
+            currentY = margin;
+          }
+
+          // Add left image
+          if (leftImage) {
+            await addImage(leftImage.url, margin, currentY, imageWidth, leftHeight);
+          }
+
+          // Add right image (if exists)
+          if (rightImage) {
+            await addImage(rightImage.url, margin + imageWidth + 10, currentY, imageWidth, rightHeight);
+          }
+
+          currentY += rowHeight + 10;
         }
-
-        // Add image
-        const imageResult = await addImage(image.url, margin, currentY, contentWidth, 100);
-        currentY += Math.max(imageResult.height, 20) + 10;
-      }, Promise.resolve());
+      }
 
       currentY += 15; // Space after images
     } else {
