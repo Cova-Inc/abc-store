@@ -88,7 +88,7 @@ export default function ProductListView() {
   const selectionManager = useSelectionManager(products);
 
   // PDF download functionality
-  const { isDownloading, downloadProductsPDF } = usePdfDownload();
+  const { isDownloading, downloadProductsPDF, downloadAllProductsPDF } = usePdfDownload();
 
   // =============================================================================
   // HANDLERS
@@ -216,6 +216,11 @@ export default function ProductListView() {
     downloadProductsPDF(selectionManager.selectedRowIds);
   }, [selectionManager.selectedRowIds, downloadProductsPDF]);
 
+  const handleDownloadAllPDF = useCallback(() => {
+    const filters = buildFilters();
+    downloadAllProductsPDF(filters);
+  }, [downloadAllProductsPDF, buildFilters]);
+
   // =============================================================================
   // EFFECTS
   // =============================================================================
@@ -307,36 +312,48 @@ export default function ProductListView() {
                 {selectionManager.selectedCount} of {totalCount} selected
               </Typography>
             </Stack>
-            {hasSelection && (
-              <Stack direction="row" spacing={1}>
-                <IconButton
-                  onClick={handleDownloadPDF}
-                  disabled={isDownloading}
-                  size="medium"
-                  aria-label="Download selected products as PDF"
-                  title="Download PDF"
-                >
-                  <Iconify
-                    icon={isDownloading ? 'eos-icons:loading' : 'eva:download-outline'}
-                    sx={{
-                      animation: isDownloading ? 'spin 1s linear infinite' : 'none',
-                      '@keyframes spin': {
-                        '0%': { transform: 'rotate(0deg)' },
-                        '100%': { transform: 'rotate(360deg)' },
-                      },
-                    }}
-                  />
-                </IconButton>
-                <IconButton
-                  onClick={handleDelete}
-                  size="medium"
-                  aria-label="Delete selected products"
-                  title="Delete selected products"
-                >
-                  <Iconify icon="solar:trash-bin-trash-bold" />
-                </IconButton>
-              </Stack>
-            )}
+            <Stack direction="row" spacing={1}>
+              <LoadingButton
+                variant="outlined"
+                startIcon={<Iconify icon="eva:download-outline" />}
+                onClick={handleDownloadAllPDF}
+                loading={isDownloading}
+                size="small"
+                sx={{ whiteSpace: 'nowrap' }}
+              >
+                Download All
+              </LoadingButton>
+              {hasSelection && (
+                <>
+                  <IconButton
+                    onClick={handleDownloadPDF}
+                    disabled={isDownloading}
+                    size="medium"
+                    aria-label="Download selected products as PDF"
+                    title="Download PDF"
+                  >
+                    <Iconify
+                      icon={isDownloading ? 'eos-icons:loading' : 'eva:download-outline'}
+                      sx={{
+                        animation: isDownloading ? 'spin 1s linear infinite' : 'none',
+                        '@keyframes spin': {
+                          '0%': { transform: 'rotate(0deg)' },
+                          '100%': { transform: 'rotate(360deg)' },
+                        },
+                      }}
+                    />
+                  </IconButton>
+                  <IconButton
+                    onClick={handleDelete}
+                    size="medium"
+                    aria-label="Delete selected products"
+                    title="Delete selected products"
+                  >
+                    <Iconify icon="solar:trash-bin-trash-bold" />
+                  </IconButton>
+                </>
+              )}
+            </Stack>
           </Stack>
         </Box>
 
