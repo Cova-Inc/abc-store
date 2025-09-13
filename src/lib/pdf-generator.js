@@ -1,5 +1,5 @@
 import path from 'path';
-import jsPDF from 'jspdf';
+import { jsPDF } from 'jspdf';
 import sharp from 'sharp';
 import fs from 'fs/promises';
 
@@ -84,8 +84,10 @@ export async function generateProductImagesPDF(products) {
   doc.text('Product Images', margin, currentY);
   currentY += 20;
 
-  // Process each product
-  for (const product of products) {
+  // Process all products and their images
+  await products.reduce(async (previousPromise, product) => {
+    await previousPromise;
+
     // Add product name
     doc.setFontSize(20);
     doc.setFont('helvetica', 'bold');
@@ -94,9 +96,17 @@ export async function generateProductImagesPDF(products) {
 
     // Add images
     if (product.images?.length > 0) {
-      for (const image of product.images) {
-        // Get image dimensions first without adding to PDF
-        const imageData = await loadImageAsBase64(image.url, contentWidth);
+      // Pre-load all images for this product in parallel
+      const imageDataPromises = product.images.map(image =>
+        loadImageAsBase64(image.url, contentWidth)
+      );
+      const imageDataArray = await Promise.all(imageDataPromises);
+
+      // Process images sequentially for layout purposes
+      await imageDataArray.reduce(async (prevPromise, imageData, index) => {
+        await prevPromise;
+
+        const image = product.images[index];
         const actualHeight = imageData ? Math.min(100, imageData.height) : 0;
 
         // Check page break with actual image height
@@ -108,7 +118,8 @@ export async function generateProductImagesPDF(products) {
         // Add image
         const imageResult = await addImage(image.url, margin, currentY, contentWidth, 100);
         currentY += Math.max(imageResult.height, 20) + 10;
-      }
+      }, Promise.resolve());
+
       currentY += 15; // Space after images
     } else {
       // No images message
@@ -119,16 +130,16 @@ export async function generateProductImagesPDF(products) {
       currentY += 20;
       doc.setTextColor(0, 0, 0);
     }
-  }
+  }, Promise.resolve());
 
   // Add page numbers
   const totalPages = doc.internal.getNumberOfPages();
-  for (let i = 1; i <= totalPages; i++) {
-    doc.setPage(i);
+  Array.from({ length: totalPages }, (_, i) => i + 1).forEach(pageNum => {
+    doc.setPage(pageNum);
     doc.setFontSize(8);
     doc.setTextColor(100, 100, 100);
-    doc.text(`Page ${i} of ${totalPages}`, pageWidth - 30, pageHeight - 10);
-  }
+    doc.text(`Page ${pageNum} of ${totalPages}`, pageWidth - 30, pageHeight - 10);
+  });
 
   return Buffer.from(doc.output('arraybuffer'));
 }
