@@ -17,7 +17,7 @@ async function loadImageAsBase64(imageUrl, maxWidthMm = 190) {
 
     // Convert mm to pixels for processing (assuming 96 DPI)
     const maxWidthPixels = Math.round(maxWidthMm / 0.264583);
-    
+
     // Calculate dimensions to fit within max width while preserving aspect ratio
     let { width, height } = imageInfo;
 
@@ -73,10 +73,9 @@ export async function generateProductImagesPDF(products) {
       const centerX = x + (maxWidth - width) / 2;
       doc.addImage(imageData.data, 'JPEG', centerX, y, width, height);
       return { width, height };
-    } 
-      console.warn(`⚠️ Skipping invalid image: ${imageUrl}`);
-      return { width: 0, height: 0 };
-    
+    }
+    console.warn(`⚠️ Skipping invalid image: ${imageUrl}`);
+    return { width: 0, height: 0 };
   };
 
   // Add title
