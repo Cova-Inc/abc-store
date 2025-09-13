@@ -134,9 +134,24 @@ export async function generateProductImagesPDF(products) {
             currentY = margin;
           }
 
-          // Add full width image
+          // Add full width image with proper aspect ratio
           if (fullImageData && fullImageData.data) {
-            doc.addImage(fullImageData.data, 'JPEG', margin, currentY, contentWidth, fullHeight);
+            // Scale image to fit within bounds while preserving aspect ratio
+            let { width, height } = fullImageData;
+            if (width > contentWidth) {
+              const ratio = contentWidth / width;
+              width = contentWidth;
+              height *= ratio;
+            }
+            if (height > fullHeight) {
+              const ratio = fullHeight / height;
+              height = fullHeight;
+              width *= ratio;
+            }
+
+            // Center image
+            const centerX = margin + (contentWidth - width) / 2;
+            doc.addImage(fullImageData.data, 'JPEG', centerX, currentY, width, height);
           }
           currentY += fullHeight + 10;
         } else {
@@ -153,12 +168,42 @@ export async function generateProductImagesPDF(products) {
 
           // Add left image
           if (leftImageData && leftImageData.data) {
-            doc.addImage(leftImageData.data, 'JPEG', margin, currentY, imageWidth, leftHeight);
+            // Scale left image to fit within bounds while preserving aspect ratio
+            let { width: leftWidth, height: leftActualHeight } = leftImageData;
+            if (leftWidth > imageWidth) {
+              const ratio = imageWidth / leftWidth;
+              leftWidth = imageWidth;
+              leftActualHeight *= ratio;
+            }
+            if (leftActualHeight > leftHeight) {
+              const ratio = leftHeight / leftActualHeight;
+              leftActualHeight = leftHeight;
+              leftWidth *= ratio;
+            }
+
+            // Center left image
+            const leftCenterX = margin + (imageWidth - leftWidth) / 2;
+            doc.addImage(leftImageData.data, 'JPEG', leftCenterX, currentY, leftWidth, leftActualHeight);
           }
 
           // Add right image (if exists)
           if (rightImageData && rightImageData.data) {
-            doc.addImage(rightImageData.data, 'JPEG', margin + imageWidth + 10, currentY, imageWidth, rightHeight);
+            // Scale right image to fit within bounds while preserving aspect ratio
+            let { width: rightWidth, height: rightActualHeight } = rightImageData;
+            if (rightWidth > imageWidth) {
+              const ratio = imageWidth / rightWidth;
+              rightWidth = imageWidth;
+              rightActualHeight *= ratio;
+            }
+            if (rightActualHeight > rightHeight) {
+              const ratio = rightHeight / rightActualHeight;
+              rightActualHeight = rightHeight;
+              rightWidth *= ratio;
+            }
+
+            // Center right image
+            const rightCenterX = margin + imageWidth + 10 + (imageWidth - rightWidth) / 2;
+            doc.addImage(rightImageData.data, 'JPEG', rightCenterX, currentY, rightWidth, rightActualHeight);
           }
 
           currentY += rowHeight + 10;
