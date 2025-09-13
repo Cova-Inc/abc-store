@@ -23,5 +23,18 @@
     "404": "Failed to Load Products",
     "500": "Failed to Load Products"
   },
-  "retry": "Retry"
+  "retry": "Retry",
+  "back": "Back",
+  "newProduct": {
+    "title": "New Product",
+    "description": "Please enter the details below to add a new product.",
+    "success": "Product created successfully!",
+    "error": "Failed to create product"
+  },
+  "editProduct": {
+    "title": "Edit Product",
+    "description": "Please enter the details below to update the product.",
+    "success": "Product updated successfully!",
+    "error": "Failed to update product"
+  }
 }

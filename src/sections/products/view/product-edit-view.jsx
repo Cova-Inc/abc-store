@@ -7,6 +7,7 @@ import { Box, Card, Stack, Button, Divider, Typography, CircularProgress } from 
 import { paths } from 'src/routes/paths';
 import { useRouter } from 'src/routes/hooks';
 
+import { useTranslate } from 'src/locales/use-locales';
 import { DashboardContent } from 'src/layouts/dashboard';
 
 import { toast } from 'src/components/snackbar';
@@ -23,6 +24,7 @@ import { ProductForm } from '../components/product-form';
 export default function ProductEditView({ params }) {
   const router = useRouter();
   const { user } = useAuthContext();
+  const { t } = useTranslate('products');
 
   // Use the products hook for data fetching
   const { product, loading, error, fetchProduct } = useProducts();
@@ -86,17 +88,17 @@ export default function ProductEditView({ params }) {
     async (data) => {
       try {
         await onSubmit(data);
-        toast.success('Product updated successfully!');
+        toast.success(t('editProduct.success'));
         // Redirect after successful submission
         setTimeout(() => {
           router.push(paths.main.products.root);
         }, 500);
       } catch (err) {
         console.error('Product update error:', err);
-        toast.error(err.message || 'Failed to update product');
+        toast.error(err.message || t('editProduct.error'));
       }
     },
-    [onSubmit, router]
+    [onSubmit, router, t]
   );
 
   if (loading) {
@@ -157,16 +159,16 @@ export default function ProductEditView({ params }) {
           size="large"
           startIcon={<Iconify icon="eva:arrow-back-fill" />}
         >
-          戻る
+          {t('back')}
         </Button>
       </Stack>
 
       {/* Product Form */}
       <Card sx={{ p: 3, mt: 3 }}>
         <Box>
-          <Typography variant="h4">商品を編集</Typography>
+          <Typography variant="h4">{t('editProduct.title')}</Typography>
           <Typography variant="body2" sx={{ color: 'text.secondary' }}>
-            以下の詳細を入力して、製品を更新してください。
+            {t('editProduct.description')}
           </Typography>
         </Box>
         <Divider sx={{ my: 2, borderStyle: 'dashed' }} />
