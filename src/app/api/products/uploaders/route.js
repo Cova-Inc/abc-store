@@ -26,10 +26,9 @@ export async function GET(request) {
 
     // Get user details for each uploader
     const User = (await import('src/models/User')).default;
-    const uploaderDetails = await User.find(
-      { _id: { $in: uploaderIds } },
-      'name email'
-    ).sort({ name: 1 }).lean();
+    const uploaderDetails = await User.find({ _id: { $in: uploaderIds } }, 'name email')
+      .sort({ name: 1 })
+      .lean();
 
     // Transform to return format
     const transformedUploaders = uploaderDetails.map((user) => ({
@@ -44,9 +43,6 @@ export async function GET(request) {
     });
   } catch (error) {
     console.error('Error fetching product uploaders:', error);
-    return NextResponse.json(
-      { error: 'Failed to fetch product uploaders' },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: 'Failed to fetch product uploaders' }, { status: 500 });
   }
 }
