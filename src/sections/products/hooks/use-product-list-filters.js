@@ -10,9 +10,37 @@ const DEFAULT_FILTERS = {
   filterFields: ['name', 'description'],
 };
 
+// localStorage keys for persistence
+const PAGE_SIZE_STORAGE_KEY = 'product-list-page-size';
+const CURRENT_PAGE_STORAGE_KEY = 'product-list-current-page';
+
+// Helper function to get pageSize from localStorage
+const getStoredPageSize = () => {
+  if (typeof window === 'undefined') return DEFAULT_FILTERS.pageSize;
+  
+  try {
+    const stored = localStorage.getItem(PAGE_SIZE_STORAGE_KEY);
+    return stored ? parseInt(stored, 10) : DEFAULT_FILTERS.pageSize;
+  } catch {
+    return DEFAULT_FILTERS.pageSize;
+  }
+};
+
+// Helper function to get current page from localStorage
+const getStoredCurrentPage = () => {
+  if (typeof window === 'undefined') return DEFAULT_FILTERS.page;
+  
+  try {
+    const stored = localStorage.getItem(CURRENT_PAGE_STORAGE_KEY);
+    return stored ? parseInt(stored, 10) : DEFAULT_FILTERS.page;
+  } catch {
+    return DEFAULT_FILTERS.page;
+  }
+};
+
 export function useProductListFilters() {
-  const [page, setPage] = useState(DEFAULT_FILTERS.page);
-  const [pageSize, setPageSize] = useState(DEFAULT_FILTERS.pageSize);
+  const [page, setPage] = useState(getStoredCurrentPage);
+  const [pageSize, setPageSize] = useState(getStoredPageSize);
   const [searchInput, setSearchInput] = useState(DEFAULT_FILTERS.searchInput);
   const [categoryFilter, setCategoryFilter] = useState(DEFAULT_FILTERS.categoryFilter);
   const [search, setSearch] = useState(DEFAULT_FILTERS.search);
@@ -48,34 +76,58 @@ export function useProductListFilters() {
     return filters;
   }, [search, categoryFilter, filterFields]);
 
+  // Custom setPage that also saves to localStorage
+  const setPageWithStorage = useCallback((newPage) => {
+    setPage(newPage);
+    if (typeof window !== 'undefined') {
+      try {
+        localStorage.setItem(CURRENT_PAGE_STORAGE_KEY, newPage.toString());
+      } catch (error) {
+        console.warn('Failed to save current page to localStorage:', error);
+      }
+    }
+  }, []);
+
   // Apply search filter
   const applyFilter = useCallback(() => {
     setSearch(searchInput);
-    setPage(0); // Reset to first page when applying new filter
-  }, [searchInput]);
+    setPageWithStorage(0); // Reset to first page when applying new filter
+  }, [searchInput, setPageWithStorage]);
 
   // Handle search input enter key
   const handleSearchEnter = useCallback(() => {
     setSearch(searchInput);
-    setPage(0); // Reset to first page when applying new filter
-  }, [searchInput]);
+    setPageWithStorage(0); // Reset to first page when applying new filter
+  }, [searchInput, setPageWithStorage]);
 
   // Clear all filters
   const clearFilter = useCallback(() => {
     setSearchInput('');
     setSearch('');
     setCategoryFilter('all');
-    setPage(0);
-  }, []);
+    setPageWithStorage(0);
+  }, [setPageWithStorage]);
 
   // Reset page when other filters change
   const resetPage = useCallback(() => {
-    setPage(0);
-  }, []);
+    setPageWithStorage(0);
+  }, [setPageWithStorage]);
 
   const setCategoryFilterWithReset = useCallback((value) => {
     setCategoryFilter(value);
-    setPage(0);
+    setPageWithStorage(0);
+  }, [setPageWithStorage]);
+
+  // Custom setPageSize that also saves to localStorage
+  const setPageSizeWithStorage = useCallback((newPageSize) => {
+    setPageSize(newPageSize);
+    if (typeof window !== 'undefined') {
+      try {
+        localStorage.setItem(PAGE_SIZE_STORAGE_KEY, newPageSize.toString());
+      } catch (error) {
+        console.warn('Failed to save pageSize to localStorage:', error);
+      }
+    }
   }, []);
 
   // Memoized filter state
@@ -94,8 +146,8 @@ export function useProductListFilters() {
 
   return {
     ...filterState,
-    setPage,
-    setPageSize,
+    setPage: setPageWithStorage,
+    setPageSize: setPageSizeWithStorage,
     setSearchInput,
     setCategoryFilter: setCategoryFilterWithReset,
     setFilterFields,
