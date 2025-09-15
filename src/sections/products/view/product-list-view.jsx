@@ -36,6 +36,7 @@ import {
   CommonListPagination,
 } from 'src/components/common-list';
 
+import axios from 'src/utils/axios';
 import { useAuthContext } from 'src/auth/hooks';
 
 import { ProductListItem } from '../components';
@@ -52,6 +53,7 @@ export default function ProductListView() {
   const isMobile = useMediaQuery(theme.breakpoints.down('md'));
   const { user } = useAuthContext();
   const [productToDelete, setProductToDelete] = useState(null);
+  const [uploaders, setUploaders] = useState([]);
   const { t } = useTranslate('products');
 
   // ONE HOOK FOR EVERYTHING
@@ -72,6 +74,7 @@ export default function ProductListView() {
     pageSize,
     searchInput,
     categoryFilter,
+    userFilter,
     search,
     filterFields,
     initialized,
@@ -79,6 +82,7 @@ export default function ProductListView() {
     setPageSize,
     setSearchInput,
     setCategoryFilter,
+    setUserFilter,
     setFilterFields,
     buildFilters,
     applyFilter,
@@ -228,6 +232,21 @@ export default function ProductListView() {
   // EFFECTS
   // =============================================================================
 
+  // Fetch uploaders when component mounts (admin only)
+  useEffect(() => {
+    const fetchUploaders = async () => {
+      if (user?.role === 'admin') {
+        try {
+          const response = await axios.get('/api/products/uploaders');
+          setUploaders(response.data.uploaders || []);
+        } catch (err) {
+          console.error('Failed to fetch uploaders:', err);
+        }
+      }
+    };
+    fetchUploaders();
+  }, [user]);
+
   // Fetch data when filters change
   useEffect(() => {
     if (initialized) {
@@ -243,6 +262,7 @@ export default function ProductListView() {
     page,
     pageSize,
     categoryFilter,
+    userFilter,
     search,
     filterFields,
     buildFilters,
@@ -294,6 +314,11 @@ export default function ProductListView() {
           filterFields={filterFields}
           setFilterFields={setFilterFields}
           filterFieldOptions={PRODUCT_FILTER_FIELD_OPTIONS}
+          showUserFilter={user?.role === 'admin'}
+          userFilterValue={userFilter}
+          setUserFilterValue={setUserFilter}
+          userFilterOptions={uploaders}
+          userFilterLabel="Uploaded By"
           minFilterWidth={isMobile ? 100 : 200}
           minSearchWidth={isMobile ? 150 : 250}
         />

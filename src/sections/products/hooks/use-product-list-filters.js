@@ -6,6 +6,7 @@ const DEFAULT_FILTERS = {
   pageSize: 10,
   searchInput: '',
   categoryFilter: 'all',
+  userFilter: 'all',
   search: '',
   filterFields: ['name', 'description'],
 };
@@ -43,6 +44,7 @@ export function useProductListFilters() {
   const [pageSize, setPageSize] = useState(getStoredPageSize);
   const [searchInput, setSearchInput] = useState(DEFAULT_FILTERS.searchInput);
   const [categoryFilter, setCategoryFilter] = useState(DEFAULT_FILTERS.categoryFilter);
+  const [userFilter, setUserFilter] = useState(DEFAULT_FILTERS.userFilter);
   const [search, setSearch] = useState(DEFAULT_FILTERS.search);
   const [filterFields, setFilterFields] = useState(DEFAULT_FILTERS.filterFields);
 
@@ -68,13 +70,18 @@ export function useProductListFilters() {
       filters.category = categoryFilter;
     }
 
+    // Only add user filter if it's not 'all'
+    if (userFilter && userFilter !== 'all') {
+      filters.createdBy = userFilter;
+    }
+
     // Only add filterFields if specified
     if (filterFields && filterFields.length > 0) {
       filters.filterFields = filterFields;
     }
 
     return filters;
-  }, [search, categoryFilter, filterFields]);
+  }, [search, categoryFilter, userFilter, filterFields]);
 
   // Custom setPage that also saves to localStorage
   const setPageWithStorage = useCallback((newPage) => {
@@ -105,6 +112,7 @@ export function useProductListFilters() {
     setSearchInput('');
     setSearch('');
     setCategoryFilter('all');
+    setUserFilter('all');
     setPageWithStorage(0);
   }, [setPageWithStorage]);
 
@@ -116,6 +124,14 @@ export function useProductListFilters() {
   const setCategoryFilterWithReset = useCallback(
     (value) => {
       setCategoryFilter(value);
+      setPageWithStorage(0);
+    },
+    [setPageWithStorage]
+  );
+
+  const setUserFilterWithReset = useCallback(
+    (value) => {
+      setUserFilter(value);
       setPageWithStorage(0);
     },
     [setPageWithStorage]
@@ -140,11 +156,12 @@ export function useProductListFilters() {
       pageSize,
       searchInput,
       categoryFilter,
+      userFilter,
       search,
       filterFields,
       initialized,
     }),
-    [page, pageSize, searchInput, categoryFilter, search, filterFields, initialized]
+    [page, pageSize, searchInput, categoryFilter, userFilter, search, filterFields, initialized]
   );
 
   return {
@@ -153,6 +170,7 @@ export function useProductListFilters() {
     setPageSize: setPageSizeWithStorage,
     setSearchInput,
     setCategoryFilter: setCategoryFilterWithReset,
+    setUserFilter: setUserFilterWithReset,
     setFilterFields,
     buildFilters,
     applyFilter,

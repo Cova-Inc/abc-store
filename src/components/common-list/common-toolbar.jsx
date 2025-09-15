@@ -15,6 +15,13 @@ export function CommonToolbar({
   filterOptions,
   filterLabel = 'Filter',
 
+  // User filter props
+  userFilterValue,
+  setUserFilterValue,
+  userFilterOptions,
+  userFilterLabel = 'Uploaded By',
+  showUserFilter = false,
+
   // Search props
   searchInput,
   setSearchInput,
@@ -47,6 +54,25 @@ export function CommonToolbar({
             {filterOptions.map((option) => (
               <MenuItem key={option.value} value={option.value}>
                 {option.label.startsWith('categories.') ? t(option.label) : option.label}
+              </MenuItem>
+            ))}
+          </Select>
+        </FormControl>
+      )}
+
+      {showUserFilter && userFilterOptions && (
+        <FormControl sx={{ minWidth: minFilterWidth }}>
+          <InputLabel id="user-filter-label">{userFilterLabel}</InputLabel>
+          <Select
+            labelId="user-filter-label"
+            value={userFilterValue}
+            label={userFilterLabel}
+            onChange={(e) => setUserFilterValue(e.target.value)}
+          >
+            <MenuItem value="all">{t('all')}</MenuItem>
+            {userFilterOptions.map((option) => (
+              <MenuItem key={option.id} value={option.id}>
+                {option.name}
               </MenuItem>
             ))}
           </Select>

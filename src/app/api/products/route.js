@@ -28,6 +28,7 @@ export async function GET(request) {
     const search = searchParams.get('search') || '';
     const category = searchParams.get('category') || '';
     const status = searchParams.get('status') || '';
+    const createdBy = searchParams.get('createdBy') || '';
     const sortBy = searchParams.get('sortBy') || 'createdAt';
     const sortOrder = searchParams.get('sortOrder') || 'desc';
 
@@ -37,6 +38,9 @@ export async function GET(request) {
     // Role-based filtering: users can only see their own products, admins can see all
     if (userRole !== 'admin') {
       filter.createdBy = userId;
+    } else if (createdBy) {
+      // Admin can filter by specific user
+      filter.createdBy = createdBy;
     }
 
     if (search) {
