@@ -60,18 +60,6 @@ export function CommonToolbar({
         </FormControl>
       )}
 
-      <SearchWithFields
-        search={searchInput}
-        setSearch={setSearchInput}
-        filterFields={filterFields}
-        setFilterFields={setFilterFields}
-        onFilter={onSearchEnter}
-        onClear={onClear}
-        filterFieldOptions={filterFieldOptions}
-        placeholder={placeholder}
-        minWidth={minSearchWidth}
-      />
-
       {showUserFilter && userFilterOptions && (
         <FormControl sx={{ minWidth: minFilterWidth }}>
           <InputLabel id="user-filter-label">{userFilterLabel}</InputLabel>
@@ -90,6 +78,18 @@ export function CommonToolbar({
           </Select>
         </FormControl>
       )}
+
+      <SearchWithFields
+        search={searchInput}
+        setSearch={setSearchInput}
+        filterFields={filterFields}
+        setFilterFields={setFilterFields}
+        onFilter={onSearchEnter}
+        onClear={onClear}
+        filterFieldOptions={filterFieldOptions}
+        placeholder={placeholder}
+        minWidth={minSearchWidth}
+      />
     </Stack>
   );
 }
