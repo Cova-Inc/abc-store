@@ -62,5 +62,31 @@
     "approved": "Approved",
     "declined": "Declined",
     "draft": "Pending Approval"
+  },
+  "form": {
+    "productImages": "Product Images (Max 10)",
+    "basicInfo": "Basic Information",
+    "productName": "Product Name",
+    "productNamePlaceholder": "Enter product name",
+    "price": "Price",
+    "stockQuantity": "Stock Quantity",
+    "detailDescription": "Detail Description",
+    "descriptionPlaceholder": "Enter product details",
+    "skuPlaceholder": "Enter SKU",
+    "supplier": "Supplier",
+    "supplierPlaceholder": "Enter supplier",
+    "originalPrice": "Original Price (MSRP)",
+    "tagsPlaceholder": "Add tags... (Press Enter to add custom tags)",
+    "tagsHelperText": "Select from suggestions or type and press Enter to add custom tags",
+    "supplierInfo": "Supplier Information",
+    "originalPriceHelperText": "Original price must be greater than or equal to the current price.",
+    "removeAll": "Remove All",
+    "reset": "Reset",
+    "createProduct": "Create Product",
+    "updateProduct": "Update Product",
+    "uploadTitle": "Drop or Select",
+    "uploadDescription": "Drag & drop files here or",
+    "uploadSelect": "browse files",
+    "uploadSuffix": "to upload"
   }
 }

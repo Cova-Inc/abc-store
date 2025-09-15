@@ -2,10 +2,13 @@ import Box from '@mui/material/Box';
 import Stack from '@mui/material/Stack';
 
 import { UploadIllustration } from 'src/assets/illustrations';
+import { useTranslate } from 'src/locales/use-locales';
 
 // ----------------------------------------------------------------------
 
 export function UploadPlaceholder({ ...other }) {
+  const { t } = useTranslate('products');
+
   return (
     <Box
       sx={{
@@ -19,17 +22,17 @@ export function UploadPlaceholder({ ...other }) {
       <UploadIllustration hideBackground sx={{ width: 200 }} />
 
       <Stack spacing={1} sx={{ textAlign: 'center' }}>
-        <Box sx={{ typography: 'h6' }}>ドロップまたは選択</Box>
+        <Box sx={{ typography: 'h6' }}>{t('form.uploadTitle')}</Box>
         <Box sx={{ typography: 'body2', color: 'text.secondary' }}>
-          ここにドラッグ＆ドロップまたは
+          {t('form.uploadDescription')}
           <br />
           <Box
             component="span"
             sx={{ mx: 0.5, color: 'primary.main', textDecoration: 'underline' }}
           >
-            ファイルを選択
+            {t('form.uploadSelect')}
           </Box>
-          してアップロード
+          {' '}{t('form.uploadSuffix')}
         </Box>
       </Stack>
     </Box>

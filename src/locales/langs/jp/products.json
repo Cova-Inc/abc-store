@@ -62,5 +62,31 @@
     "approved": "承認済み",
     "declined": "拒否",
     "draft": "承認待ち"
+  },
+  "form": {
+    "productImages": "商品画像（最大10枚）",
+    "basicInfo": "基本情報",
+    "productName": "商品名",
+    "productNamePlaceholder": "商品名を入力してください",
+    "price": "値段",
+    "stockQuantity": "在庫数量",
+    "detailDescription": "詳細説明",
+    "descriptionPlaceholder": "商品詳細を入力してください",
+    "skuPlaceholder": "SKUを入力してください",
+    "supplier": "仕入先",
+    "supplierPlaceholder": "仕入先を入力してください",
+    "originalPrice": "元の価格（定価）",
+    "tagsPlaceholder": "タグを追加...(Enterキーでカスタムタグを追加)",
+    "tagsHelperText": "候補から選択するか入力し、Enterキーでカスタムタグを追加",
+    "supplierInfo": "サプライヤー情報",
+    "originalPriceHelperText": "元の価格は現在の値段以上でなければなりません。",
+    "removeAll": "すべてを削除",
+    "reset": "リセット",
+    "createProduct": "商品を作成",
+    "updateProduct": "商品を更新",
+    "uploadTitle": "ドロップまたは選択",
+    "uploadDescription": "ここにドラッグ＆ドロップまたは",
+    "uploadSelect": "ファイルを選択",
+    "uploadSuffix": "してアップロード"
   }
 }

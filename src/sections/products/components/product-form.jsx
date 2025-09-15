@@ -121,7 +121,7 @@ export function ProductForm({
           <Grid item xs={12} md={4}>
             <Box>
               <Typography variant="subtitle2" gutterBottom>
-                商品画像（最大10枚）
+                {t('form.productImages')}
               </Typography>
               <Field.Upload
                 name="images"
@@ -156,7 +156,7 @@ export function ProductForm({
               {/* Basic Information */}
               <Box>
                 <Typography variant="h6" gutterBottom>
-                  基本情報
+                  {t('form.basicInfo')}
                 </Typography>
                 <Stack spacing={2}>
                   <Grid container spacing={2}>
@@ -164,8 +164,8 @@ export function ProductForm({
                       <Field.Text
                         required
                         name="name"
-                        label="商品名"
-                        placeholder="商品名を入力してください"
+                        label={t('form.productName')}
+                        placeholder={t('form.productNamePlaceholder')}
                         error={!!errors.name}
                         helperText={errors.name?.message}
                       />
@@ -174,7 +174,7 @@ export function ProductForm({
                       <Field.Select
                         required
                         name="category"
-                        label="カテゴリー"
+                        label={t('category')}
                         error={!!errors.category}
                         helperText={errors.category?.message}
                       >
@@ -191,7 +191,7 @@ export function ProductForm({
                       <Field.Text
                         required
                         name="price"
-                        label="値段"
+                        label={t('form.price')}
                         type="number"
                         placeholder="0.00"
                         InputProps={{
@@ -205,7 +205,7 @@ export function ProductForm({
                       <Field.Text
                         required
                         name="stock"
-                        label="在庫数量"
+                        label={t('form.stockQuantity')}
                         type="number"
                         placeholder="1"
                         error={!!errors.stock}
@@ -216,10 +216,10 @@ export function ProductForm({
 
                   <Field.Text
                     name="description"
-                    label="詳細説明"
+                    label={t('form.detailDescription')}
                     multiline
                     rows={3}
-                    placeholder="商品詳細を入力してください"
+                    placeholder={t('form.descriptionPlaceholder')}
                     error={!!errors.description}
                     helperText={errors.description?.message}
                   />
@@ -229,7 +229,7 @@ export function ProductForm({
                       <Field.Text
                         name="sku"
                         label="SKU"
-                        placeholder="SKUを入力してください"
+                        placeholder={t('form.skuPlaceholder')}
                         error={!!errors.sku}
                         helperText={errors.sku?.message}
                       />
@@ -311,14 +311,14 @@ export function ProductForm({
               {/* Inventory */}
               <Box>
                 <Typography variant="h6" gutterBottom>
-                  サプライヤー情報
+                  {t('form.supplierInfo')}
                 </Typography>
                 <Grid container spacing={2}>
                   <Grid item xs={12} sm={6}>
                     <Field.Text
                       name="supplier"
-                      label="仕入先"
-                      placeholder="仕入先を入力してください"
+                      label={t('form.supplier')}
+                      placeholder={t('form.supplierPlaceholder')}
                       error={!!errors.name}
                       helperText={errors.name?.message}
                     />
@@ -326,7 +326,7 @@ export function ProductForm({
                   <Grid item xs={12} sm={6}>
                     <Field.Text
                       name="originalPrice"
-                      label="元の価格（定価）"
+                      label={t('form.originalPrice')}
                       type="number"
                       placeholder="0.00"
                       InputProps={{
@@ -335,7 +335,7 @@ export function ProductForm({
                       error={!!errors.originalPrice}
                       helperText={
                         errors.originalPrice?.message ||
-                        '元の価格は現在の値段以上でなければなりません。'
+                        t('form.originalPriceHelperText')
                       }
                     />
                   </Grid>
@@ -347,7 +347,7 @@ export function ProductForm({
               {/* Tags */}
               <Box>
                 <Typography variant="h6" gutterBottom>
-                  タグ
+                  {t('filterFields.tags')}
                 </Typography>
                 <Controller
                   name="tags"
@@ -376,11 +376,11 @@ export function ProductForm({
                       renderInput={(params) => (
                         <TextField
                           {...params}
-                          placeholder="タグを追加...(Enterキーでカスタムタグを追加)"
+                          placeholder={t('form.tagsPlaceholder')}
                           error={!!errors.tags}
                           helperText={
                             errors.tags?.message ||
-                            '候補から選択するか入力し、Enterキーでカスタムタグを追加'
+                            t('form.tagsHelperText')
                           }
                         />
                       )}
@@ -403,7 +403,7 @@ export function ProductForm({
               }}
               disabled={isSubmitting}
             >
-              リセット
+              {t('form.reset')}
             </Button>
             <LoadingButton
               type="submit"
@@ -411,7 +411,7 @@ export function ProductForm({
               loading={isSubmitting}
               disabled={!isDirty}
             >
-              {defaultValues ? '商品を更新' : '商品を作成'}
+              {defaultValues ? t('form.updateProduct') : t('form.createProduct')}
             </LoadingButton>
           </Stack>
         </Box>
