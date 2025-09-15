@@ -1,8 +1,8 @@
 import Box from '@mui/material/Box';
 import Stack from '@mui/material/Stack';
 
-import { UploadIllustration } from 'src/assets/illustrations';
 import { useTranslate } from 'src/locales/use-locales';
+import { UploadIllustration } from 'src/assets/illustrations';
 
 // ----------------------------------------------------------------------
 

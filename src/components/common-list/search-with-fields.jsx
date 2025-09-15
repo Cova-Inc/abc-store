@@ -13,8 +13,9 @@ import {
   ClickAwayListener,
 } from '@mui/material';
 
-import { Iconify } from 'src/components/iconify';
 import { useTranslate } from 'src/locales/use-locales';
+
+import { Iconify } from 'src/components/iconify';
 
 export function SearchWithFields({
   search,

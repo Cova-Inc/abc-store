@@ -19,8 +19,8 @@ import {
 import { fDate } from 'src/utils/format-time';
 import { fNumber, fCurrency, fShortenNumber } from 'src/utils/format-number';
 
-import { PRODUCT_STATUS_OPTIONS, PRODUCT_CATEGORY_OPTIONS } from 'src/config-global';
 import { useTranslate } from 'src/locales/use-locales';
+import { PRODUCT_STATUS_OPTIONS, PRODUCT_CATEGORY_OPTIONS } from 'src/config-global';
 
 import { Label } from 'src/components/label';
 import { Image } from 'src/components/image';
@@ -114,7 +114,7 @@ export function ProductListItem({
           cursor: 'pointer',
           '&:hover': {
             borderColor: alpha(theme.palette.primary.main, 0.4),
-            boxShadow: (t) => t.customShadows.z4,
+            boxShadow: (theme) => theme.customShadows.z4,
           },
           transition: 'all 0.2s ease-in-out',
         }}
@@ -282,7 +282,7 @@ export function ProductListItem({
         cursor: 'pointer',
         '&:hover': {
           borderColor: alpha(theme.palette.primary.main, 0.4),
-          boxShadow: (t) => t.customShadows.z8,
+          boxShadow: (theme) => theme.customShadows.z8,
         },
         transition: 'all 0.2s ease-in-out',
       }}

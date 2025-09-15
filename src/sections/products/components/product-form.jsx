@@ -18,12 +18,12 @@ import {
   Autocomplete,
 } from '@mui/material';
 
+import { useTranslate } from 'src/locales/use-locales';
 import {
   MAX_UPLOAD_SIZE,
   PRODUCT_STATUS_OPTIONS,
   PRODUCT_CATEGORY_OPTIONS,
 } from 'src/config-global';
-import { useTranslate } from 'src/locales/use-locales';
 
 import { Field } from 'src/components/hook-form';
 

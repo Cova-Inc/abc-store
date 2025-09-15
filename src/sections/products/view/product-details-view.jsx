@@ -23,9 +23,9 @@ import { fDate } from 'src/utils/format-time';
 import { fCurrency, fShortenNumber } from 'src/utils/format-number';
 
 import { useBoolean } from 'src/hooks';
+import { useTranslate } from 'src/locales/use-locales';
 import { DashboardContent } from 'src/layouts/dashboard';
 import { PRODUCT_STATUS_OPTIONS, PRODUCT_CATEGORY_OPTIONS } from 'src/config-global';
-import { useTranslate } from 'src/locales/use-locales';
 
 import { Label } from 'src/components/label';
 import { toast } from 'src/components/snackbar';
