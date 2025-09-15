@@ -23,5 +23,67 @@
     "404": "加载产品失败",
     "500": "加载产品失败"
   },
-  "retry": "重试"
+  "retry": "重试",
+  "back": "返回",
+  "newProduct": {
+    "title": "新产品",
+    "description": "请输入以下详细信息以添加新产品。",
+    "success": "产品创建成功！",
+    "error": "创建产品失败"
+  },
+  "editProduct": {
+    "title": "编辑产品",
+    "description": "请输入以下详细信息以更新产品。",
+    "success": "产品更新成功！",
+    "error": "更新产品失败"
+  },
+  "categories": {
+    "shoes": "鞋子",
+    "beauty": "美妆",
+    "underwear": "内衣",
+    "books": "书籍",
+    "electronics": "电子产品",
+    "others": "其他"
+  },
+  "name": "产品名称",
+  "description": "描述",
+  "sku": "SKU",
+  "tags": "标签",
+  "reviews": "评论",
+  "noReviews": "无评论",
+  "noSku": "无SKU",
+  "all": "全部",
+  "stock": "库存数量",
+  "stockLabel": "库存",
+  "status": {
+    "approved": "已批准",
+    "declined": "已拒绝",
+    "draft": "待批准"
+  },
+  "form": {
+    "productImages": "产品图片（最多10张）",
+    "basicInfo": "基本信息",
+    "productName": "产品名称",
+    "productNamePlaceholder": "请输入产品名称",
+    "price": "价格",
+    "stockQuantity": "库存数量",
+    "detailDescription": "详细描述",
+    "descriptionPlaceholder": "请输入产品详细信息",
+    "skuPlaceholder": "请输入SKU",
+    "supplier": "供应商",
+    "supplierPlaceholder": "请输入供应商",
+    "originalPrice": "原价（建议零售价）",
+    "tagsPlaceholder": "添加标签...（按Enter键添加自定义标签）",
+    "tagsHelperText": "从建议中选择或输入并按Enter键添加自定义标签",
+    "supplierInfo": "供应商信息",
+    "originalPriceHelperText": "原价必须大于或等于当前价格。",
+    "removeAll": "全部删除",
+    "reset": "重置",
+    "createProduct": "创建产品",
+    "updateProduct": "更新产品",
+    "uploadTitle": "拖放或选择",
+    "uploadDescription": "将文件拖放到此处或",
+    "uploadSelect": "浏览文件",
+    "uploadSuffix": "上传"
+  }
 }
