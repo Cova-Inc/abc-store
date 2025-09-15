@@ -57,6 +57,7 @@
   "noReviews": "レビューなし",
   "noSku": "SKUなし",
   "stock": "在庫数量",
+  "stockLabel": "在庫",
   "status": {
     "approved": "承認済み",
     "declined": "拒否",

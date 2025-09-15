@@ -57,6 +57,7 @@
   "noReviews": "No reviews",
   "noSku": "No SKU",
   "stock": "Stock Quantity",
+  "stockLabel": "Stock",
   "status": {
     "approved": "Approved",
     "declined": "Declined",

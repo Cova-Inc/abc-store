@@ -356,7 +356,9 @@ export function ProductListItem({
               >
                 <Rating value={product.rating} precision={0.1} size="small" readOnly />
                 <Typography variant="caption" color="text.secondary">
-                  ({fNumber(product.reviewCount || 0)} レビュー)
+                  ({(product.reviewCount || 0) > 0
+                    ? `${fNumber(product.reviewCount)} ${t('reviews')}`
+                    : t('noReviews')})
                 </Typography>
               </Stack>
             </Box>
@@ -425,7 +427,7 @@ export function ProductListItem({
                   color="text.secondary"
                   sx={{ textDecorationLine: product.stock === 0 ? 'line-through' : 'none' }}
                 >
-                  在庫: {product.stock}
+                  {t('stockLabel')}: {product.stock}
                 </Typography>
               )}
             </Stack>
