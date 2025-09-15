@@ -90,7 +90,13 @@ export function SearchWithFields({
                 {filterFieldOptions.map((field) => (
                   <MenuItem key={field.value} onClick={() => handleFieldToggle(field.value)}>
                     <Checkbox checked={filterFields.includes(field.value)} />
-                    <ListItemText primary={['name', 'description', 'sku', 'category', 'tags'].includes(field.label) ? t(field.label) : field.label} />
+                    <ListItemText
+                      primary={
+                        ['name', 'description', 'sku', 'category', 'tags'].includes(field.label)
+                          ? t(field.label)
+                          : field.label
+                      }
+                    />
                   </MenuItem>
                 ))}
               </FormControl>

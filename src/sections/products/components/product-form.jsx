@@ -180,7 +180,9 @@ export function ProductForm({
                       >
                         {PRODUCT_CATEGORY_OPTIONS.map((option) => (
                           <MenuItem key={option.value} value={option.value}>
-                            {option.label.startsWith('categories.') ? t(option.label) : option.label}
+                            {option.label.startsWith('categories.')
+                              ? t(option.label)
+                              : option.label}
                           </MenuItem>
                         ))}
                       </Field.Select>
@@ -334,8 +336,7 @@ export function ProductForm({
                       }}
                       error={!!errors.originalPrice}
                       helperText={
-                        errors.originalPrice?.message ||
-                        t('form.originalPriceHelperText')
+                        errors.originalPrice?.message || t('form.originalPriceHelperText')
                       }
                     />
                   </Grid>
@@ -378,10 +379,7 @@ export function ProductForm({
                           {...params}
                           placeholder={t('form.tagsPlaceholder')}
                           error={!!errors.tags}
-                          helperText={
-                            errors.tags?.message ||
-                            t('form.tagsHelperText')
-                          }
+                          helperText={errors.tags?.message || t('form.tagsHelperText')}
                         />
                       )}
                     />

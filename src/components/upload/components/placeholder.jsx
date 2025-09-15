@@ -31,8 +31,8 @@ export function UploadPlaceholder({ ...other }) {
             sx={{ mx: 0.5, color: 'primary.main', textDecoration: 'underline' }}
           >
             {t('form.uploadSelect')}
-          </Box>
-          {' '}{t('form.uploadSuffix')}
+          </Box>{' '}
+          {t('form.uploadSuffix')}
         </Box>
       </Stack>
     </Box>

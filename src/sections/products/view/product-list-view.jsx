@@ -312,7 +312,10 @@ export default function ProductListView() {
                 aria-label="Select all products"
               />
               <Typography variant="body2" color="text.secondary">
-                {t('selectedCount', { selected: selectionManager.selectedCount, count: totalCount })}
+                {t('selectedCount', {
+                  selected: selectionManager.selectedCount,
+                  count: totalCount,
+                })}
               </Typography>
             </Stack>
             <Stack direction="row" spacing={1}>

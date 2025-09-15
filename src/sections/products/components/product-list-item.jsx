@@ -356,9 +356,11 @@ export function ProductListItem({
               >
                 <Rating value={product.rating} precision={0.1} size="small" readOnly />
                 <Typography variant="caption" color="text.secondary">
-                  ({(product.reviewCount || 0) > 0
+                  (
+                  {(product.reviewCount || 0) > 0
                     ? `${fNumber(product.reviewCount)} ${t('reviews')}`
-                    : t('noReviews')})
+                    : t('noReviews')}
+                  )
                 </Typography>
               </Stack>
             </Box>

@@ -2,14 +2,7 @@
 
 import { useState } from 'react';
 
-import {
-  Box,
-  Stack,
-  Button,
-  Popover,
-  MenuItem,
-  Typography,
-} from '@mui/material';
+import { Box, Stack, Button, Popover, MenuItem, Typography } from '@mui/material';
 
 import { allLangs } from 'src/locales/all-langs';
 import { useTranslate } from 'src/locales/use-locales';
@@ -33,9 +26,7 @@ export function LanguageSwitcher() {
     handleClose();
   };
 
-  const filteredLangs = allLangs.filter((lang) => 
-    ['en', 'jp', 'cn'].includes(lang.value)
-  );
+  const filteredLangs = allLangs.filter((lang) => ['en', 'jp', 'cn'].includes(lang.value));
 
   return (
     <>

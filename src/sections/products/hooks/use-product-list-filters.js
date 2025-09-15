@@ -17,7 +17,7 @@ const CURRENT_PAGE_STORAGE_KEY = 'product-list-current-page';
 // Helper function to get pageSize from localStorage
 const getStoredPageSize = () => {
   if (typeof window === 'undefined') return DEFAULT_FILTERS.pageSize;
-  
+
   try {
     const stored = localStorage.getItem(PAGE_SIZE_STORAGE_KEY);
     return stored ? parseInt(stored, 10) : DEFAULT_FILTERS.pageSize;
@@ -29,7 +29,7 @@ const getStoredPageSize = () => {
 // Helper function to get current page from localStorage
 const getStoredCurrentPage = () => {
   if (typeof window === 'undefined') return DEFAULT_FILTERS.page;
-  
+
   try {
     const stored = localStorage.getItem(CURRENT_PAGE_STORAGE_KEY);
     return stored ? parseInt(stored, 10) : DEFAULT_FILTERS.page;
@@ -113,10 +113,13 @@ export function useProductListFilters() {
     setPageWithStorage(0);
   }, [setPageWithStorage]);
 
-  const setCategoryFilterWithReset = useCallback((value) => {
-    setCategoryFilter(value);
-    setPageWithStorage(0);
-  }, [setPageWithStorage]);
+  const setCategoryFilterWithReset = useCallback(
+    (value) => {
+      setCategoryFilter(value);
+      setPageWithStorage(0);
+    },
+    [setPageWithStorage]
+  );
 
   // Custom setPageSize that also saves to localStorage
   const setPageSizeWithStorage = useCallback((newPageSize) => {

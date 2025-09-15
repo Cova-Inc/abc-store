@@ -183,7 +183,14 @@ export async function generateProductImagesPDF(products) {
 
             // Center left image
             const leftCenterX = margin + (imageWidth - leftWidth) / 2;
-            doc.addImage(leftImageData.data, 'JPEG', leftCenterX, currentY, leftWidth, leftActualHeight);
+            doc.addImage(
+              leftImageData.data,
+              'JPEG',
+              leftCenterX,
+              currentY,
+              leftWidth,
+              leftActualHeight
+            );
           }
 
           // Add right image (if exists)
@@ -203,7 +210,14 @@ export async function generateProductImagesPDF(products) {
 
             // Center right image
             const rightCenterX = margin + imageWidth + 10 + (imageWidth - rightWidth) / 2;
-            doc.addImage(rightImageData.data, 'JPEG', rightCenterX, currentY, rightWidth, rightActualHeight);
+            doc.addImage(
+              rightImageData.data,
+              'JPEG',
+              rightCenterX,
+              currentY,
+              rightWidth,
+              rightActualHeight
+            );
           }
 
           currentY += rowHeight + 10;
