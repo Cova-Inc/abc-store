@@ -4,6 +4,8 @@ import React from 'react';
 
 import { Stack, Select, MenuItem, InputLabel, FormControl } from '@mui/material';
 
+import { useTranslate } from 'src/locales/use-locales';
+
 import { SearchWithFields } from './search-with-fields';
 
 export function CommonToolbar({
@@ -29,6 +31,7 @@ export function CommonToolbar({
   minFilterWidth = 200,
   minSearchWidth = 250,
 }) {
+  const { t } = useTranslate('products');
   return (
     <Stack direction="row" spacing={2} alignItems="center" sx={{ p: 2 }}>
       {filterOptions && (
@@ -40,10 +43,10 @@ export function CommonToolbar({
             label={filterLabel}
             onChange={(e) => setFilterValue(e.target.value)}
           >
-            <MenuItem value="all">すべて</MenuItem>
+            <MenuItem value="all">{t('all')}</MenuItem>
             {filterOptions.map((option) => (
               <MenuItem key={option.value} value={option.value}>
-                {option.label}
+                {option.label.startsWith('categories.') ? t(option.label) : option.label}
               </MenuItem>
             ))}
           </Select>

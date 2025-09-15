@@ -25,6 +25,7 @@ import { fCurrency, fShortenNumber } from 'src/utils/format-number';
 import { useBoolean } from 'src/hooks';
 import { DashboardContent } from 'src/layouts/dashboard';
 import { PRODUCT_STATUS_OPTIONS, PRODUCT_CATEGORY_OPTIONS } from 'src/config-global';
+import { useTranslate } from 'src/locales/use-locales';
 
 import { Label } from 'src/components/label';
 import { toast } from 'src/components/snackbar';
@@ -42,6 +43,7 @@ export default function ProductDetailsView({ params }) {
   const router = useRouter();
   const { user } = useAuthContext();
   const confirmDelete = useBoolean();
+  const { t } = useTranslate('products');
 
   // Use the products hook for all operations
   const { product, loading, error, fetchProduct, deleteProduct } = useProducts();
@@ -171,6 +173,14 @@ export default function ProductDetailsView({ params }) {
     label: product?.category,
   };
 
+  // Get translated category label
+  const getCategoryLabel = () => {
+    if (categoryConfig.label && categoryConfig.label.startsWith('categories.')) {
+      return t(categoryConfig.label);
+    }
+    return categoryConfig.label;
+  };
+
   return (
     <DashboardContent>
       {/* Header */}
@@ -291,10 +301,10 @@ export default function ProductDetailsView({ params }) {
                 </Grid>
                 <Grid item xs={6}>
                   <Typography variant="body2" color="text.secondary">
-                    カテゴリー
+                    {t('category')}
                   </Typography>
                   <Typography variant="h6" sx={{ textTransform: 'capitalize' }}>
-                    {categoryConfig.label}
+                    {getCategoryLabel()}
                   </Typography>
                 </Grid>
               </Grid>

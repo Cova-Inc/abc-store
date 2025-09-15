@@ -2,6 +2,7 @@
   "title": "商品",
   "searchPlaceholder": "商品を検索...",
   "category": "カテゴリー",
+  "all": "すべて",
   "noProductsTitle": "商品が見つかりません",
   "noProductsDescription": "まだ商品が追加されていません。最初の商品を追加して始めましょう。",
   "selectedCount": "{{count}}件中{{selected}}件選択",
@@ -36,5 +37,13 @@
     "description": "以下の詳細を入力して、製品を更新してください。",
     "success": "商品が正常に更新されました！",
     "error": "商品の更新に失敗しました"
+  },
+  "categories": {
+    "shoes": "靴",
+    "beauty": "コスメ",
+    "underwear": "下着",
+    "books": "本",
+    "electronics": "家電",
+    "others": "その他"
   }
 }

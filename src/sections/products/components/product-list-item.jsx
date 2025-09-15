@@ -20,6 +20,7 @@ import { fDate } from 'src/utils/format-time';
 import { fNumber, fCurrency, fShortenNumber } from 'src/utils/format-number';
 
 import { PRODUCT_STATUS_OPTIONS, PRODUCT_CATEGORY_OPTIONS } from 'src/config-global';
+import { useTranslate } from 'src/locales/use-locales';
 
 import { Label } from 'src/components/label';
 import { Image } from 'src/components/image';
@@ -40,6 +41,7 @@ export function ProductListItem({
   ...other
 }) {
   const theme = useTheme();
+  const { t } = useTranslate('products');
   const [imageError, setImageError] = useState(false);
   const handleSelect = (e) => {
     e.stopPropagation();
@@ -71,12 +73,20 @@ export function ProductListItem({
     color: 'default',
   };
 
-  // Get category config for Japanese label
+  // Get category config for translation
   const categoryConfig = PRODUCT_CATEGORY_OPTIONS.find(
     (option) => option.value === product.category
   ) || {
     value: product?.category,
     label: product?.category,
+  };
+
+  // Get translated category label
+  const getCategoryLabel = () => {
+    if (categoryConfig.label && categoryConfig.label.startsWith('categories.')) {
+      return t(categoryConfig.label);
+    }
+    return categoryConfig.label;
   };
 
   // Mobile card layout (compact)
@@ -220,7 +230,7 @@ export function ProductListItem({
           <Stack direction="row" spacing={0.5} alignItems="center">
             {product.category && (
               <Label color="default" variant="soft" size="small">
-                {categoryConfig.label}
+                {getCategoryLabel()}
               </Label>
             )}
             {product.stock !== undefined && (
@@ -397,7 +407,7 @@ export function ProductListItem({
 
               {product.category && (
                 <Label color="info" variant="soft" size="small">
-                  {categoryConfig.label}
+                  {getCategoryLabel()}
                 </Label>
               )}
 

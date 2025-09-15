@@ -2,6 +2,7 @@
   "title": "Products",
   "searchPlaceholder": "Search products...",
   "category": "Category",
+  "all": "All",
   "noProductsTitle": "No Products Found",
   "noProductsDescription": "No products have been added yet. Add your first product to get started.",
   "selectedCount": "{{selected}} of {{count}} selected",
@@ -36,5 +37,13 @@
     "description": "Please enter the details below to update the product.",
     "success": "Product updated successfully!",
     "error": "Failed to update product"
+  },
+  "categories": {
+    "shoes": "Shoes",
+    "beauty": "Beauty & Cosmetics",
+    "underwear": "Underwear",
+    "books": "Books",
+    "electronics": "Electronics",
+    "others": "Others"
   }
 }
