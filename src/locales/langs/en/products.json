@@ -46,13 +46,10 @@
     "electronics": "Electronics",
     "others": "Others"
   },
-  "filterFields": {
-    "name": "Product Name",
-    "description": "Description",
-    "sku": "SKU",
-    "category": "Category",
-    "tags": "Tags"
-  },
+  "name": "Product Name",
+  "description": "Description",
+  "sku": "SKU",
+  "tags": "Tags",
   "reviews": "reviews",
   "noReviews": "No reviews",
   "noSku": "No SKU",

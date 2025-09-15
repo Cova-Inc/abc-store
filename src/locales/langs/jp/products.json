@@ -46,13 +46,10 @@
     "electronics": "家電",
     "others": "その他"
   },
-  "filterFields": {
-    "name": "商品名",
-    "description": "説明",
-    "sku": "SKU",
-    "category": "カテゴリー",
-    "tags": "タグ"
-  },
+  "name": "商品名",
+  "description": "説明",
+  "sku": "SKU",
+  "tags": "タグ",
   "reviews": "レビュー",
   "noReviews": "レビューなし",
   "noSku": "SKUなし",

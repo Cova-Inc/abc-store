@@ -41,9 +41,9 @@ export const PRODUCT_STATUS_OPTIONS = [
 ];
 
 export const PRODUCT_FILTER_FIELD_OPTIONS = [
-  { value: 'name', label: 'filterFields.name' },
-  { value: 'description', label: 'filterFields.description' },
-  { value: 'sku', label: 'filterFields.sku' },
-  { value: 'category', label: 'filterFields.category' },
-  { value: 'tags', label: 'filterFields.tags' },
+  { value: 'name', label: 'name' },
+  { value: 'description', label: 'description' },
+  { value: 'sku', label: 'sku' },
+  { value: 'category', label: 'category' },
+  { value: 'tags', label: 'tags' },
 ];

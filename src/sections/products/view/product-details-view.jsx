@@ -323,7 +323,7 @@ export default function ProductDetailsView({ params }) {
               {product.tags && product.tags.length > 0 && (
                 <Stack direction="column" spacing={1} flexWrap="wrap">
                   <Typography variant="body2" color="text.secondary">
-                    {t('filterFields.tags')}
+                    {t('tags')}
                   </Typography>
                   <Stack direction="row" spacing={1} flexWrap="wrap">
                     {product.tags.map((tag) => (

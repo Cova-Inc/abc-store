@@ -347,7 +347,7 @@ export function ProductForm({
               {/* Tags */}
               <Box>
                 <Typography variant="h6" gutterBottom>
-                  {t('filterFields.tags')}
+                  {t('tags')}
                 </Typography>
                 <Controller
                   name="tags"
