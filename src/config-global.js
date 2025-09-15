@@ -35,15 +35,15 @@ export const PRODUCT_CATEGORY_OPTIONS = [
 ];
 
 export const PRODUCT_STATUS_OPTIONS = [
-  { value: 'approved', label: '承認済み', color: 'success' },
-  { value: 'declined', label: '拒否', color: 'error' },
-  { value: 'draft', label: '承認待ち', color: 'info' },
+  { value: 'approved', label: 'status.approved', color: 'success' },
+  { value: 'declined', label: 'status.declined', color: 'error' },
+  { value: 'draft', label: 'status.draft', color: 'info' },
 ];
 
 export const PRODUCT_FILTER_FIELD_OPTIONS = [
-  { value: 'name', label: '商品名' },
-  { value: 'description', label: '説明' },
-  { value: 'sku', label: 'SKU' },
-  { value: 'category', label: 'カテゴリー' },
-  { value: 'tags', label: 'タグ' },
+  { value: 'name', label: 'filterFields.name' },
+  { value: 'description', label: 'filterFields.description' },
+  { value: 'sku', label: 'filterFields.sku' },
+  { value: 'category', label: 'filterFields.category' },
+  { value: 'tags', label: 'filterFields.tags' },
 ];

@@ -45,5 +45,21 @@
     "books": "Books",
     "electronics": "Electronics",
     "others": "Others"
+  },
+  "filterFields": {
+    "name": "Product Name",
+    "description": "Description",
+    "sku": "SKU",
+    "category": "Category",
+    "tags": "Tags"
+  },
+  "reviews": "reviews",
+  "noReviews": "No reviews",
+  "noSku": "No SKU",
+  "stock": "Stock Quantity",
+  "status": {
+    "approved": "Approved",
+    "declined": "Declined",
+    "draft": "Pending Approval"
   }
 }

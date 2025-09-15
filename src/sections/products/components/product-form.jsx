@@ -245,7 +245,7 @@ export function ProductForm({
                         >
                           {PRODUCT_STATUS_OPTIONS.map((option) => (
                             <MenuItem key={option.value} value={option.value}>
-                              {option.label}
+                              {option.label.startsWith('status.') ? t(option.label) : option.label}
                             </MenuItem>
                           ))}
                         </Field.Select>

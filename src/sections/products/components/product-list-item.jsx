@@ -89,6 +89,14 @@ export function ProductListItem({
     return categoryConfig.label;
   };
 
+  // Get translated status label
+  const getStatusLabel = () => {
+    if (statusConfig.label && statusConfig.label.startsWith('status.')) {
+      return t(statusConfig.label);
+    }
+    return statusConfig.label;
+  };
+
   // Mobile card layout (compact)
   if (isMobile) {
     return (
@@ -192,7 +200,7 @@ export function ProductListItem({
               textTransform: 'capitalize',
             }}
           >
-            {statusConfig.label}
+            {getStatusLabel()}
           </Label>
         </Box>
 
@@ -402,7 +410,7 @@ export function ProductListItem({
               justifyContent={{ xs: 'center', md: 'flex-start' }}
             >
               <Label color={statusConfig.color} variant="soft" size="small">
-                {statusConfig.label}
+                {getStatusLabel()}
               </Label>
 
               {product.category && (

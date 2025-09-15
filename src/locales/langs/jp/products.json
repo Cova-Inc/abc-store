@@ -45,5 +45,21 @@
     "books": "本",
     "electronics": "家電",
     "others": "その他"
+  },
+  "filterFields": {
+    "name": "商品名",
+    "description": "説明",
+    "sku": "SKU",
+    "category": "カテゴリー",
+    "tags": "タグ"
+  },
+  "reviews": "レビュー",
+  "noReviews": "レビューなし",
+  "noSku": "SKUなし",
+  "stock": "在庫数量",
+  "status": {
+    "approved": "承認済み",
+    "declined": "拒否",
+    "draft": "承認待ち"
   }
 }

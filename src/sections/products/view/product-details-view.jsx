@@ -166,6 +166,14 @@ export default function ProductDetailsView({ params }) {
     color: 'default',
   };
 
+  // Get translated status label
+  const getStatusLabel = () => {
+    if (statusConfig.label && statusConfig.label.startsWith('status.')) {
+      return t(statusConfig.label);
+    }
+    return statusConfig.label;
+  };
+
   const categoryConfig = PRODUCT_CATEGORY_OPTIONS.find(
     (option) => option.value === product.category
   ) || {
@@ -187,7 +195,7 @@ export default function ProductDetailsView({ params }) {
       <Box sx={{ mb: 3 }}>
         <Stack direction="row" alignItems="center" spacing={2} justifyContent="space-between">
           <Button onClick={handleBack} startIcon={<Iconify icon="eva:arrow-back-fill" />}>
-            戻る
+            {t('back')}
           </Button>
 
           <Stack direction="row" alignItems="center" spacing={2}>
@@ -242,7 +250,7 @@ export default function ProductDetailsView({ params }) {
                   textTransform: 'capitalize',
                 }}
               >
-                {statusConfig.label}
+                {getStatusLabel()}
               </Label>
 
               <Typography variant="h5">{product.name}</Typography>
@@ -259,7 +267,9 @@ export default function ProductDetailsView({ params }) {
                   readOnly
                   sx={{ mr: 1 }}
                 />
-                {`(${fShortenNumber(product.reviewCount)} レビュー)`}
+                {product.reviewCount > 0
+                  ? `(${fShortenNumber(product.reviewCount)} ${t('reviews')})`
+                  : `(${t('noReviews')})`}
               </Stack>
 
               <Stack direction="row" alignItems="center" spacing={2}>
@@ -284,7 +294,7 @@ export default function ProductDetailsView({ params }) {
                 )}
               </Stack>
               <Typography variant="body2" color="text.secondary">
-                {product.sku ? `SKU: ${product.sku}` : 'SKUなし'}
+                {product.sku ? `SKU: ${product.sku}` : t('noSku')}
               </Typography>
               <Typography variant="body2" color="text.secondary">
                 {product.description}
@@ -295,7 +305,7 @@ export default function ProductDetailsView({ params }) {
               <Grid container spacing={2}>
                 <Grid item xs={6}>
                   <Typography variant="body2" color="text.secondary">
-                    在庫数量
+                    {t('stock')}
                   </Typography>
                   <Typography variant="h6">{product.stock}</Typography>
                 </Grid>
