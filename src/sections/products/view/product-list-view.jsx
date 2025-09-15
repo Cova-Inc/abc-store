@@ -36,9 +36,8 @@ import {
   CommonListPagination,
 } from 'src/components/common-list';
 
-import { useAuthContext } from 'src/auth/hooks';
-
 import axios from 'src/utils/axios';
+import { useAuthContext } from 'src/auth/hooks';
 
 import { ProductListItem } from '../components';
 import { useProducts, usePdfDownload, useSelectionManager, useProductListFilters } from '../hooks';
@@ -240,8 +239,8 @@ export default function ProductListView() {
         try {
           const response = await axios.get('/api/products/uploaders');
           setUploaders(response.data.uploaders || []);
-        } catch (error) {
-          console.error('Failed to fetch uploaders:', error);
+        } catch (err) {
+          console.error('Failed to fetch uploaders:', err);
         }
       }
     };
