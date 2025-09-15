@@ -31,5 +31,5 @@ jobs:
 
       # Step 5: Run format check
       - name: Run format check
-        run: npm run fm
+        run: npm run fm:check
 
