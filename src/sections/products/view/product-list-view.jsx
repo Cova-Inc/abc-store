@@ -38,6 +38,8 @@ import {
 
 import { useAuthContext } from 'src/auth/hooks';
 
+import axios from 'src/utils/axios';
+
 import { ProductListItem } from '../components';
 import { useProducts, usePdfDownload, useSelectionManager, useProductListFilters } from '../hooks';
 
@@ -236,13 +238,8 @@ export default function ProductListView() {
     const fetchUploaders = async () => {
       if (user?.role === 'admin') {
         try {
-          const response = await fetch('/api/products/uploaders', {
-            credentials: 'include',
-          });
-          if (response.ok) {
-            const data = await response.json();
-            setUploaders(data.uploaders || []);
-          }
+          const response = await axios.get('/api/products/uploaders');
+          setUploaders(response.data.uploaders || []);
         } catch (error) {
           console.error('Failed to fetch uploaders:', error);
         }

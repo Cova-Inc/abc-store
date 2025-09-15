@@ -22,16 +22,14 @@ export async function GET(request) {
     await connectToDatabase();
 
     // Get distinct users who have created products
-    const uploaders = await Product.distinct('createdBy')
-      .populate('createdBy', 'name email')
-      .lean();
+    const uploaderIds = await Product.distinct('createdBy');
 
     // Get user details for each uploader
     const User = (await import('src/models/User')).default;
     const uploaderDetails = await User.find(
-      { _id: { $in: uploaders } },
+      { _id: { $in: uploaderIds } },
       'name email'
-    ).lean();
+    ).sort({ name: 1 }).lean();
 
     // Transform to return format
     const transformedUploaders = uploaderDetails.map((user) => ({
