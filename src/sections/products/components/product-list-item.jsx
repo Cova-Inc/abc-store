@@ -114,7 +114,7 @@ export function ProductListItem({
           cursor: 'pointer',
           '&:hover': {
             borderColor: alpha(theme.palette.primary.main, 0.4),
-            boxShadow: (theme) => theme.customShadows.z4,
+            boxShadow: (th) => th.customShadows.z4,
           },
           transition: 'all 0.2s ease-in-out',
         }}
@@ -282,7 +282,7 @@ export function ProductListItem({
         cursor: 'pointer',
         '&:hover': {
           borderColor: alpha(theme.palette.primary.main, 0.4),
-          boxShadow: (theme) => theme.customShadows.z8,
+          boxShadow: (th) => th.customShadows.z8,
         },
         transition: 'all 0.2s ease-in-out',
       }}
