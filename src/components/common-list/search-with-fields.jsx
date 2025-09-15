@@ -14,6 +14,7 @@ import {
 } from '@mui/material';
 
 import { Iconify } from 'src/components/iconify';
+import { useTranslate } from 'src/locales/use-locales';
 
 export function SearchWithFields({
   search,
@@ -26,6 +27,7 @@ export function SearchWithFields({
   placeholder = 'Search...',
   minWidth = 250,
 }) {
+  const { t } = useTranslate('products');
   const inputRef = useRef(null);
   const [popperOpen, setPopperOpen] = useState(false);
 
@@ -87,7 +89,7 @@ export function SearchWithFields({
                 {filterFieldOptions.map((field) => (
                   <MenuItem key={field.value} onClick={() => handleFieldToggle(field.value)}>
                     <Checkbox checked={filterFields.includes(field.value)} />
-                    <ListItemText primary={field.label} />
+                    <ListItemText primary={['name', 'description', 'sku', 'category', 'tags'].includes(field.label) ? t(field.label) : field.label} />
                   </MenuItem>
                 ))}
               </FormControl>

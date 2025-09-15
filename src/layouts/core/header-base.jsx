@@ -1,6 +1,7 @@
 import Box from '@mui/material/Box';
 
 import { Logo } from 'src/components/logo';
+import { LanguageSwitcher } from 'src/components/language-switcher';
 
 import { useAuthContext } from 'src/auth/hooks';
 
@@ -28,6 +29,7 @@ export function HeaderBase({ sx, data, slots, slotProps, onOpenNav, layoutQuery,
               gap: { xs: 1, sm: 1.5 },
             }}
           >
+            <LanguageSwitcher data-slot="language" />
             <SettingsButton data-slot="settings" />
             {authenticated && <AccountDrawer data-slot="account" data={data?.account} />}
           </Box>

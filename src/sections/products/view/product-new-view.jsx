@@ -7,6 +7,7 @@ import { Box, Card, Stack, Button, Divider, Typography } from '@mui/material';
 import { paths } from 'src/routes/paths';
 import { useRouter } from 'src/routes/hooks';
 
+import { useTranslate } from 'src/locales/use-locales';
 import { DashboardContent } from 'src/layouts/dashboard';
 
 import { toast } from 'src/components/snackbar';
@@ -22,6 +23,7 @@ import { ProductForm } from '../components/product-form';
 export default function ProductNewView() {
   const router = useRouter();
   const { user } = useAuthContext();
+  const { t } = useTranslate('products');
 
   const { form, methods, onSubmit, isSubmitting, reset } = useProductForm();
 
@@ -33,17 +35,17 @@ export default function ProductNewView() {
     async (data) => {
       try {
         await onSubmit(data);
-        toast.success('Product created successfully!');
+        toast.success(t('newProduct.success'));
         // Redirect after successful submission
         setTimeout(() => {
           router.push(paths.main.products.root);
         }, 500);
       } catch (err) {
         console.error('Product creation error:', err);
-        toast.error(err.message || 'Failed to create product');
+        toast.error(err.message || t('newProduct.error'));
       }
     },
-    [onSubmit, router]
+    [onSubmit, router, t]
   );
 
   return (
@@ -55,16 +57,16 @@ export default function ProductNewView() {
           size="large"
           startIcon={<Iconify icon="eva:arrow-back-fill" />}
         >
-          戻る
+          {t('back')}
         </Button>
       </Stack>
 
       {/* Product Form */}
       <Card sx={{ p: 3, mt: 3 }}>
         <Box>
-          <Typography variant="h4">新しい商品</Typography>
+          <Typography variant="h4">{t('newProduct.title')}</Typography>
           <Typography variant="body2" sx={{ color: 'text.secondary' }}>
-            以下の詳細を入力して新しい商品を追加してください。
+            {t('newProduct.description')}
           </Typography>
         </Box>
         <Divider sx={{ my: 2, borderStyle: 'dashed' }} />

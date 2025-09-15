@@ -25,6 +25,7 @@ import { fCurrency, fShortenNumber } from 'src/utils/format-number';
 import { useBoolean } from 'src/hooks';
 import { DashboardContent } from 'src/layouts/dashboard';
 import { PRODUCT_STATUS_OPTIONS, PRODUCT_CATEGORY_OPTIONS } from 'src/config-global';
+import { useTranslate } from 'src/locales/use-locales';
 
 import { Label } from 'src/components/label';
 import { toast } from 'src/components/snackbar';
@@ -42,6 +43,7 @@ export default function ProductDetailsView({ params }) {
   const router = useRouter();
   const { user } = useAuthContext();
   const confirmDelete = useBoolean();
+  const { t } = useTranslate('products');
 
   // Use the products hook for all operations
   const { product, loading, error, fetchProduct, deleteProduct } = useProducts();
@@ -164,11 +166,27 @@ export default function ProductDetailsView({ params }) {
     color: 'default',
   };
 
+  // Get translated status label
+  const getStatusLabel = () => {
+    if (statusConfig.label && statusConfig.label.startsWith('status.')) {
+      return t(statusConfig.label);
+    }
+    return statusConfig.label;
+  };
+
   const categoryConfig = PRODUCT_CATEGORY_OPTIONS.find(
     (option) => option.value === product.category
   ) || {
     value: product?.category,
     label: product?.category,
+  };
+
+  // Get translated category label
+  const getCategoryLabel = () => {
+    if (categoryConfig.label && categoryConfig.label.startsWith('categories.')) {
+      return t(categoryConfig.label);
+    }
+    return categoryConfig.label;
   };
 
   return (
@@ -177,7 +195,7 @@ export default function ProductDetailsView({ params }) {
       <Box sx={{ mb: 3 }}>
         <Stack direction="row" alignItems="center" spacing={2} justifyContent="space-between">
           <Button onClick={handleBack} startIcon={<Iconify icon="eva:arrow-back-fill" />}>
-            戻る
+            {t('back')}
           </Button>
 
           <Stack direction="row" alignItems="center" spacing={2}>
@@ -232,7 +250,7 @@ export default function ProductDetailsView({ params }) {
                   textTransform: 'capitalize',
                 }}
               >
-                {statusConfig.label}
+                {getStatusLabel()}
               </Label>
 
               <Typography variant="h5">{product.name}</Typography>
@@ -249,7 +267,9 @@ export default function ProductDetailsView({ params }) {
                   readOnly
                   sx={{ mr: 1 }}
                 />
-                {`(${fShortenNumber(product.reviewCount)} レビュー)`}
+                {product.reviewCount > 0
+                  ? `(${fShortenNumber(product.reviewCount)} ${t('reviews')})`
+                  : `(${t('noReviews')})`}
               </Stack>
 
               <Stack direction="row" alignItems="center" spacing={2}>
@@ -274,7 +294,7 @@ export default function ProductDetailsView({ params }) {
                 )}
               </Stack>
               <Typography variant="body2" color="text.secondary">
-                {product.sku ? `SKU: ${product.sku}` : 'SKUなし'}
+                {product.sku ? `SKU: ${product.sku}` : t('noSku')}
               </Typography>
               <Typography variant="body2" color="text.secondary">
                 {product.description}
@@ -285,16 +305,16 @@ export default function ProductDetailsView({ params }) {
               <Grid container spacing={2}>
                 <Grid item xs={6}>
                   <Typography variant="body2" color="text.secondary">
-                    在庫数量
+                    {t('stock')}
                   </Typography>
                   <Typography variant="h6">{product.stock}</Typography>
                 </Grid>
                 <Grid item xs={6}>
                   <Typography variant="body2" color="text.secondary">
-                    カテゴリー
+                    {t('category')}
                   </Typography>
                   <Typography variant="h6" sx={{ textTransform: 'capitalize' }}>
-                    {categoryConfig.label}
+                    {getCategoryLabel()}
                   </Typography>
                 </Grid>
               </Grid>
@@ -303,7 +323,7 @@ export default function ProductDetailsView({ params }) {
               {product.tags && product.tags.length > 0 && (
                 <Stack direction="column" spacing={1} flexWrap="wrap">
                   <Typography variant="body2" color="text.secondary">
-                    タグ
+                    {t('tags')}
                   </Typography>
                   <Stack direction="row" spacing={1} flexWrap="wrap">
                     {product.tags.map((tag) => (

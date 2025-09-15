@@ -20,6 +20,7 @@ import { fDate } from 'src/utils/format-time';
 import { fNumber, fCurrency, fShortenNumber } from 'src/utils/format-number';
 
 import { PRODUCT_STATUS_OPTIONS, PRODUCT_CATEGORY_OPTIONS } from 'src/config-global';
+import { useTranslate } from 'src/locales/use-locales';
 
 import { Label } from 'src/components/label';
 import { Image } from 'src/components/image';
@@ -40,6 +41,7 @@ export function ProductListItem({
   ...other
 }) {
   const theme = useTheme();
+  const { t } = useTranslate('products');
   const [imageError, setImageError] = useState(false);
   const handleSelect = (e) => {
     e.stopPropagation();
@@ -71,12 +73,28 @@ export function ProductListItem({
     color: 'default',
   };
 
-  // Get category config for Japanese label
+  // Get category config for translation
   const categoryConfig = PRODUCT_CATEGORY_OPTIONS.find(
     (option) => option.value === product.category
   ) || {
     value: product?.category,
     label: product?.category,
+  };
+
+  // Get translated category label
+  const getCategoryLabel = () => {
+    if (categoryConfig.label && categoryConfig.label.startsWith('categories.')) {
+      return t(categoryConfig.label);
+    }
+    return categoryConfig.label;
+  };
+
+  // Get translated status label
+  const getStatusLabel = () => {
+    if (statusConfig.label && statusConfig.label.startsWith('status.')) {
+      return t(statusConfig.label);
+    }
+    return statusConfig.label;
   };
 
   // Mobile card layout (compact)
@@ -182,7 +200,7 @@ export function ProductListItem({
               textTransform: 'capitalize',
             }}
           >
-            {statusConfig.label}
+            {getStatusLabel()}
           </Label>
         </Box>
 
@@ -220,7 +238,7 @@ export function ProductListItem({
           <Stack direction="row" spacing={0.5} alignItems="center">
             {product.category && (
               <Label color="default" variant="soft" size="small">
-                {categoryConfig.label}
+                {getCategoryLabel()}
               </Label>
             )}
             {product.stock !== undefined && (
@@ -338,7 +356,9 @@ export function ProductListItem({
               >
                 <Rating value={product.rating} precision={0.1} size="small" readOnly />
                 <Typography variant="caption" color="text.secondary">
-                  ({fNumber(product.reviewCount || 0)} レビュー)
+                  ({(product.reviewCount || 0) > 0
+                    ? `${fNumber(product.reviewCount)} ${t('reviews')}`
+                    : t('noReviews')})
                 </Typography>
               </Stack>
             </Box>
@@ -392,12 +412,12 @@ export function ProductListItem({
               justifyContent={{ xs: 'center', md: 'flex-start' }}
             >
               <Label color={statusConfig.color} variant="soft" size="small">
-                {statusConfig.label}
+                {getStatusLabel()}
               </Label>
 
               {product.category && (
                 <Label color="info" variant="soft" size="small">
-                  {categoryConfig.label}
+                  {getCategoryLabel()}
                 </Label>
               )}
 
@@ -407,7 +427,7 @@ export function ProductListItem({
                   color="text.secondary"
                   sx={{ textDecorationLine: product.stock === 0 ? 'line-through' : 'none' }}
                 >
-                  在庫: {product.stock}
+                  {t('stockLabel')}: {product.stock}
                 </Typography>
               )}
             </Stack>

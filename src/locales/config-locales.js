@@ -1,5 +1,5 @@
 export const fallbackLng = 'en';
-export const languages = ['en', 'fr', 'vi', 'cn', 'ar'];
+export const languages = ['en', 'jp', 'cn'];
 export const defaultNS = 'common';
 export const cookieName = 'i18next';
 
@@ -24,6 +24,11 @@ export const changeLangMessages = {
     success: 'Language has been changed!',
     error: 'Error changing language!',
     loading: 'Loading...',
+  },
+  jp: {
+    success: '言語が変更されました！',
+    error: '言語の変更中にエラーが発生しました！',
+    loading: '読み込み中...',
   },
   vi: {
     success: 'Ngôn ngữ đã được thay đổi!',

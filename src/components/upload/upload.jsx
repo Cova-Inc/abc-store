@@ -6,6 +6,7 @@ import Button from '@mui/material/Button';
 import FormHelperText from '@mui/material/FormHelperText';
 
 import { varAlpha } from 'src/theme/styles';
+import { useTranslate } from 'src/locales/use-locales';
 
 import { Iconify } from '../iconify';
 import { UploadPlaceholder } from './components/placeholder';
@@ -29,6 +30,7 @@ export function Upload({
   multiple = false,
   ...other
 }) {
+  const { t } = useTranslate('products');
   const { getRootProps, getInputProps, isDragActive, isDragReject, fileRejections } = useDropzone({
     multiple,
     disabled,
@@ -57,7 +59,7 @@ export function Upload({
         <Stack direction="row" justifyContent="flex-end" spacing={1.5}>
           {onRemoveAll && (
             <Button color="inherit" variant="outlined" size="small" onClick={onRemoveAll}>
-              すべてを削除
+              {t('form.removeAll')}
             </Button>
           )}
 
