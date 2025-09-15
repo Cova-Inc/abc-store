@@ -1,0 +1,35 @@
+name: Lint & Format Check
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+
+jobs:
+  lint-and-format:
+    runs-on: ubuntu-latest
+
+    steps:
+      # Step 1: Checkout the code
+      - name: Checkout repo
+        uses: actions/checkout@v4
+      
+      # Step 2: Setup Node.js
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      
+      # Step 3: Install dependencies
+      - name: Install dependencies
+        run: npm install --legacy-peer-deps
+
+      # Step 4: Run lint
+      - name: Run lint
+        run: npm run lint
+
+      # Step 5: Run format check
+      - name: Run format check
+        run: npm run fm:check
+
