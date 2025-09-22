@@ -206,7 +206,7 @@ export function ProductListItem({
 
         {/* Product Details */}
         <Stack spacing={0.5} sx={{ mt: 1, flex: 1 }}>
-          <Stack direction="row" justifyContent="space-between" alignItems="center">
+          <Stack direction="column" justifyContent="space-between" alignItems="flex-start">
             {/* Name */}
             <Typography variant="subtitle2">{product.name}</Typography>
 
