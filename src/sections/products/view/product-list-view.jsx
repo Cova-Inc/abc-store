@@ -20,6 +20,8 @@ import {
 import { paths } from 'src/routes/paths';
 import { useRouter } from 'src/routes/hooks';
 
+import axios from 'src/utils/axios';
+
 import { useBoolean } from 'src/hooks';
 import { useTranslate } from 'src/locales/use-locales';
 import { DashboardContent } from 'src/layouts/dashboard';
@@ -36,7 +38,6 @@ import {
   CommonListPagination,
 } from 'src/components/common-list';
 
-import axios from 'src/utils/axios';
 import { useAuthContext } from 'src/auth/hooks';
 
 import { ProductListItem } from '../components';
